@@ -1,0 +1,13 @@
+# Denylist local de PII — este archivo SÍ se commitea, así que va VACÍO de datos.
+# Copialo a .pii-denylist.local (gitignoreado) y poné ahí tus términos reales:
+# un apellido o nombre por línea, como expresión regular.
+#
+# Ejemplo de contenido del archivo local (NO de este):
+#   ApellidoUno
+#   ApellidoDos
+#   Nombre de tu universidad
+#   id-del-notebook
+#
+# El pre-commit lo lee si existe y bloquea cualquier línea agregada que lo mencione.
+# La comparación es SENSIBLE A MAYÚSCULAS a propósito: así "terceros" (palabra común) no
+# se confunde con el apellido "Terceros". Capitalizá los nombres.

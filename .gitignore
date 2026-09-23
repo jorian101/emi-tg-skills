@@ -1,0 +1,27 @@
+# --- Config privada del usuario: nunca se commitea ---
+config.local.md
+**/config.md
+.env.local
+.pii-denylist.local
+
+# --- Datos del estudiante: viven en el vault, no acá ---
+workspaces/
+vault/
+
+# --- Documentos fuente y artefactos generados ---
+*.docx
+*.pdf
+media/
+output/
+
+# --- Temporales y locks de Word ---
+~$*
+~WRL*
+*.tmp
+__pycache__/
+*.pyc
+node_modules/
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
