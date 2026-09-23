@@ -4,7 +4,7 @@ description: "Trigger: revisor, perfil de revisor, revisor 1, revisor 2, tutor, 
 license: Apache-2.0
 metadata:
   author: asistente-legal
-  version: "1.40"
+  version: "1.41"
 ---
 
 # Skill: perfil-revisor-tg
