@@ -28,7 +28,20 @@ docentes_en     dónde viven los criterios de docentes
 informes_en     dónde se guardan los informes crudos
 ```
 
-más tres variables de `.env.local` para los scripts (`VAULT`, `CORPUS`, `ZOTERO_SQLITE`).
+y las variables de `.env.local` que usan los scripts. **Ninguna ruta está hardcodeada en el
+motor**: si falta una variable, el script falla diciendo cuál, en vez de adivinar.
+
+| Variable | Para qué | ¿Obligatoria? |
+|---|---|---|
+| `VAULT` | Raíz de tu vault: perfiles, reglas, informes, propuestas | Sí |
+| `CORPUS` | Tus documentos fuente (Word/PDF, respaldos, anexos) | Sí para extraer |
+| `INFORMES` | Carpeta con los informes a ingerir, una subcarpeta por docente | Sí para ingerir |
+| `CODE_REPO` | El repositorio del sistema que documentás | Solo con entregables |
+| `SKILLS` | Dónde están instaladas las skills | Sí |
+| `LOCAL_BIN` | Tus binarios locales (`nlm`, wrappers de auth) | Solo con NotebookLM |
+| `ZOTERO_DB` | El `zotero.sqlite`, para el snapshot de solo lectura | Solo con Zotero |
+| `ZOTERO_STORAGE` | Adjuntos de Zotero, para resolver rutas de PDF | Solo con Zotero |
+| `NLM_NOTEBOOK_ID`, `NLM_ALIAS` | Notebook de tus docentes | Solo con NotebookLM |
 
 **Por qué `evaluadores:` y no adivinar:** el sistema no deduce quién te evalúa del nombre de la
 carpeta. Si lo hiciera, cualquier docente con un archivo en `docentes_en` pasaría a ser autoridad
