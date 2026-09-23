@@ -61,6 +61,15 @@ if [ -f "$DENY" ]; then
   [ -n "$HIT" ] && reportar "término del denylist local" "$HIT"
 fi
 
+# Apellidos en los NOMBRES de los archivos que se commitean (van en minúscula, así que se
+# comparan aparte, en minúscula, sin reabrir el falso positivo de "terceros" en la prosa).
+if [ -f "$DENY" ]; then
+  RUTAS="$(git diff --cached --name-only --diff-filter=ACM | tr 'A-Z' 'a-z')"
+  DENY_LOW="$(grep -vE '^[[:space:]]*(#|$)' "$DENY" | tr 'A-Z' 'a-z')"
+  HIT="$(printf '%s\n' "$RUTAS" | grep -Ef <(printf '%s\n' "$DENY_LOW") || true)"
+  [ -n "$HIT" ] && reportar "apellido en el nombre del archivo" "$HIT"
+fi
+
 if [ "$FAIL" -ne 0 ]; then
   cat <<'AVISO'
 

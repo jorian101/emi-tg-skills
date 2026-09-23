@@ -1,0 +1,16 @@
+# Config privada (vive en el repo del motor) — nunca se commitea acá
+config.local.md
+.env.local
+
+# Documentos fuente y artefactos generados
+*.docx
+*.pdf
+media/
+output/
+
+# Temporales y locks de Word
+~$*
+~WRL*
+*.tmp
+.DS_Store
+Thumbs.db

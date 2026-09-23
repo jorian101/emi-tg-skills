@@ -53,6 +53,9 @@ while IFS= read -r target; do
     t="${t%%\\}"   # escape de pipe en tablas ([[x\|alias]])
     t="$(echo "$t" | sed 's/^ *//;s/ *$//')"
     [[ "$t" == \#* || "$t" == ^* || -z "$t" ]] && continue
+    # Un target con <placeholder> es una plantilla sin llenar, no un enlace roto:
+    # si no, el andamiaje recien instalado nunca pasaria el gate.
+    [[ "$t" == *"<"* ]] && continue
     # probar slug exacto y basename
     if [[ -n "${NAMES[$t]:-}" ]]; then continue; fi
     # fallback: sin carpeta (roles/auditor -> auditor)
