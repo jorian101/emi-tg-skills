@@ -29,7 +29,7 @@ Usala cuando el usuario pida:
    - `confirmado` — el revisor lo dijo/rayó explícitamente (registrar cita).
    - `inferido` — hipótesis del estudiante o del agente (NO validada). Se aplica como sugerencia, nunca como exigencia.
    - `abierto` — sin explicación. Crear pendiente "preguntar al revisor", NUNCA adivinar.
-4. **Jerarquía de autoridad.** **Revisor y docente van juntos** por encima del tutor: casi nunca chocan porque el docente da reglas de **forma** y el revisor revisa **fondo y coherencia**; el tutor queda último. Fuente única: [[wiki/docentes/jerarquia-autoridad]]. Si algún criterio **contradice** la norma (`wiki/trabajos-grado/reglas-narvaez-2025.md`) u otro revisor/tutor/docente, **NO se aplica en silencio**: documentar en `wiki/contradictions/tg-revisor-*.md` y preguntar al usuario.
+4. **Jerarquía de autoridad.** **Revisor y docente van juntos** por encima del tutor: casi nunca chocan porque el docente da reglas de **forma** y el revisor revisa **fondo y coherencia**; el tutor queda último. Fuente única: [[wiki/docentes/jerarquia-autoridad]]. Si algún criterio **contradice** la norma (`wiki/trabajos-grado/reglas-institucionales.md`) u otro revisor/tutor/docente, **NO se aplica en silencio**: documentar en `wiki/contradictions/tg-revisor-*.md` y preguntar al usuario.
 5. **Justificar toda decisión** de corrección citando perfil/regla + estado de fiabilidad. Si sale de una inferencia, marcarlo.
 6. **No modificar el Word.** Entregar propuestas.
 7. **Data fuera de la skill.** La ruta se lee de `config.md`; NO hardcodear rutas absolutas en `SKILL.md`. Los `.md` generados van en el vault.
@@ -167,7 +167,7 @@ Usala cuando el usuario pida:
 1. Leer la sección indicada del documento; si es marco teórico, leer también `sources/marco-practico.md` para el chequeo de coherencia (regla 11) y el snapshot de Zotero (regla 12).
 2. Contrastar contra las reglas del perfil y producir un plan: cada ítem con `ubicación | hallazgo | acción (eliminar/agregar/subir/resumir) | justificación (perfil/regla, estado)`. En acción `resumir`, incluir el texto colapsado propuesto en prosa fluida (regla 16, sin "—" y sin ";" fuera de citas/Notas), con citas posicionadas antes del punto y sin repetición (regla 19). Si un párrafo único pierde lógica, mantener **viñetas** y resumir cada una sin quitar coherencia. **Caza proactiva:** releer la extracción buscando clases de error que NO están en ninguna fuente (perfiles, matriz, reglas); cada hallazgo va a la propuesta como `inferido` propuesto, nunca aplicado en silencio. **Test de supervivencia (MP-24):** toda oración de prosa del MP que se pretenda conservar pasa por (a) ¿el MT ya define el concepto? → término sin desarrollar; (b) ¿la figura/Nota ya lo muestra? → eliminar; (c) ¿la tabla ya lo dice? → eliminar. Lex-cues prohibidos: "Consiste en", "El objetivo es", "representa una etapa", "se divide en", "Para garantizar", "porque" y justificaciones de herramienta. Párrafo con evidencia del revisor → eliminar o mínimo, comprimir no es aplicar (MP-25).
 3. Verificar MER unificado (regla 20): si la sección repite DER, MER y esquema de base de datos relacional, consolidar a MER con la teoría DER absorbida y reencuadrar o eliminar la figura de esquema.
-4. **Contrastar contra la norma** (`wiki/trabajos-grado/reglas-narvaez-2025.md`): si una corrección del revisor contradice la norma u otro revisor/tutor/docente, NO aplicarla en silencio — abrir `wiki/contradictions/tg-revisor-*.md` (estado `abierta`) y preguntar al usuario. Revisor y docente van por encima del tutor, pero se confirma con el usuario ([[wiki/docentes/jerarquia-autoridad]]).
+4. **Contrastar contra la norma** (`wiki/trabajos-grado/reglas-institucionales.md`): si una corrección del revisor contradice la norma u otro revisor/tutor/docente, NO aplicarla en silencio — abrir `wiki/contradictions/tg-revisor-*.md` (estado `abierta`) y preguntar al usuario. Revisor y docente van por encima del tutor, pero se confirma con el usuario ([[wiki/docentes/jerarquia-autoridad]]).
 5. Los ítems `abierto` se dejan como pendiente de pregunta, no se adivina.
 6. No tocar el Word.
 7. Verificar herramientas del MP en el MT (regla 21): cruzar el listado del marco práctico contra el teórico; si falta una herramienta, registrar gap en el plan. **Co-revisión inversa (MT-32):** al cerrar la pasada, barrear los conceptos, capas, herramientas y parámetros que el corregido nombra contra el MT y registrar los ausentes como pendiente de pasada MT con sección destino.
@@ -233,15 +233,20 @@ Todos entran por `Modo perfilar` / `Auto-mejora`; cambia la **procedencia del cr
 ## References
 
 - `config.md` — ruta de data (única línea a cambiar al portar la skill).
-- `assets/` — plantillas de `Revisor_N.md`, `Tutor.md`, `reglas-propias.md`, `reglas-formato-notas-tg.md`, `indice.md`, `propuesta-tg.md`, `corregido-tg.md`.
+- `assets/` — plantillas que se copian al vault: `Revisor_N.md`, `Tutor.md`, `docente.md`,
+  `reglas-propias.md`, `reglas-formato-notas-tg.md`, `indice.md`, `propuesta-tg.md`,
+  `corregido-tg.md`, `matriz-generalizaciones.md`, `protocolo-tribunal.md`, `registro.md`.
+  Convención: `assets/` son **plantillas a copiar**; `references/` es **documentación a leer**.
 - `wiki/revisores/indice` — hub de la carpeta en el vault.
 - `wiki/revisores/protocolo-tribunal` — protocolo del modo tribunal (asignación de perfiles, brief, 2 rondas, puerta de cobertura).
 - `wiki/revisores/matriz-generalizaciones` — clases de error por perfil y lugares de caza (derivación predictiva).
-- `$CODE_REPO/.opencode/skills/omniagent/assets/cross-review.md` — transporte del tribunal a los panes de herdr (2 rondas, pane ID, `blocked`, fallback a archivo). Vive en el repo de código; esta skill vive en el vault (`~/.opencode/skills/perfil-revisor-tg/`).
+- Transporte del tribunal — **opcional**: si tenés un orquestador de agentes, el detalle de cómo
+  se mueve el brief entre ellos. El protocolo funciona igual sin él (ver `assets/protocolo-tribunal.md`
+  §8): dos sesiones separadas, o dos revisiones cruzadas a mano.
 - `wiki/revisores/reglas-formato-notas-tg` — formato de Nota y cita de Anexo (regla 13).
 - `wiki/docentes/_moc-docentes` — catálogo dinámico de docentes (contexto de criterio).
 - `wiki/docentes/jerarquia-autoridad` — jerarquía (revisor > docente > norma) + cadena de escalación.
-- `wiki/trabajos-grado/reglas-narvaez-2025` — norma contra la que se contrasta en modo revisar.
+- `wiki/trabajos-grado/reglas-institucionales` — norma contra la que se contrasta en modo revisar.
 - `wiki/contradictions/tg-revisor-indice` — choques revisor ↔ norma ↔ docente.
 - `asistente-trabajo-de-grado` (modo notebooklm) — para consultar explicaciones del docente desde NotebookLM.
 - `wiki/criterio-vocal/` — precedente de destilación de criterio (mismo patrón).

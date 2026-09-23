@@ -321,7 +321,7 @@ Los modos legibilidad, coherencia y notebooklm son de invocación explícita: no
 - `$VAULT/sources/marco-practico.md` — documento maestro (asistente legal).
 - `$VAULT/sources/<slug>.md` — documento maestro del área (ej. `trabajo-de-grado.md`).
 - `$VAULT/sources/notebooklm/trabajos-grado/` — hallazgos crudos de NotebookLM (allowlist del vault).
-- `$VAULT/wiki/trabajos-grado/` — conocimiento destilado del área (incluye `reglas-narvaez-2025.md`).
+- `$VAULT/wiki/trabajos-grado/` — conocimiento destilado del área (incluye `reglas-institucionales.md`).
 - `$VAULT/wiki/trabajos-grado/contradicciones.md` — índice de contradicciones del área.
 - `$VAULT/wiki/contradictions/tg-*.md` — notas de contradicción (numeración, ISO, etc.).
 - `$VAULT/wiki/docentes/` — catálogo dinámico de docentes (`_moc-docentes.md`, `_plantilla-docente.md`, un `.md` por docente).

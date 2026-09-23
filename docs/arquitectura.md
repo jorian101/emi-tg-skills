@@ -59,6 +59,18 @@ El vault sigue el patrón de dos capas:
 Separarlas evita el problema clásico: que una re-extracción pise correcciones manuales, o que
 material crudo y conclusiones se mezclen en el mismo archivo.
 
+## Convención de carpetas dentro de una skill
+
+| Carpeta | Qué es | Cómo se usa |
+|---|---|---|
+| `assets/` | **Plantillas**: archivos que se copian al vault | Se copian tal cual y se completan |
+| `references/` | **Documentación**: explicaciones largas para el agente | Se leen, no se copian |
+| `scripts/` | **Ejecutables** de esa skill | Se invocan |
+
+No se unifican en una sola carpeta a propósito: son cosas distintas. Una plantilla que se copia y
+un documento que se lee tienen ciclos de vida opuestos — la plantilla se completa una vez y deja de
+importar, la doc se relee cada vez.
+
 ## Los gates
 
 Tres scripts sostienen las reglas duras. Existen porque **una regla que no se verifica es una

@@ -40,6 +40,26 @@ buscar "credenciales" 'nvapi-|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}' || FAIL=
 buscar "UUID / links de notebook" \
   'notebooklm\.google\.com|/notebook/[0-9a-f-]{36}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' || FAIL=1
 
+# --- Apellidos en NOMBRES DE ARCHIVO ---
+# El chequeo de contenido es sensible a mayúsculas (para no confundir "terceros" con el
+# apellido "Terceros"), pero en un slug el apellido va en minúscula: `reglas-<apellido>-2025.md`
+# se escapaba. Se buscan entonces los tokens que PARECEN archivo y se comparan en minúscula.
+# Prosa común ("de terceros") no es un token de archivo, así que no dispara.
+buscar_slugs() {
+  local tokens deny_low hits
+  tokens="$(grep -rhoE '[A-Za-z0-9._/-]+\.(md|py|sh|yaml|yml|json|txt)' "$RAIZ" \
+    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ 2>/dev/null \
+    | tr 'A-Z' 'a-z' | sort -u || true)"
+  deny_low="$(grep -vE '^[[:space:]]*(#|$)' "$DENY" | tr 'A-Z' 'a-z' || true)"
+  hits="$(printf '%s\n' "$tokens" | grep -Ef <(printf '%s\n' "$deny_low") || true)"
+  if [ -n "$hits" ]; then
+    echo "FALLA apellido en un nombre de archivo:"
+    echo "$hits" | sed 's/^/  /'
+    return 1
+  fi
+  return 0
+}
+
 # Denylist local (apellidos y nombres reales). Sin -i a propósito: los nombres van
 # capitalizados, así "terceros" (palabra común) no matchea el apellido "Terceros".
 if [ -f "$DENY" ]; then
@@ -57,6 +77,8 @@ else
   echo "AVISO no hay .pii-denylist.local: el guard no puede buscar tus apellidos reales."
   echo "      Copiá .pii-denylist.example y completalo (está en .gitignore)."
 fi
+
+buscar_slugs || FAIL=1
 
 [ "$FAIL" -eq 0 ] && echo "OK   0 datos privados detectados ($RAIZ)"
 exit $FAIL
