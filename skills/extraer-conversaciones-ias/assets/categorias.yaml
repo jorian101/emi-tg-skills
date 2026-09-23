@@ -1,0 +1,61 @@
+# Catálogo canónico de categorías para clasificar conversaciones de IAs.
+# Fuente de verdad: sources/conversaciones-ias/categorias.md (vault).
+# DINÁMICO: si una conversación no encaja, agregar categoría AQUÍ + en el vault
+# ANTES de clasificar. El agente NUNCA inventa una categoría fuera del catálogo.
+#
+# Formato: cada categoría -> tipo de obra del flujo SAC (backend obra.py).
+# El caso concreto (Uscamayta, Mendoza) NO es categoría: va en casos-conocidos.
+
+categorias:
+  - nombre: auto-vista
+    tipo_documento: auto_vista
+  - nombre: dictamen-radicatoria
+    tipo_documento: dictamen_radicatoria
+  - nombre: dictamen-fondo
+    tipo_documento: dictamen_fondo
+  - nombre: relacion-obrados
+    tipo_documento: relacion_obrados
+  - nombre: memorial
+    tipo_documento: memorial_apelacion
+  - nombre: amparo-constitucional
+    tipo_documento: otro
+  - nombre: informe-juridico
+    tipo_documento: otro
+  - nombre: pie-informe
+    tipo_documento: otro
+  - nombre: sumario-informativo
+    tipo_documento: otro
+  - nombre: solicitud
+    tipo_documento: otro
+  - nombre: prescripcion
+    tipo_documento: otro
+  - nombre: competencia-jurisdiccional
+    tipo_documento: otro
+  - nombre: nulidad-procesal
+    tipo_documento: memorial_apelacion
+  - nombre: convenios
+    tipo_documento: otro
+  - nombre: reforma-legislativa
+    tipo_documento: otro
+  - nombre: uso-fuerza
+    tipo_documento: otro
+  - nombre: delitos
+    tipo_documento: otro
+  - nombre: doctrina
+    tipo_documento: doctrina
+  - nombre: derechos-humanos
+    tipo_documento: otro
+  - nombre: contratos
+    tipo_documento: otro
+  - nombre: derecho-familia
+    tipo_documento: otro
+  - nombre: tributario
+    tipo_documento: otro
+  - nombre: propiedad-intelectual
+    tipo_documento: otro
+  - nombre: gems
+    tipo_documento: otro
+  - nombre: estilo-redaccion
+    tipo_documento: otro
+  - nombre: perfil-vocal
+    tipo_documento: otro
