@@ -3,9 +3,8 @@
 Skills para **revisar y corregir un trabajo de grado con los criterios de tus propios
 evaluadores** (revisor 1, revisor 2, tutor y docentes), en vez de con consejos genéricos.
 
-> **Estado:** en construcción (F1 de 10 del plan de extracción). El instalador y el andamiaje del
-> vault llegan en F7; el README se cierra ahí. Nada de lo que falta rompe su uso actual: ver
-> `docs/como-funciona.md`.
+> **Estado:** el motor y el instalador están listos. Falta el paso de migración del entorno del
+> autor (`docs/migracion-desde-vault.md`), que es opcional para quien instala desde cero.
 
 ## Qué problema resuelve
 
@@ -41,7 +40,16 @@ cd "$HOME/tg-skills"
 ./install.sh            # symlinks a tus agentes + crea el vault desde vault-template/
 ```
 
-> Disponible a partir de F7.
+El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
+escribir nada: `./install.sh --check`.
+
+### Documentación
+
+- `docs/como-funciona.md` — el modelo mental: estados de fiabilidad, jerarquía, recorridos y qué
+  **no** hace.
+- `docs/arquitectura.md` — motor y datos, el contrato de config, los gates y el guard de predicción.
+- `docs/migracion-desde-vault.md` — solo si venís de tener las skills dentro de un vault.
+- `docs/portar-a-otro-estudiante.md` — pendiente.
 
 ## Límites honestos
 

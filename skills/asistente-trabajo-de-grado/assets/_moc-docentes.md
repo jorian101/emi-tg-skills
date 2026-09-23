@@ -13,7 +13,7 @@ tags:
 # Mapa de contenido — Docentes
 
 Catálogo **dinámico** de docentes. Es la fuente de verdad que leen las skills. Para agregar un
-docente: crear su `.md` desde [[plantilla-docente]] y agregar su fila acá. **Nunca hardcodear un
+docente: crear su `.md` desde [[_plantilla-docente]] y agregar su fila acá. **Nunca hardcodear un
 docente en un `SKILL.md`.**
 
 ## Docentes con material propio
@@ -22,7 +22,7 @@ Docentes con clases, audios, apuntes o PDF. Cada uno tiene su `ambito`.
 
 | Docente | Ámbito | Canal | Fuentes | Nota |
 |---|---|---|---|---|
-| [[<slug>]] | `general` o `especifico` | <audio / pdf / apuntes> | <ids o títulos de las fuentes> | <qué explica> |
+| `wiki/docentes/<slug>.md` | `general` o `especifico` | <audio / pdf / apuntes> | <ids o títulos de las fuentes> | <qué explica> |
 
 ## Docentes revisores externos
 
@@ -32,7 +32,7 @@ otros estudiantes (`sources/informes-revisores/`). `origen: informes-revisores`.
 
 | Docente | Informes | Peso de sus criterios | Nota |
 |---|---|---|---|
-| [[<slug>]] | 0 | <qué exige> | <nombre completo> |
+| `wiki/docentes/<slug>.md` | 0 | <qué exige> | <nombre completo> |
 
 > [!note] Tu tutora va en otro lado
 > Si tenés informes suscritos por tu propia tutora, sus criterios viven en `wiki/revisores/Tutor.md`,
@@ -50,5 +50,5 @@ otros estudiantes (`sources/informes-revisores/`). `origen: informes-revisores`.
 
 ## Relaciones
 - [[jerarquia-autoridad]] — quién manda cuando hay choque y a quién escalar dudas
-- [[plantilla-docente]] — scaffold para un docente nuevo
+- [[_plantilla-docente]] — scaffold para un docente nuevo
 - [[indice]] — criterio de tus evaluadores

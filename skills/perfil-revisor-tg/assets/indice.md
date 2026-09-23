@@ -41,5 +41,5 @@ tags:
 ## Cómo se conecta
 
 - Mapa de contenido: [[wiki/_moc]]
-- Documento revisado: [[sources/marco-practico]]
+- Documento revisado: `sources/<slug>.md` (tu extracción del Word)
 - Precedente de destilación de criterio: [[criterio-vocal/indice]]
