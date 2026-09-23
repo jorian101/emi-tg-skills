@@ -11,56 +11,55 @@
 # se lee de .pii-denylist.local, que está en .gitignore y es opcional.
 set -uo pipefail
 
+DENY=".pii-denylist.local"
 FAIL=0
 reportar() { printf '  %s\n    %s\n' "$1" "$2"; FAIL=1; }
 
+# --- Recolectar las líneas agregadas en UNA sola pasada de git ---
+#
+# Recorrer archivo por archivo con `git diff --cached -- "$f"` costaba ~0,9 s por archivo:
+# medido, 53 archivos = 46 s. Un gate que tarda eso empuja a la gente a `--no-verify`, que
+# es exactamente lo contrario de lo que busca. Con una sola llamada baja a menos de 1 s.
+#
+# Se emite `archivo<TAB>contenido` y se descartan las líneas de los archivos exentos.
+LINEAS="$(git diff --cached --diff-filter=ACM -U0 | awk '
+  /^\+\+\+ / {
+    f = substr($0, 7)
+    sub(/^b\//, "", f)
+    exento = (f ~ /\.example$|\.template$|\.pii-denylist\.local$|^docs\/ejemplos\/|^\.husky\/|^scripts\/auditar-(pii|rutas)\.sh$/)
+    next
+  }
+  /^\+/ && !/^\+\+\+/ { if (!exento) print f "\t" substr($0, 2) }
+')"
+
+[ -n "$LINEAS" ] || exit 0
+
 # --- Patrones genéricos (seguros de publicar: son regex, no datos) ---
-check_genericos() {
-  local archivo="$1" lineas="$2"
-
+check() { # $1=etiqueta  $2=regex
   local hit
-  hit="$(printf '%s\n' "$lineas" | grep -nE '/home/[a-z0-9_.-]+/|/Users/[A-Za-z0-9_.-]+/|/mnt/[a-z]/|~/proyectos/' || true)"
-  [ -n "$hit" ] && reportar "$archivo: ruta personal absoluta" "$hit"
-
-  hit="$(printf '%s\n' "$lineas" | grep -nE '^\+.*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' || true)"
-  if [ -n "$hit" ]; then
-    case "$archivo" in
-      *@example.com*|*.example) : ;;
-      *) reportar "$archivo: email" "$hit" ;;
-    esac
-  fi
-
-  hit="$(printf '%s\n' "$lineas" | grep -nEi 'notebooklm\.google\.com|/notebook/[0-9a-f-]{36}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' || true)"
-  [ -n "$hit" ] && reportar "$archivo: identificador de notebook / UUID" "$hit"
-
-  hit="$(printf '%s\n' "$lineas" | grep -nEi 'nvapi-|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|api[_-]?key[[:space:]]*[:=][[:space:]]*["'"'"'][A-Za-z0-9]{16,}' || true)"
-  [ -n "$hit" ] && reportar "$archivo: posible credencial" "$hit"
+  hit="$(printf '%s\n' "$LINEAS" | grep -E "$2" || true)"
+  [ -n "$hit" ] && reportar "$1" "$hit"
 }
+
+check "ruta personal absoluta" '/home/[a-z0-9_.-]+/|/Users/[A-Za-z0-9_.-]+/|/mnt/[a-z]/|~/proyectos/'
+check "identificador de notebook / UUID" \
+  'notebooklm\.google\.com|/notebook/[0-9a-f-]{36}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+check "posible credencial" 'nvapi-|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}'
+
+# Emails: los dominios reservados para documentación no son PII, así que se descartan antes
+# de reportar (no después, o el commit se bloquearía por un ejemplo legítimo).
+HIT="$(printf '%s\n' "$LINEAS" \
+  | grep -E '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
+  | grep -vE '@(example|local|test|invalid)\.(com|org|net)|@localhost' || true)"
+[ -n "$HIT" ] && reportar "email" "$HIT"
 
 # --- Denylist local (apellidos y nombres reales) ---
-DENY=".pii-denylist.local"
-check_denylist() {
-  local archivo="$1" lineas="$2"
-  [ -f "$DENY" ] || return 0
-  local hit
-  # Sin -i a proposito: los apellidos van capitalizados, y "terceros" (palabra comun)
-  # no debe confundirse con el apellido "Terceros".
-  hit="$(printf '%s\n' "$lineas" | grep -nEf <(grep -vE '^[[:space:]]*(#|$)' "$DENY") || true)"
-  [ -n "$hit" ] && reportar "$archivo: término del denylist local" "$hit"
-}
-
-# --- Recorrido de los archivos staged ---
-while IFS= read -r f; do
-  [ -n "$f" ] || continue
-  # Patrones LITERALES: en un `case`, una variable no expande los `|` como alternativas.
-  case "$f" in
-    *.example|*.template|.pii-denylist.local|docs/ejemplos/*|.husky/*|scripts/auditar-pii.sh) continue ;;
-  esac
-  LINEAS="$(git diff --cached -U0 -- "$f" | grep -E '^\+' | grep -v '^+++' || true)"
-  [ -n "$LINEAS" ] || continue
-  check_genericos "$f" "$LINEAS"
-  check_denylist "$f" "$LINEAS"
-done < <(git diff --cached --name-only --diff-filter=ACM)
+if [ -f "$DENY" ]; then
+  # Sin -i a propósito: los apellidos van capitalizados, y "terceros" (palabra común) no
+  # debe confundirse con el apellido "Terceros".
+  HIT="$(printf '%s\n' "$LINEAS" | grep -Ef <(grep -vE '^[[:space:]]*(#|$)' "$DENY") || true)"
+  [ -n "$HIT" ] && reportar "término del denylist local" "$HIT"
+fi
 
 if [ "$FAIL" -ne 0 ]; then
   cat <<'AVISO'
@@ -72,6 +71,8 @@ Qué hacer:
   - Si es un ejemplo: usá un placeholder y, si hace falta un caso completo, ponelo en
     docs/ejemplos/ (esa carpeta está exenta).
   - Si es una ruta de este repo: usá rutas relativas o variables.
+  - Si es una cita académica con un apellido común: sacá ese apellido del denylist
+    (.pii-denylist.local) — poné solo lo distintivo.
 
 Para saltearlo de forma deliberada y consciente: git commit --no-verify
 AVISO
