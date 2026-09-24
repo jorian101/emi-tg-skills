@@ -21,21 +21,26 @@ Primera versión **portable y distribuible**. Cambios que solo se notan si algui
 - **Portabilidad**: `config.local.md` declara `estudiante` y `evaluadores`; el recorrido del
   tribunal deja de requerir un orquestador de agentes (el transporte es un anexo opcional).
 
-## [No publicado]
+## [0.1.0] — 2026-09-23
 
-Extracción de las skills desde el vault del autor a un repo independiente y distribuible.
+Primera publicación del repo. Extracción de las 5 skills desde el vault del autor a un repo
+independiente y distribuible.
 
-### Por hacer (fases del plan)
-- F1 esqueleto del repo, licencia, guard anti-PII.
-- F2 copiar el motor (5 skills + gates + plantillas) sin editar.
-- F3 gates sin datos incrustados (allowlist leída del manifiesto del vault).
-- F4 externalizar las 66 rutas absolutas a `config.local.md` / `.env.local`.
-- F5 sacar los nombres reales de la lógica.
-- F6 completar `references/` de las 5 skills.
-- F7 `vault-template/` + `install.sh` + guía de migración.
-- F8 gitignore de la skill en el vault + symlink.
-- F9 prueba del ciclo repo → proyecto.
-- F10 publicación.
+Qué quedó hecho, en el orden en que se hizo:
+
+- Esqueleto del repo: licencia MIT, guard anti-PII en el pre-commit y CHANGELOG.
+- El motor se copió **fiel** (verificado con `diff`) y recién después se editó.
+- Los 6 gates que vivían en el vault se mudaron acá: sin ellos la verificación obligatoria era
+  letra muerta para quien descargara la skill.
+- La allowlist dejó de ser código: se lee del bloque `allowlist` de `ORDEN-DEL-VAULT.md`.
+- Las 66 rutas absolutas se reemplazaron por variables; los scripts **fallan diciendo qué falta**
+  en vez de adivinar.
+- Los nombres reales salieron de la lógica: los docentes se referencian por `ambito` y por rol.
+- Se completó el andamiaje: 8 plantillas que no existían.
+- `install.sh` + `vault-template/`, y la guía de migración con rollback por paso.
+- El vault del autor soltó las skills (42 archivos fuera de su índice) y quedó un symlink.
+- El alias se repuntó al repo y se verificó el ciclo completo: un cambio acá llega a los 5 agentes
+  sin pasos extra, y existe **una sola copia** del contenido.
 
 ### Versiones de las skills al momento de la copia
 | Skill | Versión de origen |
