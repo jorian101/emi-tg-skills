@@ -43,7 +43,7 @@ if [ -z "$DESTINO" ] && [ -f "$CONFIG" ]; then
   DESTINO="$(dirname "$(dirname "$DESTINO")")"
 fi
 
-echo "== tg-skills =="
+echo "== emi-tg-skills =="
 echo "  repo    $REPO"
 echo "  vault   ${DESTINO:-<sin definir>}"
 echo

@@ -1,4 +1,4 @@
-# tg-skills
+# emi-tg-skills
 
 Skills para **revisar y corregir un trabajo de grado con los criterios de tus propios
 evaluadores** (revisor 1, revisor 2, tutor y docentes), en vez de con consejos genéricos.
@@ -35,13 +35,17 @@ intención de nadie.
 ## Instalación
 
 ```bash
-git clone <url> "$HOME/tg-skills"
-cd "$HOME/tg-skills"
+git clone <url> "$HOME/emi-tg-skills"
+cd "$HOME/emi-tg-skills"
 ./install.sh            # symlinks a tus agentes + crea el vault desde vault-template/
 ```
 
 El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
 escribir nada: `./install.sh --check`.
+
+> **Sobre el nombre del alias.** El repo se llama `emi-tg-skills`, pero el alias con el que tus
+> agentes ven las skills se llama `~/.local/share/tg-skills`. Es a propósito: un alias estable
+> sobrevive a los movimientos del repo, así que su nombre no se toca aunque el repo se renombre.
 
 ### Documentación
 
@@ -67,6 +71,15 @@ Son repos hermanos y distintos: `emi-professor-skill` modela **cómo enseña y p
 este modela **cómo evalúa un revisor un trabajo de grado**. Comparten convenciones deliberadamente
 (config privada fuera de git, datos en un workspace propio, guard anti-PII en el pre-commit,
 provenance explícito) para que un usuario pueda aprender una sola vez.
+
+## Contribuir
+
+`main` está protegida: **todo cambio entra por pull request**, no por push directo. Podés abrir
+issues aunque no programes — un buen reporte vale tanto como un parche.
+
+Lo más valioso son las generalizaciones: reglas que sirvan a cualquier institución o carrera, y
+arreglos de portabilidad. Lo que **no** se acepta son datos reales de nadie (ni nombres, ni
+informes, ni rutas de tu máquina). Ver [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Licencia
 

@@ -32,7 +32,7 @@ diff -r <este-repo>/skills <vault>/.opencode/skills   # solo debe faltar config.
 En el repo del vault:
 
 ```bash
-printf '\n# Las skills viven en el repo tg-skills\n.opencode/skills/\n' >> .gitignore
+printf '\n# Las skills viven en el repo emi-tg-skills\n.opencode/skills/\n' >> .gitignore
 git rm -r --cached .opencode/skills      # el working tree NO se toca
 ```
 
