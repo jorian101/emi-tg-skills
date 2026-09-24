@@ -46,11 +46,15 @@ buscar "UUID / links de notebook" \
 # se escapaba. Se buscan entonces los tokens que PARECEN archivo y se comparan en minúscula.
 # Prosa común ("de terceros") no es un token de archivo, así que no dispara.
 buscar_slugs() {
+  # Sin denylist no hay nada que buscar. Sin este corte, el patrón vacío hace que
+  # `grep -Ef` matchee TODAS las líneas y un clon recién bajado falla el gate.
+  [ -f "$DENY" ] || return 0
   local tokens deny_low hits
   tokens="$(grep -rhoE '[A-Za-z0-9._/-]+\.(md|py|sh|yaml|yml|json|txt)' "$RAIZ" \
     --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ 2>/dev/null \
     | tr 'A-Z' 'a-z' | sort -u || true)"
   deny_low="$(grep -vE '^[[:space:]]*(#|$)' "$DENY" | tr 'A-Z' 'a-z' || true)"
+  [ -n "$deny_low" ] || return 0   # denylist solo con comentarios: no hay patrones
   hits="$(printf '%s\n' "$tokens" | grep -Ef <(printf '%s\n' "$deny_low") || true)"
   if [ -n "$hits" ]; then
     echo "FALLA apellido en un nombre de archivo:"
