@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# pre-commit — guard anti-PII de tg-skills.
+# pre-commit — guard anti-PII de emi-tg-skills.
 #
 # Bloquea el commit si las líneas AGREGADAS contienen datos privados: rutas personales,
 # emails, identificadores de notebook o los apellidos reales que tengas en tu denylist local.
