@@ -44,6 +44,13 @@ def _rel(p: Path, raiz: Path) -> str:
         return str(p)
 
 
+def imagen(archivo: Path, carpeta_nota: Path) -> str:
+    """Imagen en Markdown estándar con ruta relativa a la nota (Obsidian la muestra y no cuenta como wikilink)."""
+    import os
+
+    return f"![{archivo.stem}](<{os.path.relpath(archivo.resolve(), carpeta_nota.resolve())}>)"
+
+
 def escribir_hub_y_entregables(cfg: dict) -> list[Path]:
     raiz, notas = _destino(cfg)
     notas.mkdir(parents=True, exist_ok=True)
@@ -61,7 +68,7 @@ def escribir_hub_y_entregables(cfg: dict) -> list[Path]:
                   "## Archivos", ""]
         for a in archivos:
             r = _rel(a, raiz)
-            cuerpo.append(f"![[{r}]]" if a.suffix.lower() in IMAGEN and not r.startswith("/") else f"- `{r}`")
+            cuerpo.append(imagen(a, notas) if a.suffix.lower() in IMAGEN and not r.startswith("/") else f"- `{r}`")
         texto = _frontmatter("entregable-defensa", e["nombre"], [_rel(a, raiz) for a in archivos],
                              ["defensa", "entregable"], [e["nombre"]]) + "\n".join(cuerpo) + "\n"
         p = notas / f"{nombre}.md"

@@ -37,7 +37,7 @@ def args_sin_dir(argv: list[str] | None = None) -> list[str]:
 def ruta(valor: str, base: Path) -> Path:
     """Expande `~` y `$VAR`; si queda relativa, es relativa a la carpeta de defensa."""
     p = Path(os.path.expandvars(os.path.expanduser(valor)))
-    return p if p.is_absolute() else (base / p)
+    return p if p.is_absolute() else (base / p).resolve()
 
 
 def cargar(base: Path | None = None) -> dict:

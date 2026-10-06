@@ -173,7 +173,7 @@ def nota_vault(cfg_def: dict, cfg: dict, item: dict, rol: str, png: Path, tipo: 
     cuerpo = (nv._frontmatter("captura", titulo, [nv._rel(png, raiz)], ["defensa", "captura", rol], [item["id"]])
               + f"# {titulo}\n\nRol: {rol} · {tipo} · ruta `{item.get('ruta', '')}`. Hub: [[_moc-defensa]]"
               + (f" · sección del manual: {item['seccion']}" if item.get("seccion") else "") + ".\n\n"
-              + (f"![[{nv._rel(png, raiz)}]]\n" if not nv._rel(png, raiz).startswith("/") else f"`{png}`\n"))
+              + nv.imagen(png, carpeta) + "\n")
     (carpeta / f"{item['id']}.md").write_text(cuerpo, encoding="utf-8")
 
 
