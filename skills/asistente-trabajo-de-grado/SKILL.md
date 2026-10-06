@@ -1,10 +1,10 @@
 ---
 name: asistente-trabajo-de-grado
-description: "Trigger: revisar, corregir, citar, resumir o auditar el marco teórico o práctico de un trabajo de grado o tesis; consultar NotebookLM (perfil, marco teórico, marco práctico, comparativa por año, apuntes, explicaciones de docentes); proponer correcciones textuales; completar secciones 3.4.8/3.4.9; verificar fuentes y coherencia; generar revisiones pendientes; revisar terminología poco accesible para no especialistas (modo legibilidad); revisar coherencia entre marco teórico y marco práctico (modo coherencia); revisar o redactar el capítulo final de conclusiones y recomendaciones (modo conclusiones); auditar sprint (código ↔ documento). Área general de trabajos de grado con docentes dinámicos. NO modifica directamente el Word ni sobrescribe correcciones manuales sin aprobación."
+description: "Trigger: revisar, corregir, citar, resumir o auditar el marco teórico o práctico de un trabajo de grado o tesis; consultar NotebookLM (perfil, marco teórico, marco práctico, comparativa por año, apuntes, explicaciones de docentes); proponer correcciones textuales; completar secciones 3.4.8/3.4.9; verificar fuentes y coherencia; generar revisiones pendientes; revisar terminología poco accesible para no especialistas (modo legibilidad); revisar coherencia entre marco teórico y marco práctico (modo coherencia); revisar o redactar el capítulo final de conclusiones y recomendaciones (modo conclusiones); auditar sprint (código ↔ documento); preparar y mantener los materiales de la defensa (modo defensa: diapositivas, tríptico, bíptico, artículo, manual de usuario, anexos con QR, ruta crítica, diagramas animados para público no técnico, capturas de la interfaz, propagación desde el documento y correcciones celda por celda). Área general de trabajos de grado con docentes dinámicos. NO modifica directamente el Word ni sobrescribe correcciones manuales sin aprobación."
 license: MIT
 metadata:
   author: asistente-legal
-  version: "3.0"
+  version: "3.1"
 ---
 
 # Skill: asistente-trabajo-de-grado
@@ -24,6 +24,7 @@ Usá esta skill cuando el usuario pida:
 - revisar o redactar el capítulo final de conclusiones y recomendaciones (modo conclusiones).
 - consultar NotebookLM con filtro por año, docente y ámbito (modo notebooklm);
 - alimentar la red Karpathy del vault (fuentes crudas → destilado en `wiki/`).
+- preparar, actualizar o verificar los materiales de la defensa a partir del documento (modo defensa).
 
 ## Área de conocimiento y docentes dinámicos
 
@@ -260,7 +261,7 @@ Resumir el marco práctico (o una sección) conservando trazabilidad técnica y 
 
 Invocación: el usuario pide revisar o redactar conclusiones y recomendaciones.
 
-1. **Una conclusión por OE + síntesis del OG al final**, cada una nombrando el _para qué_ de su objetivo. Prohibido "se cumplió el objetivo".
+1. **Una conclusión por OE + síntesis del OG al final**, cada una **terminando con la misma cláusula «para…» de su objetivo** (copiada literal del objetivo específico o general). Prohibido "se cumplió el objetivo".
 2. **Estructura por viñeta:** estado inicial → lo construido y CÓMO → comparación antes/después con cifras. Las cifras son SOLO las que demuestran el "para" del objetivo (comparaciones, porcentajes justificados en la evaluación técnica); nada de tamaño de construcción (SLOC, conteos de módulos) salvo que demuestren el para.
 3. **Recomendación = dato → acción con destinatario.** Actor obligatorio en cada una; clasificación metodológicas/académicas/prácticas (estas últimas dirigidas a la institución del caso o a la EMI).
 4. **Prohibido autoelogio** ("funciona", "satisfactorio" sin dato) y datos nuevos.
@@ -292,6 +293,34 @@ Invocación: el usuario pide `audita sprint N`. SOLO lectura hasta que el usuari
    5bis. **Decisiones tipificadas:** cada `abierto` se traduce en UNA decisión con tipo explícito — `quitar` (código o fragmento documental sobrante/duplicado), `agregar` (código, test, tabla, figura o Nota faltante) o `actualizar` (corregir texto, cifra o actor existente) — que aplica tanto a código como a documento. Prohibido presentar decisiones con "o" / "ó" / alternativa / elección: cada `abierto` genera exactamente UNA decisión tipificada. Toda decisión lista: tipo, objetivo (código/documento), archivo(s) afectado(s), interpretación del revisor que la motiva y estado (`abierto`). Regla del `y` copulativo: toda celda con "A y B" / "A, B y C" se desdobla en N requerimientos atómicos antes de clasificar.
 6. Para cada `abierto`: proponer la corrección mínima pero completa — debe cerrar la ambigüedad sin dejar flancos a futura malinterpretación del revisor — sea fix de código o corrección del documento; no tocar el Word sin aprobación explícita.
    6bis. **Docx de partes aplicadas (después del `procede`).** Solo después de que el usuario acepta las decisiones, generar UN `auditoria-sprint-N-aplicado.docx` por sprint. NUNCA es una copia del Word completo (prohibido duplicar el documento de decenas de MB): contiene SOLO las partes modificadas, cada una etiquetada con su ID de decisión y su ubicación en el Word vigente. Formato por ítem: para texto (párrafos, celdas de tabla, Notas), un par `Buscar:` (cadena exacta actual) / `Reemplazar con:` (cadena final); para figuras, la imagen final incrustada (~15 cm) con la leyenda `Figura NN — reemplazar/insertar` (el título del Word no se copia: es numeración automática). Verificar las cadenas `Buscar:` contra el Word vigente con `python-docx` (que cada una exista exactamente una vez, o indicar la ventana de anclaje si hay repetidas). Destino: `sources/_propuestas/auditoria-sprint-N-*/auditoria-sprint-N-aplicado.docx`. Sirve para copiar cada parte al `TRABAJO-DE-GRADO.docx`; no reemplaza al Word vigente. Generación: script `python-docx` que construye el documento desde cero. Verificación obligatoria con `python-docx` (NO `pandoc -t plain | grep`): todo ítem presente, cada imagen con `blip`, tamaño final pequeño. Notas técnicas: usar `python3.13` (tiene `docx`, el 3.12 no); en el Word vigente los placeholders de figuras vacías traen `wp:docPr` con `descr=None`; entre un epígrafe y su Nota puede haber una fila de párrafos vacíos (ventana ±30); los epígrafes son numeración automática (buscar por título real, sin el número).
+
+### Modo defensa (materiales de la defensa, para cualquier tema)
+
+Invocación: el usuario pide preparar, actualizar o revisar diapositivas, tríptico/bíptico, artículo,
+manual de usuario, anexos con QR, ruta crítica o diagramas de la defensa, o propagar al resto los cambios
+del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tema que corresponda
+(`entregables.md`, `diagramas.md`, `capturas.md`, `trampas.md`).
+
+1. **El documento (Word) es la única fuente de verdad del contenido**; lo edita el autor a mano. El autor
+   copia a mano solo las correcciones al documento (un **único archivo vivo**, celda por celda) y el
+   manual (una **única versión a copiar**). Prohibido crear propuestas sueltas nuevas.
+2. **Nada que el documento no declare**, en ningún entregable: cada cifra y cada término se cruza contra
+   la extracción vigente del documento (re-extraer con `extraer-doc-tesis` antes de empezar).
+3. **Formato intacto:** en Word y PowerPoint solo el texto de los runs; imágenes reemplazadas con su
+   posición; exportar a PDF y mirar cada página o diapositiva tocada.
+4. **Motor genérico + config del proyecto:** los scripts viven en `scripts/defensa/` y leen
+   `defensa.json` de la carpeta de defensa del vault (`--dir`, `$DEFENSA_DIR` o el directorio actual;
+   modelo: `assets/defensa/defensa.example.json`). Ninguna ruta ni dato del estudiante va en el motor.
+5. **Diagramas en dos versiones:** la técnica (respaldo) y una pública animada **por escenas con
+   contenido real** (no íconos sueltos), con los términos del documento verificados por `escenas.py --tg`,
+   letra ≥ 28 px y una diapositiva propia a pantalla completa. Mostrar el primero al autor antes de seguir.
+6. **Capturas declarativas** (`capturas.py` + `capturas.yaml`): pantallas, modales y acciones por rol;
+   marcadores medidos; los botones que escriben quedan bloqueados; cuentas reales de la institución con la
+   clave por variable de entorno (si falta, preguntar; nunca cambiarla).
+7. **Vault interconectado:** `notas_vault.py` genera el hub `wiki/defensa/_moc-defensa.md`, una nota por
+   entregable y la de estado (`verificar_sincronizacion.py --nota`); `capturas.py` agrega una nota por captura.
+8. **Cierre:** `verificar_sincronizacion.py` sin pendientes (o con los pendientes explicados),
+   `publicar_finales.py` a la carpeta de finales, commit por bloque, sin push sin autorización.
 
 ## Orden de trabajo al pedir una actualización
 

@@ -1,0 +1,32 @@
+{
+  "_nota": "Config del modo defensa. Copiar como defensa.json a la carpeta de defensa del vault (p. ej. $VAULT/sources/_propuestas/DEFENSA). Rutas: absolutas, con ~ o $VARIABLES, o relativas a esa carpeta. Una entrada por entregable: de qué fuente depende, cómo se regenera, si es final.",
+  "fuentes": {
+    "tg": "$CORPUS/RESPALDO/TRABAJO-DE-GRADO.docx",
+    "frontend": "$CODE_REPO/frontend/src"
+  },
+  "manual_oficial": "$CORPUS/RESPALDO/MANUAL DE USUARIO OFICIAL.docx",
+  "manual_a_copiar": "MANUAL-A-COPIAR/manual-de-usuario.docx",
+  "correcciones": "CORRECCIONES-TG/correcciones-tg.md",
+  "finales": "$CORPUS/RESPALDO/FINALES",
+  "anexos": {"dir": "ANEXOS-QR", "documento": "anexos-qr.docx"},
+  "vault": {"raiz": "$VAULT", "notas": "wiki/defensa", "hub_padre": "_moc"},
+  "entregables": [
+    {"nombre": "correcciones-tg", "archivos": ["CORRECCIONES-TG/correcciones-tg.md"], "depende_de": ["tg"],
+     "como": "verificar_correcciones.py --mover (y agregar ahí lo nuevo, celda por celda)", "tipo": "automático"},
+    {"nombre": "manual", "archivos": ["MANUAL-A-COPIAR/manual-de-usuario.docx"], "depende_de": ["tg", "frontend"],
+     "como": "capturas.py si cambió el frontend; regenerar el Word y copiarlo a mano al oficial", "tipo": "automático + copia manual"},
+    {"nombre": "triptico", "archivos": ["triptico/triptico.docx", "triptico/triptico.pdf"], "depende_de": ["tg"],
+     "como": "regenerar desde el texto literal del documento", "tipo": "automático", "final": true},
+    {"nombre": "articulo", "archivos": ["articulo/articulo-oficial.docx"], "depende_de": ["tg"],
+     "como": "editar el texto de los runs del oficial; no tocar estilos ni columnas", "tipo": "manual", "final": true},
+    {"nombre": "diapositivas", "archivos": ["diapositivas/defensa.pptx", "diapositivas/defensa.pdf"], "depende_de": ["tg", "frontend"],
+     "como": "editar el texto de los runs con python-pptx; reemplazar imágenes conservando posición", "tipo": "manual", "final": true},
+    {"nombre": "diagramas", "archivos": ["diagramas/salida/01-flujo-publico.mp4"], "depende_de": ["tg"],
+     "como": "escenas.py <modulo> --modulos diagramas --tg <extracción del TG>", "tipo": "automático", "final": true},
+    {"nombre": "ruta-critica", "archivos": ["ruta-critica/ruta-critica.yaml", "ruta-critica/ruta-critica.png"], "depende_de": ["tg"],
+     "como": "ruta_critica.py crear|verificar|exportar ruta-critica/ruta-critica.yaml", "tipo": "automático", "final": true},
+    {"nombre": "anexos-qr", "archivos": ["ANEXOS-QR/anexos-qr.docx", "ANEXOS-QR/manifiesto-anexos.json", "ANEXOS-QR/QR-ANEXOS.docx"],
+     "depende_de": ["tg"], "como": "si cambian letras o títulos de anexos en el documento: corregir el docx y el manifiesto; correr anexos_pipeline.py",
+     "tipo": "manual + automático", "final": true, "publicar": ["ANEXOS-QR/QR-ANEXOS.docx"]}
+  ]
+}

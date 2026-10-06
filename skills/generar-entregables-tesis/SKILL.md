@@ -198,7 +198,7 @@ Tabla completa y justificacion en `assets/herramientas-diagramacion.md`.
 | Captura esquema BD (Sprint 0)               | Usuario (pgAdmin 4 ERD Tool)                                                        |
 | Captura colecciones BD vectorial (Sprint 0) | Usuario (Qdrant dashboard)                                                          |
 
-**Prohibido**: dbdiagram.io, Excalidraw, Carbon, ray.so, Mermaid (`mmdc`), bocetos a mano.
+**Prohibido**: dbdiagram.io, Excalidraw, Carbon, ray.so, Mermaid (`mmdc`), bocetos a mano. La prohibición rige para las figuras del documento; los diagramas animados y la ruta crítica de la **defensa** sí usan Excalidraw (modo defensa de `asistente-trabajo-de-grado`, `references/defensa/diagramas.md`).
 
 ## Decision Gates
 

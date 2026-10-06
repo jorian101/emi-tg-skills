@@ -17,7 +17,7 @@
 | Captura esquema BD relacional (Sprint 0)    | Usuario (psql)                     | Skill explica pasos al usuario; NO se embebe placeholder en el Word.                                                                                                                                                                                                                                                                                                                                                                           |
 | Captura colecciones BD vectorial (Sprint 0) | Usuario (Qdrant dashboard)         | Skill explica pasos al usuario; NO se embebe placeholder en el Word.                                                                                                                                                                                                                                                                                                                                                                           |
 
-**Prohibido**: dbdiagram.io (web), Excalidraw, Carbon, ray.so, Mermaid (`mmdc`), bocetos de arquitectura a mano.
+**Prohibido**: dbdiagram.io (web), Excalidraw, Carbon, ray.so, Mermaid (`mmdc`), bocetos de arquitectura a mano. La prohibición rige para las figuras del documento; los diagramas animados y la ruta crítica de la **defensa** sí usan Excalidraw (modo defensa de `asistente-trabajo-de-grado`, `references/defensa/diagramas.md`).
 
 ## Justificacion
 

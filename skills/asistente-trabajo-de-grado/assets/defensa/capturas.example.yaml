@@ -1,0 +1,44 @@
+# Capturas de la interfaz por rol (capturas.py). Copiar a la carpeta de defensa y adaptar.
+# Las credenciales NUNCA van acá: se leen de variables de entorno (usuario_env / clave_env).
+# Material para la institución: usar cuentas reales del sistema, no cuentas de prueba.
+base_url: http://localhost:5173
+viewport: [1366, 768]
+salida: MANUAL-A-COPIAR/capturas      # relativa a la carpeta de defensa
+notas_vault: true                     # una nota por captura en wiki/defensa/capturas/
+espera_ms: 2500                       # espera tras cada navegación (datos de la API)
+login:
+  ruta: /login
+  usuario: "#usuario"
+  clave: "#password"
+  enviar: "button[type=submit]"
+  listo_si_url_no_contiene: /login
+seguridad:
+  prohibidos: [Crear, Guardar, Aprobar, Publicar, Eliminar, Promover, Enviar]  # botones que escriben
+  escrituras_permitidas: 0
+  cerrar_con: [Cancelar, Cerrar]
+roles:
+  operador:
+    usuario_env: DEMO_USUARIO_OPERADOR
+    clave_env: DEMO_CLAVE
+    pantallas:
+      - {id: 10-op-inicio, ruta: /inicio, titulo: "Pantalla de inicio", seccion: "3.2"}
+      - {id: 11-op-casos, ruta: /casos, titulo: "Pantalla de casos", seccion: "3.6"}
+    operaciones:
+      - id: 60-op-editar-caso          # modal abierto, con sus controles numerados
+        ruta: /casos
+        titulo: "Ventana de edición de un caso"
+        seccion: "3.6.2"
+        pasos:
+          - clic: {rol: button, nombre: Editar}
+          - esperar: dialogo
+          - llenar: {css: "#nombre", valor: "Caso de ejemplo", dentro: dialogo}
+        marcadores:                     # en orden: 1, 2, 3…
+          - {css: "#nombre", dentro: dialogo}
+          - {rol: button, nombre: Cancelar, dentro: dialogo}
+      - id: 61-op-pestana-documentos   # pantalla tras una acción (abrir una pestaña)
+        ruta: /casos/1
+        pasos:
+          - clic: {rol: tab, nombre: Documentos}
+          - esperar: {respuesta: /api/documentos}
+# Localizadores: {rol, nombre[, exacto]} | {css} | {texto} | {titulo_empieza}; agregar {dentro: dialogo},
+# {n: 2} o {ultimo: true}. Pasos: clic, llenar, elegir, tecla, esperar (ms | dialogo | {respuesta} | localizador).

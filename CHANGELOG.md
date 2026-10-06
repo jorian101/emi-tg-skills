@@ -3,6 +3,24 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado: [SemVer](https://semver.org/lang/es/).
 
+## [asistente-trabajo-de-grado 3.1] — 2026-10-06
+
+**Modo defensa**: cualquier agente puede preparar y mantener los materiales de la defensa a partir del
+documento del trabajo de grado, para cualquier tema y estudiante.
+
+- **Motor genérico** en `scripts/defensa/` (sin rutas ni datos): verificación de sincronización
+  (hash + fecha) entre el documento, el frontend y cada entregable; correcciones celda por celda que se
+  reconocen solas al copiarlas; publicación de finales; anexos con QR (Word → PDF por anexo → Drive → QR).
+- **Diagramas en dos versiones**: la técnica y una pública animada por escenas con contenido real
+  (`escenas.py`), con los términos verificados contra el documento y letra mínima de 28 px. Ruta crítica
+  por carriles desde YAML (`ruta_critica.py`), exportada con Excalidraw real.
+- **Capturas declarativas** (`capturas.py`): pantallas, modales y acciones por rol desde YAML, con
+  marcadores medidos y bloqueo de los botones que escriben.
+- **Vault interconectado** (`notas_vault.py`): hub de defensa, una nota por entregable, nota de estado y
+  una nota por captura, con el frontmatter del vault.
+- Config del proyecto en `defensa.json` (modelos en `assets/defensa/`); guías en `references/defensa/`.
+- `generar-entregables-tesis`: la prohibición de Excalidraw queda acotada a las figuras del documento.
+
 ## [perfil-revisor-tg 1.41] — 2026-09-23
 
 Primera versión **portable y distribuible**. Cambios que solo se notan si alguien más la instala:

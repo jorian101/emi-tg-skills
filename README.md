@@ -18,7 +18,7 @@ intención de nadie.
 | Skill | Qué hace |
 |---|---|
 | `perfil-revisor-tg` | Perfila evaluadores, ingiere sus informes, predice qué van a corregir y corre las pasadas de revisión del **fondo** |
-| `asistente-trabajo-de-grado` | Norma, estructura y coherencia del trabajo; catálogo de docentes y consulta de sus explicaciones |
+| `asistente-trabajo-de-grado` | Norma, estructura y coherencia del trabajo; catálogo de docentes y consulta de sus explicaciones; **modo defensa**: diapositivas, tríptico, artículo, manual, anexos con QR, ruta crítica, diagramas animados y capturas, todo derivado del documento y enlazado en el vault |
 | `generar-entregables-tesis` | Entregables por sprint: figuras, tablas, mockups y Word |
 | `extraer-doc-tesis` | Extrae el Word/PDF al vault con reporte de validación y trazabilidad de citas |
 | `extraer-conversaciones-ias` | Destila criterio de docentes desde conversaciones previas con IAs, **auditando** su fiabilidad |
