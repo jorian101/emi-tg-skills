@@ -63,13 +63,17 @@
 
 ## Ruta crítica
 
-- `ruta-critica.yaml` (modelo: `assets/defensa/ruta-critica.example.yaml`): carriles por rol y una
-  columna por tarea en orden, con su tiempo observado. Debajo de cada tarea, **cómo asiste el sistema**,
-  con los requerimientos del documento (RF-xx).
-- Solo se nombra lo que el documento declara: si el sistema no genera un documento, se dice «sin
-  plantilla propia» y se describe el apoyo real.
-- `ruta_critica.py crear|verificar|exportar <spec>`: `.excalidraw` editable, PNG a escala de cartulina y
-  PDF. `verificar` falla si un texto se sale de su caja o queda chico.
+- **Diagrama de flujo** del trabajo **dentro del sistema**: desde que se carga el caso hasta el documento
+  aprobado, en un solo flujo para todos los perfiles que redactan. Frases cortas con un verbo («Carga…»,
+  «Accede…») y una línea técnica chica debajo, sin tiempos (los tiempos van en la evaluación del documento).
+- `diagrama_flujo.py crear|verificar|exportar <spec>` (modelo: `assets/defensa/flujo.example.yaml`):
+  óvalos de inicio y fin, pasos numerados, rombos de decisión, colores por fase con leyenda y flechas de
+  vuelta en codo. `verificar --tg <extracción>.md` falla si un texto se sale de su forma, si queda chico en la
+  cartulina o si un término técnico no está en el documento.
+- Los pasos salen de las pantallas reales (las capturas del manual) y los nombres, del documento. Lo que
+  ocurre fuera del sistema (entregas físicas, sesiones) no va en este diagrama.
+- `ruta_critica.py` (carriles por rol, con la tarea observada y cómo asiste el sistema) sigue disponible
+  si se quiere mostrar la ruta del proceso manual.
 
 ## Publicación
 

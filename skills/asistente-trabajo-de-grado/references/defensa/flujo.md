@@ -69,6 +69,7 @@ python3 $S/publicar_finales.py --dir DEFENSA                    # copia los fina
 | `notas_vault.py` | Hub, notas por entregable y nota de estado en el vault |
 | `escenas.py` | Motor de animaciones por escenas (versión pública de los diagramas) |
 | `diagrama_animado.py`, `ruta_critica.py` | `.excalidraw` desde YAML y export con Excalidraw real; ruta crítica por carriles |
+| `diagrama_flujo.py` | Diagrama de flujo desde YAML (pasos numerados, decisiones, colores por fase): la ruta crítica dentro del sistema |
 | `capturas.py` | Capturas declarativas por rol con marcadores medidos y bloqueo de botones que escriben |
 | `anexos_pipeline.py` (+ `anexos_dividir.py`, `drive_subir.py`, `anexos_qr.py`, `watch_anexos.py`) | Anexos con QR: Word → PDF por anexo → Drive → QR |
 | `word_a_pdf.py`, `watch_a_pdf.py` | PDF desde Word/PowerPoint (Windows desde WSL, o LibreOffice) y vigilante |
