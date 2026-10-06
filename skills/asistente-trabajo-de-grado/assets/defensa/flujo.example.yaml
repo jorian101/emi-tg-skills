@@ -2,6 +2,8 @@
 # ir en serpentina (la fila 1 de derecha a izquierda). Tipos: inicio, paso (se numera solo), decision, fin.
 # Una arista entre celdas vecinas es recta; `vuelta: arriba` sube por el pasillo entre filas y
 # `vuelta: izquierda` rodea por el margen izquierdo. `fase` da el color; las que tienen `leyenda` van abajo.
+# Opcionales: `separacion: [x, y]` (pasillos más anchos para rótulos largos), `numero` en un paso (ramas
+# paralelas con el mismo número) y `recuadro: {fase, titulo, lineas}` (destacado bajo la leyenda).
 # `terminos_tg`: términos técnicos que el documento debe declarar (verificar --tg <extracción>.md).
 slug: flujo-ejemplo
 titulo: "Flujo de trabajo en el sistema: de la solicitud al documento aprobado"

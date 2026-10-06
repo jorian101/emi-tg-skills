@@ -34,7 +34,9 @@ def _caja(n: dict, arriba: float) -> tuple[float, float, float, float]:
 
 
 def crear() -> Path:
+    global GX, GY
     sp = da.leer(SPEC)
+    GX, GY = sp.get("separacion", [GX, GY])  # más pasillo si los rótulos de las flechas son largos
     cols = max(n["col"] for n in sp["nodos"]) + 1
     filas = max(n["fila"] for n in sp["nodos"]) + 1
     W = 2 * MX + cols * NW + (cols - 1) * GX
@@ -67,8 +69,8 @@ def crear() -> Path:
             t["customData"] = {"dentro": n["id"]}
             yy += t["height"] + 10
             els.append(t)
-        if n["tipo"] == "paso":  # número del paso en un círculo sobre la esquina
-            num += 1
+        if n["tipo"] == "paso":  # número del paso en un círculo sobre la esquina (`numero` lo fija a mano)
+            num = n.get("numero", num + 1)
             els.append(da._base("ellipse", x - 26, y - 26, 64, 64, strokeColor=trazo, backgroundColor=trazo,
                                 strokeWidth=2))
             c = da._texto(x - 26, y - 26 + 12, 64, str(num), 32, "#ffffff", True)
@@ -86,14 +88,28 @@ def crear() -> Path:
         t["x"] = x_ley + 60
         els.append(t)
         x_ley += 60 + t["width"] + 70
+    y_fin = y_ley + 90
+    if sp.get("recuadro"):  # recuadro destacado debajo de la leyenda (título y líneas)
+        r = sp["recuadro"]
+        f = fases[r["fase"]]
+        lineas = [da._texto(MX + 30, 0, W - 2 * MX - 60, r["titulo"], 32, f["trazo"], True)]
+        lineas += [da._texto(MX + 30, 0, W - 2 * MX - 60, txt, 28, da.AZUL_OSCURO) for txt in r["lineas"]]
+        yy = y_fin + 24
+        for t in lineas:
+            t["y"] = yy
+            yy += t["height"] + 14
+        els.append(da._base("rectangle", MX, y_fin, W - 2 * MX, yy - y_fin + 10, strokeColor=f["trazo"],
+                            backgroundColor=f["relleno"], strokeWidth=3, roundness={"type": 3}))
+        els += lineas
+        y_fin = yy + 50
     if sp.get("nota"):
-        els.append(da._texto(40, y_ley + 90, W - 80, sp["nota"], 28, da.GRIS))
+        els.append(da._texto(40, y_fin, W - 80, sp["nota"], 28, da.GRIS))
     doc = {"type": "excalidraw", "version": 2, "source": "diagrama_flujo.py", "elements": els,
            "appState": {"viewBackgroundColor": "#ffffff", "gridSize": None, "exportScale": sp.get("escala_export", 3)},
            "files": {}}
     out = AQUI / f"{sp['slug']}.excalidraw"
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"ok {out.name} ({int(W)}×{int(y_ley + 160)})")
+    print(f"ok {out.name} ({int(W)}×{int(y_fin + 70)})")
     return out
 
 
@@ -108,8 +124,10 @@ def _flecha(o, d, a, fases) -> list[dict]:
         pts = [(ox + ow / 2, oy + oh), (ox + ow / 2, bajo), (lado, bajo), (lado, dy + dh / 2), (dx, dy + dh / 2)]
     elif abs(oy - dy) < 1:  # misma fila
         pts = [(ox + ow, oy + oh / 2), (dx, dy + dh / 2)] if dx > ox else [(ox, oy + oh / 2), (dx + dw, dy + dh / 2)]
-    else:  # cambio de fila en la misma columna
+    elif dy > oy:  # baja a la fila siguiente en la misma columna
         pts = [(ox + ow / 2, oy + oh), (dx + dw / 2, dy)]
+    else:  # sube en la misma columna
+        pts = [(ox + ow / 2, oy), (dx + dw / 2, dy + dh)]
     color = fases.get(a.get("fase", ""), {}).get("trazo", "#343a40")
     x0, y0 = pts[0]
     flecha = da._base("arrow", x0, y0, max(p[0] for p in pts) - min(p[0] for p in pts),
@@ -121,7 +139,11 @@ def _flecha(o, d, a, fases) -> list[dict]:
     out = [flecha]
     if a.get("rotulo"):
         (px, py), (qx, qy) = (pts[1], pts[2]) if len(pts) > 2 else (pts[0], pts[1])
-        t = da._texto(min(px, qx), min(py, qy) - 44, max(abs(qx - px), 200), a["rotulo"], T_ROTULO, color, True)
+        if abs(px - qx) < 1:  # vertical: el rótulo va al costado, a media altura
+            t = da._texto(px + 16, (py + qy) / 2 - 18, 380, a["rotulo"], T_ROTULO, color, True)
+            t["x"] = px + 16
+        else:
+            t = da._texto(min(px, qx), min(py, qy) - 50, max(abs(qx - px), 200), a["rotulo"], T_ROTULO, color, True)
         out.append(t)
     return out
 
