@@ -33,7 +33,10 @@ def objetivos_de_config() -> list[str]:
     base = Path(cfg["_base"])
     rutas = [cfg["fuentes"].get("tg")] + [cfg.get("manual_oficial")]
     rutas += [a for e in cfg["entregables"] for a in e["archivos"]]
-    return sorted({str(config.ruta(r, base)) for r in rutas if r and Path(r).suffix.lower() in (".docx", ".pptx")})
+    propios = set()  # el documento de anexos lo convierte su propio pipeline (watch_anexos.py)
+    if cfg.get("anexos"):
+        propios.add(str(config.ruta(cfg["anexos"]["dir"], base) / cfg["anexos"].get("documento", "anexos-qr.docx")))
+    return sorted({str(config.ruta(r, base)) for r in rutas if r and Path(r).suffix.lower() in (".docx", ".pptx")} - propios)
 
 
 def mtime(p: Path) -> float | None:
