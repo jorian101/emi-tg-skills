@@ -16,3 +16,5 @@ Cada una costó una corrida mala. Revisarlas antes de dar algo por terminado.
 | Cuentas de prueba en material para la institución | Las capturas muestran usuarios de prueba | Cuentas reales; si falta la clave, preguntar |
 | Word abierto con el archivo | Un vigilante dispara a mitad de un guardado | Esperar unos segundos tras el cambio (los vigilantes ya lo hacen) |
 | `--forzar` al publicar | Llega a finales algo viejo | Solo si lo pendiente es conocido y ajeno al contenido |
+| Medir el efecto y no la causa | El revisor pide cuánto mejora la validación y solo hay tiempos | Separar en la defensa lo **medido** (efecto) de lo **pendiente** (causa: errores antes y después, con formularios históricos y expertos); preparar un caso real con el error visible en el documento y nunca declarar una cifra que no se midió |
+| Transcripción sin hablantes | Se atribuye al revisor lo que dijo el autor | Leer la fuente completa y marcar cada pedido con su cita corta; lo dudoso se rotula `inferido` |
