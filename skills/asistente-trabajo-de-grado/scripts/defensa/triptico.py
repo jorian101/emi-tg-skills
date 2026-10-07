@@ -5,7 +5,7 @@ Uso: uv run --with python-docx --with pyyaml python triptico.py generar TRIPTICO
      uv run --with python-docx --with pyyaml python triptico.py verificar TRIPTICO.yaml --tg EXTRACCION.md
 TRIPTICO.yaml (modelo: assets/defensa/triptico.example.yaml):
   colores: {oscuro: "032154", accion: "0a3a82"}      imagenes: {logo: ruta, foto: ruta}   (rutas relativas al yaml)
-  salida: {triptico: nombre.docx, biptico: nombre.docx}
+  salida: {triptico: nombre.docx, biptico: nombre.docx}   hoja: a4 | carta (horizontal; por defecto a4)
   solapa, contratapa, portada: lista de elementos       interior: [panel, panel, panel]      biptico: [panel, panel]
 Elemento = lista: [h, texto] barra de título · [hb, texto] título sobre fondo oscuro · [p, texto] · [pb, texto] negrita
   · [pw, texto] párrafo blanco · [c, texto] centrado · [titulo, texto] · [li, texto] viñeta · [cifra, valor, rótulo]
@@ -38,6 +38,8 @@ from docx.shared import Cm, Pt, RGBColor
 BLANCO = RGBColor(0xFF, 0xFF, 0xFF)
 AZUL_TRIBUNAL, AZUL_ACCION = "032154", "0a3a82"  # se reemplazan con `colores` del yaml
 FUENTE = "Calibri"  # una sola tipografía en todo el documento (`fuente` en el yaml)
+HOJAS = {"a4": (29.7, 21.0), "carta": (27.94, 21.59)}  # horizontal, en cm
+HOJA = "a4"  # `hoja` en el yaml
 
 
 def sombrear(celda, hex_):
@@ -183,7 +185,7 @@ def documento():
     )
     sec = doc.sections[0]
     sec.orientation = WD_ORIENT.LANDSCAPE
-    sec.page_width, sec.page_height = Cm(29.7), Cm(21.0)
+    sec.page_width, sec.page_height = Cm(HOJAS[HOJA][0]), Cm(HOJAS[HOJA][1])
     for m in ("top_margin", "bottom_margin", "left_margin", "right_margin"):
         setattr(sec, m, Cm(0.8))
     return doc
@@ -205,9 +207,10 @@ def _panel(spec, imagenes, base: Path):
 
 
 def generar(spec_path: Path) -> None:
-    global AZUL_TRIBUNAL, AZUL_ACCION, FUENTE
+    global AZUL_TRIBUNAL, AZUL_ACCION, FUENTE, HOJA
     spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
     FUENTE = spec.get("fuente", FUENTE)
+    HOJA = spec.get("hoja", HOJA)
     base = spec_path.parent
     AZUL_TRIBUNAL = spec.get("colores", {}).get("oscuro", AZUL_TRIBUNAL)
     AZUL_ACCION = spec.get("colores", {}).get("accion", AZUL_ACCION)
