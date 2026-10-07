@@ -40,6 +40,9 @@ Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scr
 ## Reglas de contenido
 
 - **Título, objetivo general, objetivos específicos y formulación del problema se copian literales** y se verifican contra el documento.
+- **Cada tabla, figura o cifra cita su anexo**, tal como lo dice la «Nota.» de esa tabla o figura en el documento («Elaboración propia
+  con base en el Anexo …»); las fotos, entrevistas y registros llevan la letra del anexo en su leyenda. Las leyendas nuevas clonan el estilo de una
+  existente y van a 11 pt como mínimo.
 - **Guion y notas en tercera persona**, con frases tomadas del documento.
 
 - Solo lo que el documento declara. Lo que no se midió se rotula «siguiente medición» o «de ejemplo»; nunca una cifra inventada.
