@@ -37,6 +37,7 @@ from docx.shared import Cm, Pt, RGBColor
 
 BLANCO = RGBColor(0xFF, 0xFF, 0xFF)
 AZUL_TRIBUNAL, AZUL_ACCION = "032154", "0a3a82"  # se reemplazan con `colores` del yaml
+FUENTE = "Calibri"  # una sola tipografía en todo el documento (`fuente` en el yaml)
 
 
 def sombrear(celda, hex_):
@@ -71,6 +72,8 @@ def parrafo(celda, primero, alin=None, antes=0, despues=3):
 def run(p, texto, tam=8.5, negrita=False, color=None, cursiva=False):
     r = p.add_run(texto)
     r.font.size, r.bold, r.italic = Pt(tam), negrita, cursiva
+    r.font.name = FUENTE
+    r._element.get_or_add_rPr().get_or_add_rFonts().set(qn("w:eastAsia"), FUENTE)
     if color is not None:
         r.font.color.rgb = color
     return r
@@ -119,11 +122,19 @@ def llenar(celda, fondo, elementos):
                 True,
                 azul,
             )
-        elif tipo == "li":
+        elif (
+            tipo == "li"
+        ):  # viñeta con sangría francesa: la segunda línea queda alineada con el texto
             p = parrafo(celda, primero, despues=2)
-            p.paragraph_format.left_indent = Cm(0.3)
-            run(p, "▪ ", 10, True, azul)
-            run(p, el[1], 10, False, texto_color)
+            texto = el[1]
+            m = re.match(r"^(\d+)\.\s+(.*)$", texto, re.DOTALL)
+            marca, texto = (m.group(1) + ".", m.group(2)) if m else ("•", texto)
+            sangria = Cm(0.5)
+            p.paragraph_format.left_indent = sangria
+            p.paragraph_format.first_line_indent = -sangria
+            p.paragraph_format.tab_stops.add_tab_stop(sangria)
+            run(p, marca + "\t", 10, True, azul)
+            run(p, texto, 10, False, texto_color)
         elif tipo == "cifra":
             p = parrafo(celda, primero, despues=1)
             run(p, el[1] + "  ", 16, True, azul)
@@ -165,6 +176,11 @@ def hoja(doc, paneles, nueva_pagina=False):
 
 def documento():
     doc = Document()
+    normal = doc.styles["Normal"].font
+    normal.name = FUENTE
+    doc.styles["Normal"].element.get_or_add_rPr().get_or_add_rFonts().set(
+        qn("w:eastAsia"), FUENTE
+    )
     sec = doc.sections[0]
     sec.orientation = WD_ORIENT.LANDSCAPE
     sec.page_width, sec.page_height = Cm(29.7), Cm(21.0)
@@ -189,8 +205,9 @@ def _panel(spec, imagenes, base: Path):
 
 
 def generar(spec_path: Path) -> None:
-    global AZUL_TRIBUNAL, AZUL_ACCION
+    global AZUL_TRIBUNAL, AZUL_ACCION, FUENTE
     spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
+    FUENTE = spec.get("fuente", FUENTE)
     base = spec_path.parent
     AZUL_TRIBUNAL = spec.get("colores", {}).get("oscuro", AZUL_TRIBUNAL)
     AZUL_ACCION = spec.get("colores", {}).get("accion", AZUL_ACCION)
