@@ -18,3 +18,8 @@ Cada una costó una corrida mala. Revisarlas antes de dar algo por terminado.
 | `--forzar` al publicar | Llega a finales algo viejo | Solo si lo pendiente es conocido y ajeno al contenido |
 | Medir el efecto y no la causa | El revisor pide cuánto mejora la validación y solo hay tiempos | Separar en la defensa lo **medido** (efecto) de lo **pendiente** (causa: errores antes y después, con formularios históricos y expertos); preparar un caso real con el error visible en el documento y nunca declarar una cifra que no se midió |
 | Transcripción sin hablantes | Se atribuye al revisor lo que dijo el autor | Leer la fuente completa y marcar cada pedido con su cita corta; lo dudoso se rotula `inferido` |
+| Formas con el mismo id en una diapositiva (al clonar con python-pptx) | PowerPoint dice que no puede abrir el archivo, ni con reparar | `diapositivas.py` reasigna los ids al guardar (`ids`); al terminar, abrir y guardar el mazo con PowerPoint (COM `SaveAs`) y probar que abre |
+| Diapositivas ocultas en medio del mazo | La numeración visible salta (13 → 19) y el docente lo nota | `diapositivas.py mover` las lleva al final como respaldo y renumera |
+| Cifras sin su contexto o paráfrasis de lo literal | Un jurado lee «0 errores» o «reduce errores del Tribunal» | Cada cifra con su ámbito («en la prueba piloto», «en la evaluación de la generación»); título, objetivos y formulación siempre literales |
+| Guion en primera persona | El docente lo observa | Tercera persona e impersonal: «se desarrolló», «el trabajo presenta» |
+

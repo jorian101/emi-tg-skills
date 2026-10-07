@@ -8,6 +8,8 @@ Uso: uv run --with python-pptx --with pillow python diapositivas.py <comando> MA
   notas    MAZO GUION.yaml               escribe el guion en las notas del orador: {numero: "texto"} o lista de {n, texto}
   ocultar  MAZO N [N ...] [--mostrar]    oculta (o muestra) diapositivas: el contenido queda como respaldo
   imagen   MAZO N NOMBRE ARCHIVO         reemplaza una imagen conservando su caja (se centra y no se deforma)
+  mover    MAZO N [N ...]                lleva esas diapositivas al final (respaldo), en ese orden
+  ids      MAZO                          reasigna ids de forma repetidos (se corre solo al guardar)
   tarjetas MAZO --despues N --spec S.yaml  agrega una diapositiva con tarjetas de cifras clonando el estilo de otra
 S.yaml: {titulo, base: N (diapositiva con tarjetas de la que se toma el estilo), tarjetas: [{cifra, texto}], pie}
 Los números de diapositiva son los que ve el autor (1 = primera). Los cambios se guardan sobre el mismo archivo.
@@ -232,6 +234,42 @@ def tarjetas(prs: Presentation, despues: int, spec: dict) -> None:
     )
 
 
+def mover_al_final(prs: Presentation, numeros: list[int]) -> None:
+    lista = prs.slides._sldIdLst
+    elegidos = [lista[n - 1] for n in numeros]
+    for el in elegidos:
+        lista.remove(el)
+        lista.append(el)
+    print(f"ok {numeros} al final (renumerar los números escritos)")
+
+
+def renumerar(prs: Presentation) -> None:
+    """Escribe en cada diapositiva su número real (cajas «Marcador de contenido»)."""
+    for i, s in enumerate(prs.slides, 1):
+        for f in s.shapes:
+            if _es_numero_de_pagina(f) and f.has_text_frame and f.text_frame.paragraphs[0].runs:
+                runs = f.text_frame.paragraphs[0].runs
+                runs[0].text = str(i)
+                for r in runs[1:]:
+                    r._r.getparent().remove(r._r)
+
+
+def ids_unicos(prs: Presentation) -> int:
+    """PowerPoint no abre (ni repara) una diapositiva con dos formas del mismo id: se reasignan los repetidos."""
+    cambios = 0
+    for s in prs.slides:
+        vistos = set()
+        nodos = s._element.xpath("//p:cNvPr")
+        maximo = max((int(n.get("id")) for n in nodos), default=0)
+        for n in nodos:
+            if n.get("id") in vistos:
+                maximo += 1
+                n.set("id", str(maximo))
+                cambios += 1
+            vistos.add(n.get("id"))
+    return cambios
+
+
 def main() -> int:
     if len(sys.argv) < 3:
         print(__doc__)
@@ -253,6 +291,11 @@ def main() -> int:
         ocultar(prs, [int(x) for x in a if x.isdigit()], "--mostrar" in a)
     elif cmd == "imagen":
         imagen(prs, int(a[0]), a[1], Path(a[2]))
+    elif cmd == "ids":
+        pass
+    elif cmd == "mover":
+        mover_al_final(prs, [int(x) for x in a if x.isdigit()])
+        renumerar(prs)
     elif cmd == "tarjetas":
         tarjetas(
             prs,
@@ -262,6 +305,8 @@ def main() -> int:
     else:
         print(__doc__)
         return 2
+    if n := ids_unicos(prs):
+        print(f"ok {n} ids de forma repetidos reasignados")
     prs.save(mazo)
     return rc
 

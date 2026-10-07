@@ -31,11 +31,16 @@ Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scr
    (el mazo del proyecto lo hace en su script).
 6. Guion en las notas del orador: `notas MAZO guion.yaml`.
 7. `diapositivas.py verificar MAZO`: imágenes con menos de 150 ppp o sin descripción, cajas vacías.
-8. Exportar a PDF **desde una copia** (`word_a_pdf.py`): si PowerPoint tiene el archivo abierto, la conversión exporta lo que está abierto y
+8. **Abrir y guardar con PowerPoint** (COM `Presentations.Open` + `SaveAs` formato 24) y comprobar que abre: python-pptx puede dejar
+   ids de forma repetidos que PowerPoint no repara. Las ocultas van al final (`mover`) para que la numeración visible sea seguida.
+9. Exportar a PDF **desde una copia** (`word_a_pdf.py`): si PowerPoint tiene el archivo abierto, la conversión exporta lo que está abierto y
    no lo guardado en disco. Mirar cada diapositiva tocada (PDF a PNG) y confirmar que el número de páginas es el esperado (las ocultas no salen).
-9. Pedir al autor que **cierre PowerPoint sin guardar** antes de abrir el archivo nuevo: si guarda desde una copia vieja, pisa los cambios.
+10. Pedir al autor que **cierre PowerPoint sin guardar** antes de abrir el archivo nuevo: si guarda desde una copia vieja, pisa los cambios.
 
 ## Reglas de contenido
+
+- **Título, objetivo general, objetivos específicos y formulación del problema se copian literales** y se verifican contra el documento.
+- **Guion y notas en tercera persona**, con frases tomadas del documento.
 
 - Solo lo que el documento declara. Lo que no se midió se rotula «siguiente medición» o «de ejemplo»; nunca una cifra inventada.
 - Misma terminología que el documento y orden obligatorio del corpus jurídico (ver memoria del proyecto) cuando se nombran las fuentes.
