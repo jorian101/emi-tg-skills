@@ -28,10 +28,7 @@
 
 ## Tríptico y bíptico
 
-- **Contenido literal del documento:** problema, objetivos, perfiles, configuración, resultados y cifras
-  económicas, copiados tal cual. Verificar con un script que cada cifra exista en el documento.
-- Diseño institucional (paleta, logo de la institución tomado del propio documento, una foto del caso de
-  estudio tomada de un anexo). Exportar a PDF y revisar cada página.
+Ver [triptico.md](triptico.md): se generan desde `triptico.yaml` con `scripts/defensa/triptico.py`.
 
 ## Artículo
 
@@ -40,17 +37,10 @@
 - Exportar a PDF antes y después: mismo número de páginas y mismas secciones. Si un párrafo se corre de
   página, avisarlo.
 
-## Diapositivas
+## Diapositivas y guion
 
-- `python-pptx`: cambiar el texto del run (un párrafo suele tener un solo run); no crear formas nuevas
-  salvo que se pida.
-- Textos más cortos que el documento si no caben, pero con todos sus datos y la forma «verbo… para…».
-- **Reemplazar una imagen:** agregar la nueva con el mismo ancho y posición (alto según su proporción,
-  centrada en la caja vieja), insertarla en el mismo orden de capas y borrar la anterior.
-- **Diagramas animados:** van en una diapositiva propia a pantalla completa (si no, la letra se proyecta
-  demasiado chica). Al insertar diapositivas, renumerar el número escrito en cada una.
-- Verificar: comparar el texto de todas las diapositivas antes y después (solo cambian las tocadas y los
-  números), exportar a PDF y mirar las tocadas.
+Ver [diapositivas.md](diapositivas.md) (estructura que pide el docente, 30 minutos, respaldo oculto, motor `diapositivas.py`),
+[guion.md](guion.md) (tribunal, minutos, demostración, preguntas) y [tv-videos.md](tv-videos.md) (segunda pantalla).
 
 ## Anexos con QR
 

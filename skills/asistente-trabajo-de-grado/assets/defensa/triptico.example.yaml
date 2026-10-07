@@ -1,0 +1,36 @@
+# Modelo de triptico.yaml: contenido como datos. Imágenes relativas al yaml (logo y foto por clave). Neutro: cambiar los textos.
+colores: {oscuro: "032154", accion: "0a3a82"}
+imagenes: {logo: img/logo.png, foto: img/foto.jpg}
+salida: {triptico: triptico.docx, biptico: biptico.docx}
+solapa:
+  - [h, DATOS DEL PROYECTO]
+  - [p, "Estudiante: …"]
+  - [p, "Tutor: …"]
+contratapa:
+  - [h, CASO DE ESTUDIO]
+  - [img, foto, 8.8]
+  - [pie, "Pie de la foto (Anexo …)"]
+  - [p, "Descripción del caso, tomada del documento."]
+portada:
+  - [img, logo, 6.0]
+  - [c, TRABAJO DE GRADO]
+  - [titulo, "TÍTULO DEL TRABAJO"]
+  - [c, "AUTOR · TUTOR · CIUDAD, AÑO"]
+interior:
+  - - [h, FORMULACIÓN DEL PROBLEMA]
+    - [p, "Texto literal del documento."]
+    - [h, OBJETIVO GENERAL]
+    - [pb, "Texto literal del documento."]
+  - - [h, OBJETIVOS ESPECÍFICOS]
+    - [li, "1. …"]
+  - - [h, RESULTADOS]
+    - [cifra, "00 %", "Rótulo de la cifra · valoración"]
+biptico:
+  - fondo: oscuro
+    elementos:
+      - [img, logo, 5.0]
+      - [titulo, "TÍTULO DEL TRABAJO"]
+      - [hb, FORMULACIÓN DEL PROBLEMA]
+      - [pw, "Texto literal del documento."]
+  - - [h, RESULTADOS]
+    - [cifra, "00 %", "Rótulo de la cifra · valoración"]

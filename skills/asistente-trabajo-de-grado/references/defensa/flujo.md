@@ -53,7 +53,11 @@ python3 $S/publicar_finales.py --dir DEFENSA                    # copia los fina
 
 | Tema | Guía |
 |---|---|
-| Correcciones, manual, tríptico, artículo, diapositivas, anexos QR, ruta crítica, publicación | [entregables.md](entregables.md) |
+| Correcciones, manual, artículo, anexos QR, ruta crítica, publicación | [entregables.md](entregables.md) |
+| Diapositivas de la defensa (estructura del docente, 30 minutos, respaldo oculto) | [diapositivas.md](diapositivas.md) |
+| Tríptico y bíptico | [triptico.md](triptico.md) |
+| Guion de la defensa, tribunal, hacer y no hacer, demostración | [guion.md](guion.md) |
+| Segunda pantalla (TV) con videos en bucle | [tv-videos.md](tv-videos.md) |
 | Diagramas animados para público no técnico (dos versiones) | [diagramas.md](diagramas.md) |
 | Capturas de la interfaz: pantallas, modales y acciones, por rol | [capturas.md](capturas.md) |
 | Trampas conocidas y cómo evitarlas | [trampas.md](trampas.md) |
@@ -70,6 +74,9 @@ python3 $S/publicar_finales.py --dir DEFENSA                    # copia los fina
 | `escenas.py` | Motor de animaciones por escenas (versión pública de los diagramas) |
 | `diagrama_animado.py`, `ruta_critica.py` | `.excalidraw` desde YAML y export con Excalidraw real; ruta crítica por carriles |
 | `diagrama_flujo.py` | Diagrama de flujo desde YAML (pasos numerados, decisiones, colores por fase): la ruta crítica dentro del sistema |
+| `diapositivas.py` | Mazo: `texto`, `cifras --tg`, `verificar`, `notas`, `ocultar`, `imagen`, `tarjetas` (ver [diapositivas.md](diapositivas.md)) |
+| `triptico.py` | Tríptico y bíptico desde `triptico.yaml`; `verificar` cruza las cifras con el documento ([triptico.md](triptico.md)) |
+| `tv.py` | Página de la segunda pantalla con videos en bucle y teclas ([tv-videos.md](tv-videos.md)) |
 | `capturas.py` | Capturas declarativas por rol con marcadores medidos y bloqueo de botones que escriben |
 | `anexos_pipeline.py` (+ `anexos_dividir.py`, `drive_subir.py`, `anexos_qr.py`, `watch_anexos.py`) | Anexos con QR: Word → PDF por anexo → Drive → QR |
 | `word_a_pdf.py`, `watch_a_pdf.py` | PDF desde Word/PowerPoint (Windows desde WSL, o LibreOffice) y vigilante |

@@ -1,6 +1,6 @@
 ---
 name: asistente-trabajo-de-grado
-description: "Trigger: revisar, corregir, citar, resumir o auditar el marco teórico o práctico de un trabajo de grado o tesis; consultar NotebookLM (perfil, marco teórico, marco práctico, comparativa por año, apuntes, explicaciones de docentes); proponer correcciones textuales; completar secciones 3.4.8/3.4.9; verificar fuentes y coherencia; generar revisiones pendientes; revisar terminología poco accesible para no especialistas (modo legibilidad); revisar coherencia entre marco teórico y marco práctico (modo coherencia); revisar o redactar el capítulo final de conclusiones y recomendaciones (modo conclusiones); auditar sprint (código ↔ documento); preparar y mantener los materiales de la defensa (modo defensa: diapositivas, tríptico, bíptico, artículo, manual de usuario, anexos con QR, ruta crítica, diagramas animados para público no técnico, capturas de la interfaz, propagación desde el documento y correcciones celda por celda). Área general de trabajos de grado con docentes dinámicos. NO modifica directamente el Word ni sobrescribe correcciones manuales sin aprobación."
+description: "Trigger: revisar, corregir, citar, resumir o auditar el marco teórico o práctico de un trabajo de grado o tesis; consultar NotebookLM (perfil, marco teórico, marco práctico, comparativa por año, apuntes, explicaciones de docentes); proponer correcciones textuales; completar secciones 3.4.8/3.4.9; verificar fuentes y coherencia; generar revisiones pendientes; revisar terminología poco accesible para no especialistas (modo legibilidad); revisar coherencia entre marco teórico y marco práctico (modo coherencia); revisar o redactar el capítulo final de conclusiones y recomendaciones (modo conclusiones); auditar sprint (código ↔ documento); preparar y mantener los materiales de la defensa (modo defensa: diapositivas, tríptico, bíptico, artículo, manual de usuario, anexos con QR, ruta crítica, diagramas animados para público no técnico, guion de la defensa de 30 minutos y segunda pantalla con videos, capturas de la interfaz, propagación desde el documento y correcciones celda por celda). Área general de trabajos de grado con docentes dinámicos. NO modifica directamente el Word ni sobrescribe correcciones manuales sin aprobación."
 license: MIT
 metadata:
   author: asistente-legal
@@ -299,7 +299,7 @@ Invocación: el usuario pide `audita sprint N`. SOLO lectura hasta que el usuari
 Invocación: el usuario pide preparar, actualizar o revisar diapositivas, tríptico/bíptico, artículo,
 manual de usuario, anexos con QR, ruta crítica o diagramas de la defensa, o propagar al resto los cambios
 del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tema que corresponda
-(`entregables.md`, `diagramas.md`, `capturas.md`, `trampas.md`).
+(`entregables.md`, `diapositivas.md`, `triptico.md`, `guion.md`, `tv-videos.md`, `diagramas.md`, `capturas.md`, `trampas.md`).
 
 1. **El documento (Word) es la única fuente de verdad del contenido**; lo edita el autor a mano. El autor
    copia a mano solo las correcciones al documento (un **único archivo vivo**, celda por celda) y el
@@ -319,7 +319,11 @@ del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tem
    clave por variable de entorno (si falta, preguntar; nunca cambiarla).
 7. **Vault interconectado:** `notas_vault.py` genera el hub `wiki/defensa/_moc-defensa.md`, una nota por
    entregable y la de estado (`verificar_sincronizacion.py --nota`); `capturas.py` agrega una nota por captura.
-8. **Cierre:** `verificar_sincronizacion.py` sin pendientes (o con los pendientes explicados),
+8. **Defensa pública en 30 minutos** (`diapositivas.py`, `triptico.py`, `tv.py`): mazo en el orden que pide el
+   docente, sin leer, con las páginas de evidencia por objetivo y el detalle oculto como respaldo; guion con
+   marcas de minuto para el tribunal académico y plan de demostración; segunda pantalla con videos en bucle;
+   lo que falta se registra en `PENDIENTES-DEFENSA.md`, nunca se muestra como hecho.
+9. **Cierre:** `verificar_sincronizacion.py` sin pendientes (o con los pendientes explicados),
    `publicar_finales.py` a la carpeta de finales, commit por bloque, sin push sin autorización.
 
 ## Orden de trabajo al pedir una actualización
