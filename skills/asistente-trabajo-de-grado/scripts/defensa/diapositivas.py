@@ -9,6 +9,7 @@ Uso: uv run --with python-pptx --with pillow python diapositivas.py <comando> MA
   ocultar  MAZO N [N ...] [--mostrar]    oculta (o muestra) diapositivas: el contenido queda como respaldo
   imagen   MAZO N NOMBRE ARCHIVO         reemplaza una imagen conservando su caja (se centra y no se deforma)
   mover    MAZO N [N ...]                lleva esas diapositivas al final (respaldo), en ese orden
+  diagrama MAZO N NOMBRE --leyenda T     deja la diapositiva con la figura a pantalla completa (recorta márgenes) y una leyenda
   ids      MAZO                          reasigna ids de forma repetidos (se corre solo al guardar)
   tarjetas MAZO --despues N --spec S.yaml  agrega una diapositiva con tarjetas de cifras clonando el estilo de otra
 S.yaml: {titulo, base: N (diapositiva con tarjetas de la que se toma el estilo), tarjetas: [{cifra, texto}], pie}
@@ -25,9 +26,10 @@ import unicodedata
 from pathlib import Path
 
 import yaml
-from PIL import Image
+from PIL import Image, ImageChops
 from pptx import Presentation
 from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN
 from pptx.util import Emu, Pt
 
 PPP_MINIMO = 150
@@ -234,6 +236,72 @@ def tarjetas(prs: Presentation, despues: int, spec: dict) -> None:
     )
 
 
+def diagrama(prs: Presentation, n: int, nombre: str, leyenda: str) -> None:
+    """Figura densa a pantalla completa: se quitan los demás objetos (menos el número de página), se recorta el margen blanco
+    de la imagen y se escala al máximo dentro del área útil; abajo, una leyenda de una línea."""
+    s = prs.slides[n - 1]
+    vieja = next(f for f in s.shapes if f.name == nombre and f.shape_type == 13)
+    im = Image.open(io.BytesIO(vieja.image.blob)).convert("RGB")
+    caja = (
+        ImageChops.difference(im, Image.new("RGB", im.size, "white"))
+        .point(lambda v: 255 if v > 12 else 0)
+        .getbbox()
+    )
+    if caja:
+        m = max(4, im.width // 200)
+        caja = (
+            max(caja[0] - m, 0),
+            max(caja[1] - m, 0),
+            min(caja[2] + m, im.width),
+            min(caja[3] + m, im.height),
+        )
+        im = im.crop(caja)
+    area_w, area_h = 940 * 12700, 462 * 12700
+    esc = min(area_w / im.width, area_h / im.height)
+    w, h = int(im.width * esc), int(im.height * esc)
+    ppp = im.width / (w / 914400)
+    buf = io.BytesIO()
+    im.save(buf, "PNG")
+    buf.seek(0)
+    ids = [int(i) for i in s._element.xpath("//p:cNvPr/@id")]
+    for f in list(s.shapes):
+        if not _es_numero_de_pagina(f):
+            f._element.getparent().remove(f._element)
+    fondo = s.shapes.add_shape(
+        1, 0, 0, Emu(960 * 12700), Emu(496 * 12700)
+    )  # tapa la línea del encabezado que viene del diseño
+    fondo.fill.solid()
+    fondo.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+    fondo.line.fill.background()
+    fondo.shadow.inherit = False
+    fondo.name = "Fondo"
+    fondo._element.xpath(".//p:cNvPr")[0].set("id", str(max(ids) + 3))
+    nueva = s.shapes.add_picture(
+        buf,
+        Emu(int((960 * 12700 - w) / 2)),
+        Emu(int(8 * 12700 + (area_h - h) / 2)),
+        Emu(w),
+        Emu(h),
+    )
+    nueva.name = nombre
+    nueva._element.xpath(".//p:cNvPr")[0].set("id", str(max(ids) + 1))
+    nueva._element.xpath(".//p:cNvPr")[0].set("descr", leyenda)
+    caja_t = s.shapes.add_textbox(
+        Emu(20 * 12700), Emu(472 * 12700), Emu(920 * 12700), Emu(22 * 12700)
+    )
+    caja_t.text_frame.word_wrap = True
+    caja_t.text_frame.text = leyenda
+    par = caja_t.text_frame.paragraphs[0]
+    par.alignment = PP_ALIGN.CENTER
+    par.runs[0].font.size = Pt(14)
+    par.runs[0].font.italic = True
+    par.runs[0].font.color.rgb = RGBColor.from_string("032154")
+    caja_t._element.xpath(".//p:cNvPr")[0].set("id", str(max(ids) + 2))
+    print(
+        f"ok diapositiva {n}: {nombre} a {ppp:.0f} ppp ({int(w / 12700)}x{int(h / 12700)} pt)"
+    )
+
+
 def mover_al_final(prs: Presentation, numeros: list[int]) -> None:
     lista = prs.slides._sldIdLst
     elegidos = [lista[n - 1] for n in numeros]
@@ -247,7 +315,11 @@ def renumerar(prs: Presentation) -> None:
     """Escribe en cada diapositiva su número real (cajas «Marcador de contenido»)."""
     for i, s in enumerate(prs.slides, 1):
         for f in s.shapes:
-            if _es_numero_de_pagina(f) and f.has_text_frame and f.text_frame.paragraphs[0].runs:
+            if (
+                _es_numero_de_pagina(f)
+                and f.has_text_frame
+                and f.text_frame.paragraphs[0].runs
+            ):
                 runs = f.text_frame.paragraphs[0].runs
                 runs[0].text = str(i)
                 for r in runs[1:]:
@@ -291,6 +363,8 @@ def main() -> int:
         ocultar(prs, [int(x) for x in a if x.isdigit()], "--mostrar" in a)
     elif cmd == "imagen":
         imagen(prs, int(a[0]), a[1], Path(a[2]))
+    elif cmd == "diagrama":
+        diagrama(prs, int(a[0]), a[1], a[a.index("--leyenda") + 1])
     elif cmd == "ids":
         pass
     elif cmd == "mover":

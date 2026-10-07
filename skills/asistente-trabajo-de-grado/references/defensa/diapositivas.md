@@ -37,6 +37,14 @@ Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scr
    no lo guardado en disco. Mirar cada diapositiva tocada (PDF a PNG) y confirmar que el número de páginas es el esperado (las ocultas no salen).
 10. Pedir al autor que **cierre PowerPoint sin guardar** antes de abrir el archivo nuevo: si guarda desde una copia vieja, pisa los cambios.
 
+## Figuras densas (diagramas)
+
+- Una figura con letra chica (BPMN, arquitectura, flujo) va **a pantalla completa**: `diapositivas.py diagrama MAZO N NOMBRE --leyenda "Figura N · … (Anexo X)"`
+  quita los demás objetos, recorta el margen blanco, escala al máximo y tapa la línea del encabezado. El texto que desplaza va a las notas.
+- No se amplía una imagen más de lo que aguanta: **≥ 110 ppp** en el tamaño proyectado. Si la figura de origen es chica (organigrama, árbol), se
+  recorta el margen y se reubica sin sumar diapositivas, y se avisa que su letra seguirá siendo pequeña.
+- Los diagramas animados para público no técnico van a la segunda pantalla; no sustituyen a las figuras del documento en el proyector.
+
 ## Reglas de contenido
 
 - **Título, objetivo general, objetivos específicos y formulación del problema se copian literales** y se verifican contra el documento.
