@@ -15,3 +15,16 @@ Entregable: `GUION/guion-defensa.md` (+ .docx para leerlo en Windows) y las nota
 6. **Preguntas esperadas.** Una respuesta corta por cada observación abierta de los revisores, con cifras del documento y la limitación declarada.
 7. **Ensayo** con cronómetro (±2 minutos) y con la segunda pantalla.
 8. Lo que falta por conseguir va a `PENDIENTES-DEFENSA.md` (plantilla `pendientes-defensa.plantilla.md`), con el entregable donde entra.
+
+## Lecciones de defensas observadas (genéricas)
+
+- Faltar a las primeras diapositivas del formato del docente (documentación administrativa) cuesta puntos de inmediato.
+- El tribunal corrige la primera persona en el momento: todo en tercera persona.
+- Revisan que cada ecuación, tabla y figura citada exista con su número, y que no haya tablas cortadas ni espacios en blanco.
+- Cada conclusión repite el verbo de su objetivo; si no, piden explicarla en vivo.
+- Las recomendaciones que suenan a trabajo no terminado se cuestionan («muéstrame dónde»): redactarlas y explicarlas como mejoras.
+- Hay preguntas al azar sobre base de datos (normalización), evaluación económica o algoritmos: tener respuestas y el código abierto,
+  y no afirmar nada que el documento no declare.
+- Pasarse del tiempo hace que corten la exposición: marcas de minuto y tope a la demostración.
+- Postura y presentación: de pie, de frente al tribunal, vestimenta formal.
+
