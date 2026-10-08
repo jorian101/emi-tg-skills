@@ -1,0 +1,3 @@
+[submodule "catalogo"]
+	path = catalogo
+	url = https://github.com/jorian101/emi-docentes.git

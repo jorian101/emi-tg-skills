@@ -17,6 +17,7 @@ PATRONES='/home/[a-z0-9_.-]+/|/Users/[A-Za-z0-9_.-]+/|/mnt/[a-z]/|~/proyectos/'
 #   2. Este auditor y el pre-commit contienen los patrones por definición.
 #   3. La config privada (config.md, .env.local) está en .gitignore: nunca se publica,
 #      y alarmar por ella sería ruido. El pre-commit sí vigila que no se commitee.
+# catalogo/ es el submódulo PRIVADO de docentes: tiene su propio gate (preflight_publicar.py --sin-docentes), no es parte de este repo.
 filtrar() {
   grep -vE '/docs/ejemplos/|\.example:|\.template:|\.pii-denylist\.' \
     | grep -vE '/config\.md:|\.env\.local:' \
@@ -24,7 +25,7 @@ filtrar() {
 }
 
 HITS="$(grep -rnE "$PATRONES" "$RAIZ" \
-  --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ \
+  --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ --exclude-dir=catalogo \
   --include='*.md' --include='*.sh' --include='*.py' --include='*.mjs' \
   --include='*.yaml' --include='*.yml' --include='*.json' --include='*.txt' 2>/dev/null \
   | filtrar || true)"
