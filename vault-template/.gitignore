@@ -24,3 +24,6 @@ sources/_propuestas/DEFENSA/.sync-estado.json
 /wiki/docentes/*.md
 !/wiki/docentes/_*.md
 !/wiki/docentes/jerarquia-autoridad.md
+
+# Nombres de TUS docentes (código → nombre): solo en tu máquina
+/wiki/docentes/_nombres.local.yaml

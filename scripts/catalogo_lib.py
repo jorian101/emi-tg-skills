@@ -330,11 +330,15 @@ def codigo_de_slug(slug: str) -> str:
     return "d-" + hashlib.sha256(f"{SAL}|slug|{slug}".encode()).hexdigest()[:6]
 
 
-def coincidencias(nombre: str, perfiles: dict[str, list[str]]) -> list[tuple[str, int]]:
-    """[(código, pares en común)] de mayor a menor, con al menos un par en común."""
-    mias = set(claves_de_nombre(nombre))
+def coincidencias_claves(mias_: list[str], perfiles: dict[str, list[str]]) -> list[tuple[str, int]]:
+    mias = set(mias_)
     res = [(cod, len(mias & set(claves))) for cod, claves in perfiles.items()]
     return sorted(((c, n) for c, n in res if n), key=lambda x: -x[1])
+
+
+def coincidencias(nombre: str, perfiles: dict[str, list[str]]) -> list[tuple[str, int]]:
+    """[(código, pares en común)] de mayor a menor, con al menos un par en común."""
+    return coincidencias_claves(claves_de_nombre(nombre), perfiles)
 
 
 def claves_del_catalogo(cat: Path) -> dict[str, list[str]]:
@@ -421,10 +425,44 @@ def nombres_privados(cat: Path) -> set[str]:
         if fm.get("type") != "docente":
             continue
         out.update(t for t in re.findall(r"[a-z]{4,}", normalizar(p.stem)))
-        out.update(t for t in re.findall(r"[a-z]{4,}", normalizar(str(fm.get("nombre", "")))) if t not in TITULOS_NOMBRE)
+        if not normalizar(str(fm.get("nombre", ""))).startswith("por completar"):
+            out.update(t for t in re.findall(r"[a-z]{4,}", normalizar(str(fm.get("nombre", "")))) if t not in TITULOS_NOMBRE)
     return out
 
 
 def nombres_en(texto: str, prohibidos: set[str], permitir: frozenset[str] = frozenset()) -> list[str]:
     palabras = set(re.findall(r"[a-z]{4,}", normalizar(texto)))
     return sorted((palabras & prohibidos) - permitir)
+
+
+# ------------------------------------------------------------------ nombres locales (código → nombre de MIS docentes)
+NOMBRES_LOCAL = "wiki/docentes/_nombres.local.yaml"  # en el vault, ignorado por git: el nombre no sale de tu máquina
+
+
+def leer_nombres(vault: Path) -> dict[str, str]:
+    f = vault / NOMBRES_LOCAL
+    return {str(k): str(v) for k, v in (yaml.safe_load(f.read_text(encoding="utf-8")) or {}).items()} if f.is_file() else {}
+
+
+def guardar_nombre(vault: Path, codigo: str, nombre: str) -> None:
+    f = vault / NOMBRES_LOCAL
+    f.parent.mkdir(parents=True, exist_ok=True)
+    datos = leer_nombres(vault)
+    datos[codigo] = nombre
+    f.write_text("# Código del catálogo → nombre de TUS docentes. Solo en tu máquina (ignorado por git).\n"
+                 + yaml.safe_dump(datos, allow_unicode=True, sort_keys=True), encoding="utf-8")
+
+
+def codigo_de_nombre(nombre: str) -> str:
+    """Código provisional de un docente nuevo creado en local (el mantenedor lo reconcilia por `claves`)."""
+    return "d-" + hashlib.sha256(f"{SAL}|nombre|{'|'.join(tokens_nombre(nombre))}".encode()).hexdigest()[:6]
+
+
+def docente_publico_nuevo(nombre: str, rol: str, revisa: str, alcance: str, fecha: str) -> tuple[str, str]:
+    """Perfil local sin nombre (solo código y huellas): el nombre se guarda aparte, en el vault."""
+    codigo = codigo_de_nombre(nombre)
+    cab = {"title": f"Docente {codigo}", "type": "docente", "codigo": codigo, "status": "activo", "revisa": revisa,
+           "alcance": alcance, "rol": rol_generico(rol), "updated": fecha, "claves": claves_de_nombre(nombre)}
+    cuerpo = (f"# Docente {codigo}\n\n{PLANTILLA_CALLOUT_PUBLICO}\n\n## Criterios de fondo\n\n{ENCABEZADO_CRITERIOS}\n"
+              "## Historial de roles\n\n| Rol | Estudiante | Desde |\n|---|---|---|\n\n## Relaciones\n- [[_moc-docentes]] · [[jerarquia-autoridad]]\n")
+    return codigo, "---\n" + yaml.safe_dump(cab, allow_unicode=True, sort_keys=False, width=200).rstrip() + "\n---\n\n" + cuerpo

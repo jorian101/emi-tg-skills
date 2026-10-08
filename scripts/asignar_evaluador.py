@@ -3,6 +3,7 @@
 
 Uso:
   python3 scripts/asignar_evaluador.py <vault> --rol tutor|revisor_1|revisor_2|docente_tg --docente <slug> [--iniciales D.P.]
+  python3 scripts/asignar_evaluador.py <vault> --rol tutor --nombre "Nombre Apellido"   # lo reconoce por huellas (catálogo público)
   python3 scripts/asignar_evaluador.py <vault> --rol revisor_2 --por-asignar
   python3 scripts/asignar_evaluador.py <vault> --check
   python3 scripts/asignar_evaluador.py <vault> --desde-tg     # vincula al tutor que nombra proyecto.yaml, si está en el catálogo
@@ -32,7 +33,16 @@ from pathlib import Path
 
 import yaml
 
-from catalogo_lib import commit_local, historial_texto, rama_local
+from catalogo_lib import (
+    MIN_COINCIDENCIAS_AUTO,
+    claves_del_catalogo,
+    coincidencias,
+    commit_local,
+    guardar_nombre,
+    historial_texto,
+    leer_nombres,
+    rama_local,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 PLANTILLA = REPO / "skills/perfil-revisor-tg/assets/Revisor_N.md"
@@ -128,7 +138,8 @@ def rehacer_moc(vault: Path) -> None:
         d = docente_de(perfil)
         if d:
             fm = frontmatter(perfil.read_text(encoding="utf-8"))
-            celda = "por asignar (solo clases SEM)" if d == "por-asignar" else f"[[{d}]]"
+            nombres = leer_nombres(vault)  # el nombre solo está en tu máquina
+            celda = "por asignar (solo clases SEM)" if d == "por-asignar" else f"[[{d}]]" + (f" — {nombres[d]}" if d in nombres else "")
             filas.append(f"| {nombre} | {celda} | {fm.get('asignado', '—')} |")
     tabla = "| Rol | Docente | Desde |\n|---|---|---|\n" + ("\n".join(filas) or "| — | sin evaluadores vinculados todavía | — |")
     s = moc.read_text(encoding="utf-8")
@@ -136,13 +147,15 @@ def rehacer_moc(vault: Path) -> None:
     moc.write_text(s, encoding="utf-8")
 
 
-def prediccion(catalogo: Path, slug: str) -> str:
+def prediccion(catalogo: Path, slug: str, vault: Path | None = None) -> str:
     s = (catalogo / "docentes" / f"{slug}.md").read_text(encoding="utf-8")
     fm = frontmatter(s)
     i = s.find("## Criterios de fondo")
     seccion = s[i: s.find("\n## ", i + 1) if s.find("\n## ", i + 1) > 0 else None] if i >= 0 else ""
     filas = [f for f in seccion.splitlines() if f.startswith("|") and not re.match(r"\|\s*-", f)][1:]
-    cabeza = f"Predicción inicial de {fm.get('title', slug)} — revisa: {fm.get('revisa', '?')} ({fm.get('alcance', '?')})"
+    nombre = leer_nombres(vault).get(slug) if vault else None
+    titulo = f"{nombre} ({slug})" if nombre else fm.get("title", slug)
+    cabeza = f"Predicción inicial de {titulo} — revisa: {fm.get('revisa', '?')} ({fm.get('alcance', '?')})"
     return cabeza + "\n" + ("\n".join(filas) if filas else "  (todavía sin criterios en el catálogo)")
 
 
@@ -171,7 +184,7 @@ def asignar(vault: Path, catalogo: Path, rol: str, slug: str | None, quien: str 
         print(f"  ok    {nombre} por asignar: hasta entonces solo valen las clases SEM de la matriz")
     rehacer_moc(vault)
     if slug:
-        print(prediccion(catalogo, slug))
+        print(prediccion(catalogo, slug, vault))
 
 
 def check(vault: Path, catalogo: Path) -> int:
@@ -249,15 +262,22 @@ def escribir_config(vault: Path, evaluadores: list[str]) -> None:
 
 
 def desde_tg(vault: Path, catalogo: Path, fecha: str) -> int:
-    """El tutor sale de la carátula (proyecto.yaml): si su nombre está en el catálogo, se vincula solo."""
+    """El tutor sale de la carátula (proyecto.yaml): se vincula solo si el catálogo lo reconoce sin dudas."""
     py = vault / "proyecto.yaml"
-    tutor = norm(str((yaml.safe_load(py.read_text(encoding="utf-8")) or {}).get("tg", {}).get("tutor", ""))) if py.is_file() else ""
-    for p in sorted((catalogo / "docentes").glob("*.md")):
+    crudo = str((yaml.safe_load(py.read_text(encoding="utf-8")) or {}).get("tg", {}).get("tutor", "")) if py.is_file() else ""
+    tutor = norm(crudo)
+    for p in sorted((catalogo / "docentes").glob("*.md")):  # catálogo con nombres (el del mantenedor)
         n = norm(str(frontmatter(p.read_text(encoding="utf-8")).get("nombre") or ""))
         if n and tutor and n in tutor:
             asignar(vault, catalogo, "tutor", p.stem, None, fecha)
             return 0
-    print("  aviso el tutor de proyecto.yaml no está en el catálogo: crealo desde _plantilla-docente y vinculalo")
+    cand = coincidencias(crudo, claves_del_catalogo(catalogo)) if crudo else []  # catálogo público: huellas del nombre
+    if cand and cand[0][1] >= MIN_COINCIDENCIAS_AUTO and (len(cand) == 1 or cand[0][1] > cand[1][1]):
+        guardar_nombre(vault, cand[0][0], crudo.title())
+        asignar(vault, catalogo, "tutor", cand[0][0], None, fecha)
+        return 0
+    print("  aviso no reconozco al tutor de proyecto.yaml en el catálogo: probá resolver_docente.py \"Nombre Apellido\" "
+          "o nuevo_docente.py y vinculalo con --rol tutor")
     return 0
 
 
@@ -266,6 +286,7 @@ def main() -> int:
     ap.add_argument("vault", type=Path)
     ap.add_argument("--rol", choices=ROLES)
     ap.add_argument("--docente")
+    ap.add_argument("--nombre", help="nombre de tu docente: se reconoce por huellas y se guarda solo en tu vault")
     ap.add_argument("--por-asignar", action="store_true")
     ap.add_argument("--iniciales")
     ap.add_argument("--fecha", default=datetime.datetime.now().astimezone().date().isoformat())
@@ -284,9 +305,16 @@ def main() -> int:
         return sync(vault, catalogo)
     if a.desde_tg:
         return desde_tg(vault, catalogo, a.fecha)
-    if not a.rol or bool(a.docente) == a.por_asignar:
-        ap.error("indicá --rol y una de --docente <slug> o --por-asignar")
-    asignar(vault, catalogo, a.rol, a.docente, a.iniciales, a.fecha)
+    if not a.rol or sum(bool(x) for x in (a.docente, a.nombre, a.por_asignar)) != 1:
+        ap.error("indicá --rol y una de --docente <slug>, --nombre \"…\" o --por-asignar")
+    docente = a.docente
+    if a.nombre:
+        cand = coincidencias(a.nombre, claves_del_catalogo(catalogo))
+        if not cand or (len(cand) > 1 and cand[0][1] == cand[1][1]):
+            sys.exit("No hay una coincidencia única para ese nombre: probá resolver_docente.py (más nombres y apellidos) o nuevo_docente.py.")
+        docente = cand[0][0]
+        guardar_nombre(vault, docente, a.nombre)
+    asignar(vault, catalogo, a.rol, docente, a.iniciales, a.fecha)
     return 0
 
 

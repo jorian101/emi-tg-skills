@@ -2,12 +2,13 @@
 """Puerta antes de publicar (push o PR): busca datos sensibles en las líneas que se van a publicar.
 
 Uso:
-  preflight_publicar.py [repo] [--base origin/main] [--catalogo carpeta] [--sin-docentes] [--permitir termino ...]
+  preflight_publicar.py [repo] [--base origin/main] [--catalogo carpeta] [--nombres-de carpeta] [--sin-docentes] [--permitir termino ...]
 
 Mira SOLO las líneas agregadas respecto de la base (`git diff base..HEAD`) y de los archivos nuevos, **sin distinguir
 mayúsculas** (auditar-pii.sh es sensible a mayúsculas a propósito; esta puerta es la red más ancha). Busca:
   - cada término de `.pii-denylist.local` del repo (apellidos, nombres de pila, siglas de tu proyecto);
-  - los apellidos y slugs de los docentes del catálogo (`docentes/*.md`), salvo con --sin-docentes (el propio catálogo);
+  - los apellidos y slugs de los docentes del catálogo con nombres (`docentes/*.md` de --nombres-de, por defecto el catálogo
+    local), salvo con --sin-docentes (el propio catálogo privado). Para publicar skills usá el PRIVADO: --nombres-de <privado>;
   - correos reales (no noreply ni de ejemplo), rutas personales /home/<usuario>, enlaces de notebook y UUID.
 Sale 1 si hay algún hallazgo; cada uno se revisa a mano y, si es un falso positivo (una palabra común que coincide con un apellido),
 se pasa con --permitir. También corre auditar-pii.sh y auditar-rutas.sh si el repo los tiene.
@@ -69,12 +70,13 @@ def main() -> int:
     ap.add_argument("repo", nargs="?", type=Path, default=Path.cwd())
     ap.add_argument("--base", default="origin/main")
     ap.add_argument("--catalogo", type=Path, default=catalogo_default())
+    ap.add_argument("--nombres-de", type=Path)
     ap.add_argument("--sin-docentes", action="store_true")
     ap.add_argument("--permitir", nargs="*", default=[])
     a = ap.parse_args()
     repo = a.repo.resolve()
     permitidos = {t.lower() for t in a.permitir}
-    nombres = terminos_denylist(repo) + ([] if a.sin_docentes else terminos_docentes(a.catalogo))
+    nombres = terminos_denylist(repo) + ([] if a.sin_docentes else terminos_docentes(a.nombres_de or a.catalogo))
     patrones = [(re.compile(rf"\b{re.escape(t)}\b" if re.fullmatch(r"\w+", t) else t, re.IGNORECASE), t) for t in nombres
                 if t.lower() not in permitidos]
     patrones += [(re.compile(g, re.IGNORECASE), "dato personal") for g in GENERICOS]

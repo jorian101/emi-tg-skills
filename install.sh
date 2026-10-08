@@ -10,7 +10,8 @@
 #   ./install.sh --destino ~/mi-vault --remoto mi-vault    # además crea el repo PRIVADO en GitHub (sin push)
 #   ./install.sh --code-repo ~/mi-proyecto                 # conecta el repo de tu proyecto con tus agentes
 #   ./install.sh --agentes ~/.claude/skills --agentes ~/.codex/skills   # más agentes (se puede repetir)
-#   ./install.sh --catalogo <url-git|carpeta>              # catálogo de docentes distinto del submódulo
+#   ./install.sh --catalogo-publico                        # descarga (opcional) el catálogo de docentes SIN nombres
+#   ./install.sh --catalogo <url-git|carpeta>              # un catálogo propio (p. ej. el privado del mantenedor)
 #   ./install.sh --check                                   # solo verifica, no escribe nada
 set -uo pipefail
 
@@ -20,7 +21,7 @@ ALIAS="$HOME/.local/share/tg-skills"
 ALIAS_DOC="$HOME/.local/share/tg-docentes"
 AGENTE_DEFAULT="$HOME/.agents/skills"
 
-DESTINO="" DOCX="" CATALOGO="" CODE_REPO="" REMOTO="" CHECK=0
+DESTINO="" DOCX="" CATALOGO="" CATALOGO_PUBLICO="" CODE_REPO="" REMOTO="" CHECK=0
 AGENTES=("$AGENTE_DEFAULT")
 
 while [ $# -gt 0 ]; do
@@ -28,6 +29,7 @@ while [ $# -gt 0 ]; do
     --destino)   DESTINO="${2:-}"; shift 2 ;;
     --docx)      DOCX="${2:-}"; shift 2 ;;
     --catalogo)  CATALOGO="${2:-}"; shift 2 ;;
+    --catalogo-publico) CATALOGO_PUBLICO=1; shift ;;
     --code-repo) CODE_REPO="${2:-}"; shift 2 ;;
     --remoto)    REMOTO="${2:-}"; shift 2 ;;
     --check)     CHECK=1; shift ;;
@@ -84,6 +86,12 @@ else warn "LibreOffice/Office: hace falta para exportar a PDF — apt install li
 
 # ---------------------------------------------------------------- catálogo de docentes
 catalogo_ok() { [ -d "$1/docentes" ]; }
+PUBLICO="$REPO/catalogo-publico"
+sembrar_publico() { # copia el catálogo público (sin nombres) a un repo git LOCAL: tus cambios van a tu rama local/<usuario>
+  mkdir -p "$ALIAS_DOC"
+  cp -a "$PUBLICO/." "$ALIAS_DOC/"
+  ( cd "$ALIAS_DOC" && git init -q -b main && git add -A && git -c user.name=install -c user.email=install@localhost commit -q -m "chore(docentes): snapshot del catálogo público" )
+}
 obtener_catalogo() {
   local origen=""
   if [ -n "$CATALOGO" ]; then
@@ -97,25 +105,34 @@ obtener_catalogo() {
         fi ;;
       *) if [ -d "$CATALOGO" ]; then origen="$(cd "$CATALOGO" && pwd)"; else warn "no existe la carpeta $CATALOGO"; fi ;;
     esac
-  elif [ -f "$REPO/.gitmodules" ] && grep -q 'path = catalogo' "$REPO/.gitmodules"; then
-    git -C "$REPO" submodule update --init catalogo >/dev/null 2>&1 || warn "sin acceso al catálogo privado (submódulo catalogo/)"
-    origen="$REPO/catalogo"
   fi
   if [ -n "$origen" ] && ! catalogo_ok "$origen"; then origen=""; fi
   if [ -n "$origen" ]; then
     if [ -d "$ALIAS_DOC" ] && [ ! -L "$ALIAS_DOC" ]; then warn "$ALIAS_DOC es una carpeta real: no la reemplazo por el catálogo"
     else mkdir -p "$(dirname "$ALIAS_DOC")"; ln -sfn "$origen" "$ALIAS_DOC"; ok "catálogo de docentes: $origen"; fi
-  elif catalogo_ok "$ALIAS_DOC"; then
+    return
+  fi
+  # Opcional: el catálogo público de docentes (sin nombres). En una terminal se pregunta; por defecto, no.
+  if [ -z "$CATALOGO_PUBLICO" ] && [ -t 0 ] && [ -z "$CATALOGO" ] && ! catalogo_ok "$ALIAS_DOC" && [ -d "$PUBLICO/docentes" ]; then
+    printf '  ¿Descargar el catálogo público de docentes (criterios sin nombres; el nombre de tu docente lo reconocés vos, en tu máquina)? [s/N] '
+    read -r r; case "$r" in s|S|si|sí|y|Y) CATALOGO_PUBLICO=1 ;; esac
+  fi
+  if [ -n "$CATALOGO_PUBLICO" ]; then
+    if [ ! -d "$PUBLICO/docentes" ]; then warn "este clon no trae catalogo-publico/ (actualizá con git pull)"
+    elif [ -L "$ALIAS_DOC" ]; then warn "$ALIAS_DOC apunta a otro catálogo: no lo reemplazo"
+    elif [ -d "$ALIAS_DOC/.git" ]; then bash "$REPO/scripts/actualizar_catalogo.sh" "$ALIAS_DOC" || warn "no pude sincronizar el catálogo público"; ok "catálogo público sincronizado"
+    else rm -rf "$ALIAS_DOC"; sembrar_publico; ok "catálogo público (sin nombres) en $ALIAS_DOC"; fi
+  fi
+  if catalogo_ok "$ALIAS_DOC"; then
     skip "catálogo de docentes ($ALIAS_DOC)"
   else
-    # Sin acceso al catálogo compartido: uno vacío y local, para que todo funcione con tus propios informes.
+    # Sin catálogo: uno vacío y local, para que todo funcione con tus propios informes.
     mkdir -p "$ALIAS_DOC/docentes"
     sed "s/YYYY-MM-DD/$(date +%Y-%m-%d)/g" "$SKILLS_REPO/asistente-trabajo-de-grado/assets/jerarquia-autoridad.md" > "$ALIAS_DOC/docentes/jerarquia-autoridad.md"
     sed "s/YYYY-MM-DD/$(date +%Y-%m-%d)/g" "$SKILLS_REPO/asistente-trabajo-de-grado/assets/plantilla-docente.md" > "$ALIAS_DOC/docentes/_plantilla-docente.md"
-    printf '# Catálogo local de docentes\n\nCreado por install.sh sin acceso al catálogo compartido. Los docentes se agregan con scripts/nuevo_docente.py.\n' > "$ALIAS_DOC/README.md"
+    printf '# Catálogo local de docentes\n\nCreado por install.sh. Los docentes se agregan con scripts/nuevo_docente.py; el catálogo público opcional: ./install.sh --catalogo-publico.\n' > "$ALIAS_DOC/README.md"
     ( cd "$ALIAS_DOC" && git init -q -b main && git add -A && git -c user.name=install -c user.email=install@localhost commit -q -m "chore(docentes): catálogo local vacío" )
     ok "catálogo de docentes local y vacío ($ALIAS_DOC)"
-    warn "pedí acceso al catálogo compartido y corré: ./install.sh --catalogo <url>"
   fi
 }
 
