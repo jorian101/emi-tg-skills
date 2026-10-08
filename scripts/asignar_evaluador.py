@@ -43,8 +43,16 @@ def norm(s: str) -> str:
 
 
 def frontmatter(texto: str) -> dict:
+    """Frontmatter como dict. Vaults viejos traen YAML inválido (listas con «: » y líneas continuadas): en ese caso
+    se leen solo las claves simples de primer nivel, que son las que usa este script."""
     m = re.match(r"---\n(.*?)\n---\n", texto, re.DOTALL)
-    return (yaml.safe_load(m[1]) or {}) if m else {}
+    if not m:
+        return {}
+    try:
+        return yaml.safe_load(m[1]) or {}
+    except yaml.YAMLError:
+        simples = (re.match(r"([A-Za-z_]\w*):\s*(.*)$", ln) for ln in m[1].splitlines())
+        return {k[1]: k[2].strip().strip('"') for k in simples if k and k[2]}
 
 
 def poner_campo(texto: str, clave: str, valor: str) -> str:

@@ -49,6 +49,8 @@ with tempfile.TemporaryDirectory() as t:
     (vault / "proyecto.yaml").write_text("tg:\n  estudiante: LUIS PEREZ\n  tutor: Ana Prueba Rojas\n", encoding="utf-8")
     (vault / "wiki/docentes/beto.md").write_text("copia vieja\n", encoding="utf-8")
 
+    (vault / "wiki/revisores").mkdir(parents=True)  # frontmatter inválido heredado de un vault viejo
+    (vault / "wiki/revisores/Revisor_1.md").write_text("---\ntitle: x\nsources:\n  - algo: dos\n    seguido\n---\ncuerpo\n", encoding="utf-8")
     r = correr(vault, "--check", "--catalogo", cat)
     assert r.returncode == 1 and "no te evalúa" in r.stdout and "Ana Prueba Rojas" in r.stdout, r.stdout
     (vault / "wiki/docentes/beto.md").unlink()

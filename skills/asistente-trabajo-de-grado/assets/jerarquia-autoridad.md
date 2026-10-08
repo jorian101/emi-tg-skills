@@ -20,7 +20,7 @@ tags:
 
 Para tu TG cuentan **solo** quienes te evalúan: tu **tutor**, tus **revisores** (el Revisor 2 suele asignarse
 después) y tu **docente de TG** (el que dicta la materia; puede variar de un paralelo a otro). Cada uno se vincula
-desde su perfil en `wiki/revisores/` (`docente: "[[<slug>]]"`) al catálogo compartido de docentes con
+desde su perfil en `wiki/revisores/` (campo `docente:` con el slug del docente) al catálogo compartido de docentes con
 `scripts/asignar_evaluador.py`. **Los demás docentes del catálogo se ignoran**, aunque tengan criterios parecidos:
 pueden contradecirse y no te evalúan. Mientras un evaluador está `por-asignar`, solo valen las clases genéricas
 `SEM-NN` de la matriz de generalizaciones.
