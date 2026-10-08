@@ -35,7 +35,7 @@ intención de nadie.
 ## Instalación
 
 ```bash
-git clone --recurse-submodules <url> "$HOME/emi-tg-skills"
+git clone <url> "$HOME/emi-tg-skills"
 cd "$HOME/emi-tg-skills"
 ./install.sh --destino ~/mi-vault --docx ~/TRABAJO-DE-GRADO.docx --code-repo ~/mi-proyecto
 ```
@@ -51,9 +51,10 @@ Después, tres pasos con tu agente:
 2. **«ingerir informe»** y **«registrar corrección»** con cada revisión — arma el perfil de cada evaluador.
 3. **modo defensa** — diapositivas, tríptico, ruta crítica, manual, anexos con QR, diagramas animados y guion.
 
-**Catálogo de docentes (colaborativo).** `catalogo/` es un submódulo privado con los perfiles de los docentes (tutores,
-revisores y docentes de TG). Cada vault ve **solo** a sus evaluadores; lo que corrigen a cada estudiante se registra en su
-catálogo local y se comparte por issue o PR (`scripts/contribuir.py`), así los perfiles se enriquecen entre todos.
+**Catálogo de docentes (colaborativo, sin nombres).** `catalogo-publico/` trae los perfiles de tutores, revisores y docentes de TG
+**sin nombres** (código y huellas); descargarlo es opcional (`--catalogo-publico`) y el nombre de tu docente lo reconocés vos, en tu
+máquina. Lo que te corrigen se comparte por **issue abierto a todos** (`scripts/contribuir.py`), sin invitaciones. Los nombres viven solo en el
+catálogo privado del mantenedor. Detalle y límites: [`docs/instalacion.md`](docs/instalacion.md).
 
 El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
 escribir nada: `./install.sh --check`.

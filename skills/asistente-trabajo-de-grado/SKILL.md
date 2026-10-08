@@ -32,7 +32,7 @@ Esta skill trabaja sobre el **área general de trabajos de grado** del vault, no
 
 - **Documento maestro**: `sources/<slug>.md` (por ejemplo `trabajo-de-grado.md` o `marco-practico.md`), según lo registrado en `ORDEN-DEL-VAULT.md`.
 - **Conocimiento destilado**: `wiki/trabajos-grado/` (estructura, perfil, marcos, metodología) — notas con frontmatter `fuente_original` + `seccion_original`.
-- **Docentes**: solo tus **evaluadores identificados** (tutor, revisores, docente de TG). Sus perfiles viven en el catálogo compartido (`$DOCENTES_EMI`, por defecto `~/.local/share/tg-docentes`) y `wiki/docentes/` enlaza **únicamente** a los tuyos; `wiki/docentes/_moc-docentes.md` los lista (lo mantiene `scripts/asignar_evaluador.py`). Un docente que no te evalúa no se lee: sus criterios pueden contradecir a los de tus evaluadores. **Nunca hardcodear un docente en `SKILL.md`.**
+- **Docentes**: solo tus **evaluadores identificados** (tutor, revisores, docente de TG). Sus perfiles viven en el catálogo de docentes (`$DOCENTES_EMI`, por defecto `~/.local/share/tg-docentes`; el público no trae nombres: se reconoce con `scripts/resolver_docente.py`) y `wiki/docentes/` enlaza **únicamente** a los tuyos; `wiki/docentes/_moc-docentes.md` los lista (lo mantiene `scripts/asignar_evaluador.py`). Un docente que no te evalúa no se lee: sus criterios pueden contradecir a los de tus evaluadores. **Nunca hardcodear un docente en `SKILL.md`.**
 
 ### Docentes y material de clase (se lee en cada corrida)
 

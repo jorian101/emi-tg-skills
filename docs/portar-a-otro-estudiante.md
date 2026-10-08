@@ -11,13 +11,13 @@ también acepta los términos del dominio de tu proyecto).
 | Reglas de forma de la EMI, modos, motores de la defensa | `proyecto.yaml`: datos del TG y convenciones (producto, paleta, terminología, fases) |
 | Plantillas (`assets/`) y modelos `*.example.*` | `sources/<slug>.md`: el TG extraído |
 | Clases genéricas de corrección (`matriz-generalizaciones`) | Lo `confirmado` de sus evaluadores, informes, reglas propias |
-| — | Perfil de cada docente en el **catálogo compartido** (`emi-docentes`), enlazado solo para sus evaluadores |
+| — | Perfil de cada docente en el **catálogo público sin nombres** (`catalogo-publico/`), enlazado solo para sus evaluadores; el nombre, solo en su vault |
 | Ejemplos marcados «proyecto de referencia» | `sources/_propuestas/DEFENSA/`: los YAML y entregables de su defensa |
 
 ## Arrancar con otro TG (resumen; el detalle está en `docs/instalacion.md`)
 
 ```bash
-./install.sh --destino ~/vault-de-ana --docx "~/Ana/TRABAJO DE GRADO.docx" --catalogo <emi-docentes>
+./install.sh --destino ~/vault-de-ana --docx "~/Ana/TRABAJO DE GRADO.docx" [--catalogo-publico]
 ```
 
 1. El instalador crea el vault, extrae el TG, arma `proyecto.yaml` (carátula, objetivos, anexos, figuras) y la

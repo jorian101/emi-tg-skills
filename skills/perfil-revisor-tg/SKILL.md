@@ -26,7 +26,7 @@ Usala cuando el usuario pida:
 ## Hard Rules
 
 1. **Solo FONDO** (coherencia, redacción, contenido, redundancia, extensión, estilo de evidencia). NO FORMA/APA 7 por ahora.
-2. **Vínculo con el catálogo de docentes.** Cada evaluador del estudiante (tutor, Revisor 1, Revisor 2, docente de TG) tiene su perfil en `wiki/revisores/` con `docente: "[[<slug>]]"`, que apunta a su perfil **compartido** en el catálogo (`$DOCENTES_EMI`, por defecto `~/.local/share/tg-docentes`; en `wiki/docentes/` solo hay enlaces a los propios). El perfil del vault guarda lo `confirmado` sobre **este** TG; el del catálogo, el criterio del docente con ocurrencias, útil para predecir. La consulta de material de clase de un docente se delega a `asistente-trabajo-de-grado` (modo notebooklm).
+2. **Vínculo con el catálogo de docentes.** Cada evaluador del estudiante (tutor, Revisor 1, Revisor 2, docente de TG) tiene su perfil en `wiki/revisores/` con `docente: "[[<código>]]"`, que apunta a su perfil en el catálogo (`$DOCENTES_EMI`, por defecto `~/.local/share/tg-docentes`; en `wiki/docentes/` solo hay enlaces a los propios). El catálogo público **no tiene nombres**: el docente se reconoce con `scripts/resolver_docente.py` (huellas calculadas en la máquina del estudiante) y su nombre queda solo en `wiki/docentes/_nombres.local.yaml`. El perfil del vault guarda lo `confirmado` sobre **este** TG; el del catálogo, el criterio del docente con ocurrencias, útil para predecir. La consulta de material de clase se delega a `asistente-trabajo-de-grado` (modo notebooklm).
 3. **No alucinar la intención del revisor.** Todo punto lleva UNO de tres estados:
    - `confirmado` — el revisor lo dijo/rayó explícitamente (registrar cita).
    - `inferido` — hipótesis del estudiante o del agente (NO validada). Se aplica como sugerencia, nunca como exigencia.
@@ -236,18 +236,19 @@ Todos entran por `Modo perfilar` / `Auto-mejora`; cambia la **procedencia del cr
 
 Trigger: «X me corrigió Y», «registrar corrección», «regla nueva: …», o un informe recién ingerido.
 1. **Quién**: el evaluador del vault (rol y docente vinculado). Si el docente no está en el catálogo (cualquier rol: tutor,
-   revisor o docente de TG), crearlo antes: `python3 scripts/nuevo_docente.py <slug> --nombre … --rol …` y vincularlo con
-   `asignar_evaluador.py`. Si no es evaluador del estudiante, no se registra.
+   revisor o docente de TG), crearlo antes: `python3 scripts/nuevo_docente.py --nombre … --rol … --vault $VAULT` (crea su perfil local **sin nombre**) y vincularlo con
+   `asignar_evaluador.py --docente <código>`. Si no es evaluador del estudiante, no se registra.
 2. **Vault**: fila `confirmado` en su perfil de `wiki/revisores/` (frase literal + fecha + fuente), como siempre.
 3. **Clasificar**: `fondo` | `forma` | `dominio` (regla 39-b). Lo de `dominio` (propio de ese TG) no sube al catálogo.
-4. **Catálogo local** (solo lo generalizable): `python3 scripts/registrar_criterio.py <slug> --criterio "…" --capitulo … --fuente
+4. **Catálogo local** (solo lo generalizable): `python3 scripts/registrar_criterio.py <código> --criterio "…" --capitulo … --fuente
    "informe a <INICIALES>, MP 15/05"`; si ya existe un criterio equivalente, `--ocurrencia <ID>` suma una ocurrencia. El script
    escribe en la rama `local/<usuario>` del catálogo y se niega si la fuente trae un nombre completo.
 5. **Generalizar**: clase en `matriz-generalizaciones.md` del vault (o subir a `confirmado` una `SEM-NN` que él pidió) y, si el
    usuario la formula como regla, fila en `reglas-propias.md`.
-6. **Compartir** (solo si el usuario lo pide): `python3 scripts/contribuir.py` muestra la contribución saneada (criterios,
-   ocurrencias, iniciales; nunca el informe ni nombres) y, con `--enviar`, la abre como issue en el repo del catálogo; el
-   mantenedor la integra con `aplicar_contribucion.py`. Las novedades de los demás llegan con `scripts/actualizar_catalogo.sh`.
+6. **Compartir** (solo si el usuario lo pide): `python3 scripts/contribuir.py` muestra la contribución saneada (código del docente,
+   criterios, ocurrencias, iniciales; nunca el nombre del docente, el informe ni nombres de estudiantes) y se niega si aparece el
+   nombre de alguno de sus docentes; con `--enviar` la abre como **issue en el repo público** (sin invitación). El mantenedor la
+   integra en el catálogo privado con `aplicar_contribucion.py` y republica. Las novedades llegan con `scripts/actualizar_catalogo.sh`.
 7. Commit en el vault. Lo del catálogo ya queda commiteado en su rama local.
 
 ### Auto-mejora

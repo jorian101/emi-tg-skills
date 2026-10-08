@@ -5,19 +5,24 @@ Versionado: [SemVer](https://semver.org/lang/es/).
 
 ## [instalación 2.0] — 2026-10-08
 
-**El vault es un repositorio nuevo del estudiante y el catálogo de docentes se comparte por issue o PR.**
+**El vault es un repositorio nuevo del estudiante y el catálogo de docentes es público sin nombres, con aportes por issue abierto.**
 
 - `install.sh`: `git init` del vault con pre-commit (0 wikilinks rotos, 0 huérfanas, ningún enlace versionado) y primer
   commit; `--remoto` crea el repo **privado** en GitHub sin push; `--code-repo` conecta el repo del proyecto con el agente;
   `--agentes` repetible y sin pisar copias; dependencias opcionales por entregable en `--check`.
 - Lo que lleva rutas de una máquina (`scripts/`, `wiki/docentes/<docente>.md`, `config.md`) ya no se versiona: se rehace con
   `asignar_evaluador.py --sync` (clonar el vault en otra máquina).
-- Catálogo de docentes como submódulo privado `catalogo/`, por URL o carpeta, o uno local vacío si no hay acceso.
+- Catálogo de docentes **público y sin nombres** (`catalogo-publico/`, opcional con `--catalogo-publico`), `--catalogo` para uno propio, o uno local vacío.
 - Colaboración: `registrar_criterio.py`, `nuevo_docente.py` (cualquier docente y rol), `contribuir.py` (contribución saneada,
   iniciales, issue con `gh` previa confirmación o PR), `aplicar_contribucion.py` y `actualizar_catalogo.sh`.
 - `scripts/preflight_publicar.py`: puerta antes de publicar (nombres sin distinguir mayúsculas, docentes del catálogo, correos,
-  rutas personales y notebooks en las líneas a publicar). `auditar-pii.sh`/`auditar-rutas.sh` no escanean `catalogo/`.
-- `scripts/test_install.sh` y `test_catalogo.py`: instalación desde cero, otra máquina, sin catálogo y flujo completo de
+  rutas personales y notebooks en las líneas a publicar; `--nombres-de` toma los nombres del catálogo privado).
+- **Seudónimos**: cada docente del catálogo público tiene código `d-xxxxxx` y huellas (SHA-256 con sal pública) de pares de
+  nombre/apellido; `resolver_docente.py` los reconoce en tu máquina y el nombre queda solo en tu vault. `exportar_publico.py`
+  genera el catálogo público desde el privado y aborta sin escribir si se cuela un nombre. Es seudonimización, no anonimato.
+- Aportes abiertos: `contribuir.py` abre un issue en el repo público (código/huellas, nunca el nombre; se niega si aparece el nombre de
+  tus docentes), con formulario `.github/ISSUE_TEMPLATE/aporte-criterio.yml`; `aplicar_contribucion.py` lo integra en el privado.
+- `scripts/test_install.sh`, `test_catalogo.py`, `test_publico_e2e.py`, `test_exportar_publico.py` y `test_pseudonimos.py`: instalación desde cero, otra máquina, sin catálogo y flujo completo de
   contribución. El extractor ya no falla con un TG sin imágenes.
 
 ## [perfil-revisor-tg 1.43 · asistente-trabajo-de-grado 3.3] — 2026-10-08

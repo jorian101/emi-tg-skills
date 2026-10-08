@@ -72,7 +72,8 @@ with tempfile.TemporaryDirectory() as t:
 
     # 4. el mantenedor integra en el privado (el docente nuevo queda «por completar»), y vuelve a exportar
     git(privado, "init", "-q", "-b", "main"); git(privado, "add", "-A"); git(privado, "commit", "-q", "-m", "base")
-    py("aplicar_contribucion.py", t / "aporte_ok.md", "--catalogo", privado, "--commit", "--exportar")
+    py("aplicar_contribucion.py", t / "aporte_ok.md", "--catalogo", privado, "--commit", "--exportar", "--destino", pub)
+    assert "Diagrama de flujo en el análisis" in (pub / f"docentes/{codigo}.md").read_text(encoding="utf-8")
     privado_txt = (privado / "docentes/tarqui-vasquez.md").read_text(encoding="utf-8")
     assert "Diagrama de flujo en el análisis" in privado_txt and "| CR1 | Cifras con porcentaje | confirmado | 2 |" in privado_txt
     creados = [p for p in (privado / "docentes").glob("d-*.md")]

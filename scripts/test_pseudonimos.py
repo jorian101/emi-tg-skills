@@ -1,7 +1,15 @@
 """Huellas del nombre, código y perfil público sin nombres (python3 scripts/test_pseudonimos.py)."""
 
-from catalogo_lib import (claves_de_nombre, codigo_de_slug, coincidencias, frontmatter, nombres_en, normalizar, perfil_publico,
-                          tokens_nombre)
+from catalogo_lib import (
+                          claves_de_nombre,
+                          codigo_de_slug,
+                          coincidencias,
+                          frontmatter,
+                          nombres_en,
+                          normalizar,
+                          perfil_publico,
+                          tokens_nombre,
+)
 
 assert tokens_nombre("Cnl. DAEN Ramiro Óscar Tarqui Vásquez") == ["oscar", "ramiro", "tarqui", "vasquez"]
 assert normalizar("Zúñiga") == "zuniga"

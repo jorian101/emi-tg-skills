@@ -7,7 +7,7 @@ El vault del proyecto de referencia es un ejemplo de resultado, nunca una planti
 ## 0. Precondición (determinística, ya la hace el instalador)
 
 ```bash
-./install.sh --destino <vault> --docx <TG.docx> [--catalogo <emi-docentes>]
+./install.sh --destino <vault> --docx <TG.docx> [--catalogo-publico]
 ```
 
 Eso extrae el TG (`sources/<slug>.md`), crea `proyecto.yaml` con lo que el TG dice de sí mismo (carátula, objetivos,
@@ -40,8 +40,9 @@ Solo cuentan quienes evalúan a este estudiante; los demás docentes del catálo
    (`asignar_evaluador.py --desde-tg`).
 2. Preguntar al usuario: **Revisor 1, Revisor 2 y docente de TG** (el Revisor 2 suele asignarse después: queda
    `--por-asignar` y mientras tanto solo valen las clases `SEM-NN`).
-3. Por cada uno: `python3 scripts/asignar_evaluador.py <vault> --rol <rol> --docente <slug>`. Si el docente no está en
-   el catálogo, crearlo desde su `_plantilla-docente.md` (queda con criterios vacíos hasta que lleguen informes).
+3. Por cada uno: `python3 scripts/asignar_evaluador.py <vault> --rol <rol> --nombre "Nombre Apellido"` (se reconoce por huellas
+   en el catálogo público, que no tiene nombres; el nombre queda solo en el vault). Si no está en el catálogo:
+   `scripts/nuevo_docente.py --nombre … --rol … --vault <vault>` (perfil local sin nombre, vacío hasta que lleguen informes).
 4. Mostrar la **predicción inicial** que imprime el script y ofrecer una pasada de revisión sobre los capítulos que
    cada uno suele revisar, para corregir desde el principio.
 5. Lo que el estudiante vaya recibiendo se registra con «registrar corrección» (`perfil-revisor-tg`): queda en su

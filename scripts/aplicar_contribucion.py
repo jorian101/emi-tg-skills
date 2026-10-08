@@ -22,7 +22,6 @@ import sys
 from pathlib import Path
 
 import yaml
-
 from catalogo_lib import (
     MIN_COINCIDENCIAS_AUTO,
     aplicar_cambio,
@@ -100,6 +99,7 @@ def main() -> int:
     ap.add_argument("--repo")
     ap.add_argument("--commit", action="store_true")
     ap.add_argument("--exportar", action="store_true")
+    ap.add_argument("--destino", type=Path, help="con --exportar: dónde regenerar el catálogo público (por defecto catalogo-publico/ de este repo)")
     ap.add_argument("--catalogo", type=Path, default=catalogo_default())
     a = ap.parse_args()
     cat = a.catalogo
@@ -142,7 +142,8 @@ def main() -> int:
     regenerar_moc(cat)
     print("\n".join(f"  ok    {r}" for r in resumen))
     if a.exportar:
-        r = subprocess.run([sys.executable, str(Path(__file__).with_name("exportar_publico.py")), "--origen", str(cat)],
+        destino = ["--destino", str(a.destino)] if a.destino else []
+        r = subprocess.run([sys.executable, str(Path(__file__).with_name("exportar_publico.py")), "--origen", str(cat), *destino],
                            capture_output=True, text=True, check=False)
         print(r.stdout.strip() or r.stderr.strip())
     if a.commit:

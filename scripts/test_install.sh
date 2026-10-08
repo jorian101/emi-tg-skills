@@ -86,10 +86,15 @@ copiar_repo "$T/r3"; mkdir -p "$T/home3"
 HOME="$T/home3" bash "$T/r3/install.sh" --destino "$T/vault3" --catalogo "file://$T/no-existe" > "$T/salida3.txt" 2>&1
 chk "catálogo local vacío creado y vault funcional" '[ -d "$T/home3/.local/share/tg-docentes/docentes" ] && [ "$(git -C "$T/vault3" rev-list --count HEAD)" = 1 ]'
 
-echo "== submódulo del catálogo inalcanzable (sin acceso al repo privado) =="
-copiar_repo "$T/r4"; mkdir -p "$T/home4"
-chk "el repo trae .gitmodules con el catálogo privado" 'grep -q "path = catalogo" "$T/r4/.gitmodules"'
-HOME="$T/home4" bash "$T/r4/install.sh" --destino "$T/vault4" > "$T/salida4.txt" 2>&1
-chk "avisa y sigue con un catálogo local vacío" 'grep -q "sin acceso al catálogo privado" "$T/salida4.txt" && [ -d "$T/home4/.local/share/tg-docentes/docentes" ] && [ "$(git -C "$T/vault4" rev-list --count HEAD)" = 1 ]'
+echo "== catálogo público (opcional, sin nombres) =="
+copiar_repo "$T/r4"; mkdir -p "$T/home4" "$T/home5"
+chk "el repo trae catalogo-publico/ con perfiles sin nombre" 'ls "$T/r4/catalogo-publico/docentes"/d-*.md >/dev/null 2>&1 && ! grep -lE "^nombre:" "$T"/r4/catalogo-publico/docentes/d-*.md | grep -q .'
+HOME="$T/home5" bash "$T/r4/install.sh" --destino "$T/vault5" > "$T/salida5.txt" 2>&1
+chk "sin pedirlo (no hay terminal) NO se descarga: catálogo local vacío" '[ ! -f "$(ls "$T"/home5/.local/share/tg-docentes/docentes/d-*.md 2>/dev/null | head -1)" ] && ! ls "$T"/home5/.local/share/tg-docentes/docentes/d-*.md >/dev/null 2>&1'
+HOME="$T/home4" bash "$T/r4/install.sh" --destino "$T/vault4" --catalogo-publico > "$T/salida4.txt" 2>&1
+chk "--catalogo-publico siembra un catálogo local con perfiles y huellas" 'ls "$T"/home4/.local/share/tg-docentes/docentes/d-*.md >/dev/null 2>&1 && grep -q "^claves:" "$(ls "$T"/home4/.local/share/tg-docentes/docentes/d-*.md | head -1)" && [ -d "$T/home4/.local/share/tg-docentes/.git" ]'
+chk "el vault queda como repo con 1 commit y sin nombres de docentes" '[ "$(git -C "$T/vault4" rev-list --count HEAD)" = 1 ] && [ ! -e "$T/vault4/wiki/docentes/_nombres.local.yaml" ]'
+HOME="$T/home4" bash "$T/r4/scripts/actualizar_catalogo.sh" > "$T/salida4b.txt" 2>&1
+chk "actualizar_catalogo.sh sincroniza el snapshot sin romper nada" '[ $? -eq 0 ] && ! grep -qi "choque" "$T/salida4b.txt"'
 
 if [ "$FALLO" -eq 0 ]; then echo "ok test_install"; else echo "FALLÓ test_install"; tail -30 "$T/salida1.txt"; exit 1; fi
