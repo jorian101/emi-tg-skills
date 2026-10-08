@@ -7,6 +7,7 @@ Ubicación del catálogo: `$DOCENTES_EMI` o `~/.local/share/tg-docentes`. Los ca
 
 from __future__ import annotations
 
+import base64
 import getpass
 import hashlib
 import itertools
@@ -481,6 +482,19 @@ def texto_de_oficina(path: Path) -> str:
     return " ".join(partes)
 
 
+# Logos institucionales que sí viajan en las plantillas (sha256); cualquier otra imagen es de ejemplo y se reemplaza por un píxel blanco.
+LOGOS_PLANTILLA = frozenset({
+    "bdc0e69ec11873420483a2cd70f9a9ae2301f66bc23120ac5203325fd82b71ad",
+    "ad485386c6165c75193a808994d1d5f408224c97e6a2c5cfa09559e9e0bdbda8",
+    "3a39083025ff88f75bdc51d3cecb294c263e0cf869f27edd9962615846dce0f8",
+})
+_PIXEL = {
+    ".png": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC",
+    ".jpg": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigD//2Q==",
+}
+_PIXEL[".jpeg"] = _PIXEL[".jpg"]
+
+
 def sanear_oficina(origen: Path, destino: Path) -> None:
     """Copia un .docx/.pptx sin autor, último editor, título, empresa ni responsable (propiedades de persona)."""
     with zipfile.ZipFile(origen) as zin, zipfile.ZipFile(destino, "w", zipfile.ZIP_DEFLATED) as zout:
@@ -498,4 +512,6 @@ def sanear_oficina(origen: Path, destino: Path) -> None:
                 datos = t.encode("utf-8")
             elif item.filename.startswith("docProps/thumbnail"):
                 continue
+            elif "/media/" in item.filename and Path(item.filename).suffix.lower() in _PIXEL and hashlib.sha256(datos).hexdigest() not in LOGOS_PLANTILLA:
+                datos = base64.b64decode(_PIXEL[Path(item.filename).suffix.lower()])
             zout.writestr(item, datos)

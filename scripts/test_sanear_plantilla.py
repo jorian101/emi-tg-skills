@@ -36,4 +36,18 @@ with tempfile.TemporaryDirectory() as t:
     docx(t / "sucio.docx", "Elaborado por Ana Tarqui")
     r = correr(t / "sucio.docx", t / "out/sucio.docx", "--nombres-de", t / "cat")
     assert r.returncode != 0 and "tarqui" in r.stderr.lower() and not (t / "out/sucio.docx").exists()
+    # imágenes: la ajena se reemplaza por un píxel; el logo (por hash) se conserva
+    import hashlib
+
+    from catalogo_lib import LOGOS_PLANTILLA
+
+    ajena = b"imagen-de-otro-proyecto"
+    with zipfile.ZipFile(t / "img.docx", "w") as z:
+        z.writestr("word/document.xml", "<w:document/>")
+        z.writestr("word/media/image1.png", ajena)
+    r = correr(t / "img.docx", t / "out/img.docx")
+    assert r.returncode == 0, r.stderr
+    with zipfile.ZipFile(t / "out/img.docx") as z:
+        assert z.read("word/media/image1.png") != ajena and z.read("word/media/image1.png").startswith(b"\x89PNG")
+    assert all(len(h) == 64 for h in LOGOS_PLANTILLA) and hashlib.sha256(ajena).hexdigest() not in LOGOS_PLANTILLA
 print("ok test_sanear_plantilla")
