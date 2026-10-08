@@ -4,7 +4,7 @@
 
 ```
 emi-tg-skills/        ← MOTOR (este repo, público, sin datos)
-  skills/             las cinco skills
+  skills/             las cuatro skills
   scripts/            los gates de verificación
   vault-template/     el andamiaje vacío que se instala
 
