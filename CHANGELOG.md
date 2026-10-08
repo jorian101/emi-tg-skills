@@ -15,6 +15,8 @@ Versionado: [SemVer](https://semver.org/lang/es/).
 - Catálogo de docentes como submódulo privado `catalogo/`, por URL o carpeta, o uno local vacío si no hay acceso.
 - Colaboración: `registrar_criterio.py`, `nuevo_docente.py` (cualquier docente y rol), `contribuir.py` (contribución saneada,
   iniciales, issue con `gh` previa confirmación o PR), `aplicar_contribucion.py` y `actualizar_catalogo.sh`.
+- `scripts/preflight_publicar.py`: puerta antes de publicar (nombres sin distinguir mayúsculas, docentes del catálogo, correos,
+  rutas personales y notebooks en las líneas a publicar). `auditar-pii.sh`/`auditar-rutas.sh` no escanean `catalogo/`.
 - `scripts/test_install.sh` y `test_catalogo.py`: instalación desde cero, otra máquina, sin catálogo y flujo completo de
   contribución. El extractor ya no falla con un TG sin imágenes.
 

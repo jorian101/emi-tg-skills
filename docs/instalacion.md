@@ -51,6 +51,19 @@ El pre-commit del vault rechaza un commit con wikilinks rotos, notas huérfanas 
   con `scripts/aplicar_contribucion.py`; vos traés las novedades con `scripts/actualizar_catalogo.sh`.
 - Sin acceso al catálogo compartido todo funciona con tus propios informes; pedí acceso y corré `./install.sh --catalogo <url>`.
 
+## Quién ve el catálogo (mantenedor)
+
+El catálogo es un repo **privado** (`catalogo/`, submódulo) porque tiene nombres de docentes y criterios sacados de informes.
+Este repo público solo guarda su **dirección** en `.gitmodules`, nunca su contenido. Para dar acceso a un estudiante:
+
+```bash
+gh api -X PUT repos/<owner>/emi-docentes/collaborators/<usuario-de-github> -f permission=push
+```
+
+Quien no tiene acceso instala igual: el instalador avisa («sin acceso al catálogo privado») y crea un catálogo local vacío.
+Antes de publicar cualquier cosa: `python3 scripts/preflight_publicar.py .` (nombres sin distinguir mayúsculas, docentes del
+catálogo, correos y rutas personales en las líneas a publicar) y, en el catálogo, `... --sin-docentes` (estudiantes = 0).
+
 ## Problemas frecuentes
 
 | Síntoma | Causa y arreglo |
