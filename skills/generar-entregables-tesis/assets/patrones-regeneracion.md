@@ -10,7 +10,7 @@ Tres modos de operacion segun el pedido del usuario.
 
 **Flujo**:
 
-1. Lectura de contexto (silencioso): `marco-practico.md §3.4.X` + `wiki/<teoria>.md` correspondiente + inspeccion del backend
+1. Lectura de contexto (silencioso): subsección de la fase en `sources/<slug>.md` + `wiki/<teoria>.md` correspondiente + inspeccion del backend
 2. Presentar plan global al usuario (lista de Figuras/Tablas a generar, herramientas, orden)
 3. Checkpoint del usuario: "¿Avanzo con este plan o ajustas algo?"
 4. Por cada entregable: presentar contenido propuesto (modo ligero: nombre + ruta + 1 linea de intencion), checkpoint, generar

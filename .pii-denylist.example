@@ -7,6 +7,8 @@
 #   ApellidoDos
 #   Nombre de tu universidad
 #   id-del-notebook
+#   SIGLA-DE-TU-INSTITUCION      <- términos del dominio de TU proyecto: la skill es genérica
+#   [Nn]ombre de tu producto     y no debe volver a nombrarlos
 #
 # El pre-commit lo lee si existe y bloquea cualquier línea agregada que lo mencione.
 # La comparación es SENSIBLE A MAYÚSCULAS a propósito: así "terceros" (palabra común) no

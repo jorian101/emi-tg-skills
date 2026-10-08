@@ -320,7 +320,7 @@ Pasos:
 1. Levantar pgAdmin 4 en Docker (misma red que el postgres del proyecto):
    ```bash
    docker run -d --name pgadmin \
-     --network asistente-legal_default \
+     --network <red-docker-del-proyecto> \
      -p 5050:80 \
      -e PGADMIN_DEFAULT_EMAIL=admin@local.com \
      -e PGADMIN_DEFAULT_PASSWORD=admin \
@@ -328,15 +328,15 @@ Pasos:
    ```
 2. Abrir http://localhost:5050 en el navegador. Login: admin@local.com / admin
 3. Click derecho en "Servers" -> Create -> Server...
-4. General: Name = AsistenteLegal
+4. General: Name = <nombre-del-proyecto>
 5. Connection:
-   - Host: asistente-legal-postgres-1 (nombre del contenedor postgres, misma red Docker)
+   - Host: <contenedor-postgres> (nombre del contenedor postgres, misma red Docker)
    - Port: 5432 (puerto interno del contenedor, NO 5433)
-   - Database: asistente_legal
+   - Database: (nombre de la BD, leer de .env)
    - Username: (leer de .env con `set -a && source .env && echo $POSTGRES_USER`)
    - Password: (leer de .env con `set -a && source .env && echo $POSTGRES_PASSWORD`)
    - Save
-6. Expandir Servers -> AsistenteLegal -> Databases -> asistente_legal -> Schemas -> public -> Tables
+6. Expandir Servers -> <nombre-del-proyecto> -> Databases -> <bd> -> Schemas -> public -> Tables
 7. Seleccionar todas las tablas (Shift+click) -> click derecho -> ERD Tool
 8. En la ventana ERD: File -> Export -> Image (PNG)
 9. Guardar como sprints/sprint-0/capturas/esquema-bd-relacional.png
@@ -402,7 +402,7 @@ fixtures controlados, sin modificar la aplicación:
 
 ```python
 page.add_init_script("""
-  sessionStorage.setItem('asistente-legal-auth', JSON.stringify({
+  sessionStorage.setItem('<clave-de-sesion-del-frontend>', JSON.stringify({
     access_token: 'revision-token', rol: 'administrador', carnet: '7000001', id: 1
   }));
 """)

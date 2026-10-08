@@ -20,6 +20,6 @@ Cada una costó una corrida mala. Revisarlas antes de dar algo por terminado.
 | Transcripción sin hablantes | Se atribuye al revisor lo que dijo el autor | Leer la fuente completa y marcar cada pedido con su cita corta; lo dudoso se rotula `inferido` |
 | Formas con el mismo id en una diapositiva (al clonar con python-pptx) | PowerPoint dice que no puede abrir el archivo, ni con reparar | `diapositivas.py` reasigna los ids al guardar (`ids`); al terminar, abrir y guardar el mazo con PowerPoint (COM `SaveAs`) y probar que abre |
 | Diapositivas ocultas en medio del mazo | La numeración visible salta (13 → 19) y el docente lo nota | `diapositivas.py mover` las lleva al final como respaldo y renumera |
-| Cifras sin su contexto o paráfrasis de lo literal | Un jurado lee «0 errores» o «reduce errores del Tribunal» | Cada cifra con su ámbito («en la prueba piloto», «en la evaluación de la generación»); título, objetivos y formulación siempre literales |
+| Cifras sin su contexto o paráfrasis de lo literal | Un jurado lee «0 errores» o «reduce errores de la institución» | Cada cifra con su ámbito («en la prueba piloto», «en la evaluación de la generación»); título, objetivos y formulación siempre literales |
 | Guion en primera persona | El docente lo observa | Tercera persona e impersonal: «se desarrolló», «el trabajo presenta» |
 | Figura densa en media diapositiva | El tribunal no lee el diagrama proyectado | Pantalla completa con `diagrama`; sin ampliar bajo 110 ppp; la versión animada va a la TV |

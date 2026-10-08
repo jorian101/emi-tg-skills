@@ -3,7 +3,7 @@ name: generar-entregables-tesis
 description: "Trigger: Genera o regenera entregables de tesis de un sprint, una figura, una tabla o los mockups del sprint. Produce Markdown, diagramas, fuentes OpenPencil, PNG y Word con validación reproducible."
 license: MIT
 metadata:
-  author: "jorian"
+  author: "emi-tg-skills"
   version: "3.2.1"
 ---
 
@@ -23,17 +23,34 @@ Flujo completo de los 3 modos en `assets/patrones-regeneracion.md`. Mapeo entreg
 
 Output en `$VAULT/sprints/sprint-X/`.
 
+## Perfil del proyecto (leer ANTES de cualquier modo)
+
+Esta skill sirve para cualquier trabajo de grado con desarrollo por sprints/fases. Lo que depende del
+proyecto **no** está en esta skill: se lee de `$VAULT/proyecto.yaml` (lo crea `install.sh --docx` y lo
+completa el modo inicializar de `asistente-trabajo-de-grado`):
+
+- `entregables.seccion_desarrollo` (p. ej. `3.4`), `entregables.fases` (nombre de cada sprint/fase y su subsección),
+  `entregables.calendario` (fechas del día de pruebas por fase).
+- `convenciones.producto` (cómo se nombra el producto en el texto), `convenciones.hilo_conductor` (eje técnico que
+  cada fase debe mostrar), `convenciones.terminologia` (término del código → término del documento, con su gate),
+  `convenciones.terminos_prohibidos`, `convenciones.paleta_uml`, `convenciones.contenedores` (BD para capturas).
+- Los mapas por figura (`entregables.mapa`) se generan desde el índice de figuras/tablas del TG extraído.
+
+Los números de figura/tabla, sprints, colores y nombres que aparecen en esta skill y en `assets/` son del
+**proyecto de referencia** (un asistente de IA con BD relacional + vectorial): son ejemplos de forma, no valores.
+Si `proyecto.yaml` no define un dato, preguntar al usuario; nunca copiar el valor del ejemplo.
+
 ## Hard Rules
 
 1. **Tono OBLIGATORIO en presente del indicativo**: "se diseña", "se crea", "se configura". Nunca pasado ("se diseñó", "se creó"). Nunca primera/segunda persona. **Acentuacion correcta SIEMPRE**: tildes donde corresponde ("se diseña", "código", "gestión", "útil"), prohibido escribir sin tildes ("se disena", "codigo"). Tabla de sustituciones pasado→presente y regla de tildes en `assets/patrones-redaccion.md`. Si una frase no puede reformularse en presente, recurrir a "Actualmente se ..." para rutinas ya implementadas.
 
-2. **Source of truth for subtitles**: `$VAULT/sources/marco-practico.md` seccion 3.4.X. Mapeo 1:1 estricto: Sprint 0 = 3.4.1, Sprint 1 = 3.4.2, ..., Sprint 6 = 3.4.7. Mapeo numerico completo (con doble nivel 3.4.X.Y) en `assets/subtitulos-por-sprint.md`.
+2. **Source of truth for subtitles**: el TG extraído (`sources/<slug>.md`), sección `entregables.seccion_desarrollo` de `proyecto.yaml`. Mapeo 1:1 estricto fase → subsección según `entregables.fases` (en el proyecto de referencia: Sprint 0 = 3.4.1, ..., Sprint 6 = 3.4.7). Ejemplo de mapeo numérico completo (doble nivel X.Y.Z) en `assets/subtitulos-por-sprint.md`.
 
-3. **Source of truth for code**: inspeccionar `$CODE_REPO/backend/` (migraciones Alembic, Qdrant migrations, entidades de dominio, routers FastAPI, tests) ANTES de escribir. Para mockups, inspeccionar además `$CODE_REPO/frontend/`, `$CODE_REPO/DESIGN.md`, `$CODE_REPO/frontend/src/index.css` y el CSS/componente de la pantalla. Nunca fabricar contenido no respaldado por codigo.
+3. **Source of truth for code**: inspeccionar `$CODE_REPO` (migraciones, entidades de dominio, rutas/controladores, tests; en el proyecto de referencia `backend/` con Alembic y FastAPI) ANTES de escribir. Para mockups, inspeccionar además `$CODE_REPO/frontend/`, `$CODE_REPO/DESIGN.md`, `$CODE_REPO/frontend/src/index.css` y el CSS/componente de la pantalla. Nunca fabricar contenido no respaldado por codigo.
 
-4. **Source of truth for theory**: antes de redactar y elegir herramientas, consultar `$VAULT/wiki/` (`uml-diagramas-teoria.md`, `der-teoria.md`, `arquitectura-easi-rag-teoria.md`) y `$VAULT/sources/marco-practico.md` (secciones 2.x y 3.x). La teoria se usa para DISENAR/ELABORAR el diagrama, pero **NUNCA se menciona en los parrafos introductorios** ni en los parrafos antes de cada Figura/Tabla (sin citas de autores, sin definiciones, sin historia del estandar). El cuerpo del Word describe SOLO el desarrollo concreto del sprint; la teoria queda en el marco teorico de la tesis.
+4. **Source of truth for theory**: antes de redactar y elegir herramientas, consultar `$VAULT/wiki/` (notas de teoría de UML, DER y de la arquitectura propia del proyecto) y `$VAULT/sources/marco-practico.md` (secciones 2.x y 3.x). La teoria se usa para DISENAR/ELABORAR el diagrama, pero **NUNCA se menciona en los parrafos introductorios** ni en los parrafos antes de cada Figura/Tabla (sin citas de autores, sin definiciones, sin historia del estandar). El cuerpo del Word describe SOLO el desarrollo concreto del sprint; la teoria queda en el marco teorico de la tesis.
 
-4bis. **Redaccion global (OBLIGATORIA)**: ver reglas completas en `assets/patrones-redaccion.md` seccion "Reglas de redaccion global". Resumen no negociable: - **Sin rutas de archivos**, **sin parentesis** (solo numeracion `3.4.X.Y`), **sin citas a Reglas de seguridad** (Regla 2/4/7 etc.). - **Sin guiones bajos en el cuerpo del Word**: prohibido mencionar nombres de variables, columnas o identificadores con guiones bajos (`expediente_id` -> "identificador del expediente", `created_at` -> "fecha de creacion", `POSTGRES_USER` -> "usuario de la base de datos", `chartdb_diagram.json` -> "el archivo de modelo fisico"). Esta regla aplica SOLO al cuerpo del Word y a los `.md` entregables. Las instrucciones operativas para el usuario (bloques `bash` con comandos) SI pueden llevar nombres tecnicos porque son comandos literales. - **Menos tecnicismo**: describir herramienta y accion, sin nombres de variables largos, siglas internas, flags HTTP ni nombres de indices. - **Sin** "sistema" / "aplicacion" / "app" (u otros equivalentes). Si hay que nombrar al producto, usar **"asistente"**. - **Sin ingles de mas**: preferir castellano (`login` -> `inicio de sesion`, `upload` -> `carga`). - **Tildes y ñ SIEMPRE** en los ENTREGABLES (`.md` y Word): `se diseña`, `código`, `diseño`, `señal`. El asset y el SKILL.md van sin tildes para legibilidad en terminal. - **Solo** `En la Figura N, se...` / `En la Tabla N, se...`. Prohibido `En la captura`, `En la imagen`.
+4bis. **Redaccion global (OBLIGATORIA)**: ver reglas completas en `assets/patrones-redaccion.md` seccion "Reglas de redaccion global". Resumen no negociable: - **Sin rutas de archivos**, **sin parentesis** (solo numeracion `3.4.X.Y`), **sin citas a Reglas de seguridad** (Regla 2/4/7 etc.). - **Sin guiones bajos en el cuerpo del Word**: prohibido mencionar nombres de variables, columnas o identificadores con guiones bajos (`expediente_id` -> "identificador del expediente", `created_at` -> "fecha de creacion", `POSTGRES_USER` -> "usuario de la base de datos", `chartdb_diagram.json` -> "el archivo de modelo fisico"). Esta regla aplica SOLO al cuerpo del Word y a los `.md` entregables. Las instrucciones operativas para el usuario (bloques `bash` con comandos) SI pueden llevar nombres tecnicos porque son comandos literales. - **Menos tecnicismo**: describir herramienta y accion, sin nombres de variables largos, siglas internas, flags HTTP ni nombres de indices. - Nombrar al producto **siempre** con `convenciones.producto` de `proyecto.yaml` (en el proyecto de referencia, "asistente"; prohibidos los sinónimos "sistema"/"aplicacion"/"app" si el TG fija otro). - **Sin ingles de mas**: preferir castellano (`login` -> `inicio de sesion`, `upload` -> `carga`). - **Tildes y ñ SIEMPRE** en los ENTREGABLES (`.md` y Word): `se diseña`, `código`, `diseño`, `señal`. El asset y el SKILL.md van sin tildes para legibilidad en terminal. - **Solo** `En la Figura N, se...` / `En la Tabla N, se...`. Prohibido `En la captura`, `En la imagen`.
 
 5. **Idempotency**: sobreescribir `.md`, diagramas y `.png` existentes. No crear `_v2` salvo pedido explicito del usuario. Modos 1 y 3 son ejecutables multiples veces sin generar duplicados.
 
@@ -41,9 +58,9 @@ Output en `$VAULT/sprints/sprint-X/`.
 
 7. **RG5 (no secrets)**: PNGs sin `.env`, tokens o datos sensibles. Redactar antes de commit.
 
-8. **Branches de commits**: vault commits van a `main` del vault repo; skill changes se commitean en la rama de trabajo actual de `asistente-legal` (confirmar con el usuario el destino). El `.docx` y `reference.docx` NUNCA se commitean (untracked).
+8. **Branches de commits**: vault commits van a `main` del vault repo; los cambios en el repo del codigo (`$CODE_REPO`) van en su rama de trabajo actual (confirmar con el usuario el destino). El `.docx` y `reference.docx` NUNCA se commitean (untracked).
 
-9. **Nota obligatoria**: TODA Figura y TODA Tabla individual debe terminar con un parrafo `Nota.` citando las fuentes exactas (ver `assets/notas-por-entregable.md`). Formato: `Nota. [descripcion]. Elaboracion propia con base en [Autor1 (Ano), Autor2 (Ano), ...], 2026.` Nunca omitir, nunca inventar.
+9. **Nota obligatoria**: TODA Figura y TODA Tabla individual debe terminar con un parrafo `Nota.` citando las fuentes exactas (ver `assets/notas-por-entregable.md`). Formato: `Nota. [descripcion]. Elaboracion propia con base en [Autor1 (Ano), Autor2 (Ano), ...], AÑO.` Nunca omitir, nunca inventar.
 
 10. **Patron de redaccion obligatorio — UN SOLO parrafo por entregable** (alineado al Word real de BACKUP TG): Toda Figura/Tabla sigue:
     (1) H1 `# 3.4.X.Y. [Titulo de seccion]` (subseccion)
@@ -63,7 +80,7 @@ Output en `$VAULT/sprints/sprint-X/`.
 
 14. **Sangria en Word**: CERO sangria, ni en cuerpo ni en celdas de tablas. `first_line_indent = Cm(0)`. Aplicado tanto en `reference.docx` como en post-procesamiento de tablas.
 
-15. **Colores MANTENER en diagramas UML (NO en DER)**: la paleta institucional del Tribunal Supremo Militar aplica SOLO a diagramas UML (PlantUML: componentes, casos de uso, actividades, secuencia).
+15. **Colores MANTENER en diagramas UML (NO en DER)**: la paleta institucional (`convenciones.paleta_uml` de `proyecto.yaml`: la de la institución del caso de estudio) aplica SOLO a diagramas UML (PlantUML: componentes, casos de uso, actividades, secuencia). Valores del proyecto de referencia (paleta ámbar), como ejemplo de qué rol lleva cada color:
 
 - **Caso de Uso**: actor `#FDE68A`/`#78350F`, usecase `#FFF7D6`/`#92400E`, rectangle `#FFFBEB`/`#92400E`.
 - **Actividades**: acción `#FFF7D6`/`#92400E`, decisión `#FDE68A`/`#78350F`, inicio/fin `#78350F`, flecha `#92400E`, swimlane `#92400E` grosor 2.
@@ -89,9 +106,9 @@ El DER conceptual (Graphviz `neato`) NO usa paleta: nodos con `fillcolor=white`,
     - El archivo completo `chartdb_diagram.json` (modelo E-R fisico de ChartDB)
     - Cualquier otro bloque de codigo fuente embebido en los `.md` (`.py`, `.sql`, `.ts`, etc.): los snippets de codigo de la Codificacion del Modulo van como Figura PNG (Silicon) en el cuerpo, pero si su codigo fuente se incluye como bloque, va en esta seccion final, nunca en el cuerpo.
 
-Excepcion unica: bloques ` ```bash ` con instrucciones para el usuario (ej. pasos ChartDB, pasos pgAdmin, pasos Qdrant) SI van en cuerpo del Word porque son instrucciones operativas para el lector.
+Excepcion unica: bloques ` ```bash ` con instrucciones para el usuario (ej. pasos ChartDB, pasos pgAdmin, pasos del panel de la BD vectorial) SI van en cuerpo del Word porque son instrucciones operativas para el lector.
 
-23. **Capturas propias del usuario** (Sprint 0 Figuras 47 ChartDB, 48 esquema BD relacional vía pgAdmin y 50 dashboard Qdrant): la skill NO las genera automáticamente, NO embebe placeholders 1x1 y NO inventa capturas. Si un PNG no existe al momento de ensamblar el Word, preguntar al usuario si se omite esa figura o si espera a subir la captura. Ver `assets/herramientas-diagramacion.md`.
+23. **Capturas propias del usuario** (en el proyecto de referencia, Sprint 0: modelo en ChartDB, esquema BD vía pgAdmin y panel de la BD vectorial): la skill NO las genera automáticamente, NO embebe placeholders 1x1 y NO inventa capturas. Si un PNG no existe al momento de ensamblar el Word, preguntar al usuario si se omite esa figura o si espera a subir la captura. Ver `assets/herramientas-diagramacion.md`.
 
 24. **Una Figura = una sola imagen**: cada captura de pantalla, mockup o script de codigo es una **Figura independiente** con su propio numero, su propio titulo y su propia `Nota.`. Cero sufijos `a/b/c`. Prohibido `Figura x.y`, `Captura 53a` o agrupar varias imagenes bajo un mismo numero de Figura. Si un entregable genera N imagenes, cada una recibe su propio `## Figura N:`.
 
@@ -133,15 +150,15 @@ Excepcion unica: bloques ` ```bash ` con instrucciones para el usuario (ej. paso
     - Las tablas finales que consolidan datos de sprints deben llevar una nota de verificacion: `Verificado contra sprints S1-S6, <fecha>`.
     - Nunca copiar datos congelados de un sprint a una tabla final sin registrar la dependencia.
 
-42. **Arquitectura RAG visible en los sprints (OBLIGATORIO)**: el hilo conductor del marco practico es el desarrollo de la arquitectura RAG del asistente. Cada sprint debe mostrar su aporte concreto a esa arquitectura segun el codigo real (`$CODE_REPO/backend/`): Sprint 0 = infraestructura de datos (relacional + vectorial) que sostiene el RAG; Sprint 2 = ingesta, segmentacion e indexacion del corpus (la "R" de retrieval); Sprint 3 = recuperacion hibrida con `PipelineRAG` y `HybridSearcher` y reordenamiento por relevancia con el reranker (cross-encoder); Sprint 5 = contexto y trazabilidad con `ExpansorJerarquico` y `EvaluadorVisibilidad`; Sprint 6 = generacion con `ResolvedorPlantillas` y el cliente del modelo de lenguaje. La redaccion de cada sprint conecta su entregable con la pieza del RAG que construye, en lenguaje llano y sin repetir el marco teorico. Si un sprint no aporta a una fase RAG (ej. Sprint 1 auth, Sprint 4 expedientes), se describe como habilitador de las fases siguientes.
+42. **Hilo conductor visible en cada fase (OBLIGATORIO)**: el marco práctico cuenta la construcción de `convenciones.hilo_conductor` (en el proyecto de referencia, la arquitectura RAG: S0 infraestructura de datos, S2 ingesta e indexación, S3 recuperación híbrida y reordenamiento, S5 contexto y trazabilidad, S6 generación). Cada fase muestra su aporte concreto a ese eje según el código real, en lenguaje llano y sin repetir el marco teórico. Una fase que no aporta directamente (p. ej. autenticación) se describe como habilitadora de las siguientes.
 
-42bis. **Sistema descrito en su estado actual (OBLIGATORIO)**: al redactar cualquier entregable, describir el asistente como funciona HOY segun `$CODE_REPO/backend/`. El pipeline RAG se describe con sus fases operativas: clasificacion del tipo de respuesta, busqueda hibrida, **reordenamiento por relevancia (el reranker funciona como tal: reordena los candidatos con un modelo de lenguaje cruzado)** y expansion jerarquica. PROHIBIDO describir el reranker como "desactivado", "deshabilitado", "degradado" o "en fallback": el reranker es una fase operativa del pipeline y se redacta como tal, de forma consistente con el Word real (Sprint 3). Tampoco se mencionan circuit breakers, timeouts ni mecanismos de degradacion internos en el cuerpo del Word.
+42bis. **Sistema descrito en su estado actual (OBLIGATORIO)**: describir el producto como funciona HOY según `$CODE_REPO`, con las fases operativas que el TG nombra. Un componente que el TG presenta como operativo no se redacta como "desactivado", "degradado" o "en fallback"; tampoco se mencionan mecanismos internos de degradación (circuit breakers, timeouts) en el cuerpo del Word.
 
-42ter. **Fecha de ejecucion en tablas de pruebas (OBLIGATORIO)**: cada tabla de Pruebas Unitarias y de Pruebas de Integracion lleva un texto de fecha justo debajo de su titulo H2 y arriba de la tabla, como texto aparte. La fecha es la del **Dia 5** de la planificacion del sprint (ultimo dia habil; el dia de pruebas), formato ISO: `Fecha de ejecucion: 2026-06-19.` Las fechas por sprint salen de `assets/calendario-sprints.md` (S1: 06-19, S2: 06-26, S3: 07-03, S4: 07-10, S5: 07-31, S6: 08-07, todas de 2026).
+42ter. **Fecha de ejecucion en tablas de pruebas (OBLIGATORIO)**: cada tabla de Pruebas Unitarias y de Pruebas de Integracion lleva un texto de fecha justo debajo de su titulo H2 y arriba de la tabla, como texto aparte. La fecha es la del **Dia 5** de la planificacion del sprint (ultimo dia habil; el dia de pruebas), formato ISO: `Fecha de ejecucion: 2026-06-19.` Las fechas por fase salen de `entregables.calendario` de `proyecto.yaml` (ejemplo de formato en `assets/calendario-sprints.md`).
 
 43. **Fluidez entre sprints (modo aparte, solo a pedido)**: la revision de fluidez transversal NO es parte del flujo normal por sprint. Se activa SOLO cuando el usuario pide "revisa la redaccion en relacion a todos los sprints" o "que fluya el relato de S0 a S6". En ese modo: leer todos los `.md` de los sprints en orden, verificar continuidad narrativa S0→S6, que cada sprint enganche con el siguiente, que no se repita teoria del marco teorico y que no haya descripciones duplicadas entre sprints (ej. describir la segmentacion en S2 y volver a explicarla en S3). Entregar propuestas de ajuste puntual por sprint. No modificar artefactos visuales (mockups, diagramas) salvo pedido explicito.
 
-44. **Terminologia de la unidad indexable (OBLIGATORIO)**: en todo texto de entregable, figura, nota y diagrama la unidad indexable se dice SIEMPRE "segmento" (asi lo usan el Word, las tablas de planificacion y las TU: "segmentar", "segmentos indexables", "consultar segmentos"). "Fragmento" es el nombre de la entidad interna del codigo (Postgres/Qdrant) y queda PROHIBIDO en textos de nodos, mensajes, ramas, titulos y notas de diagramas y .md entregables. Igual la unidad documental procesal: se dice SIEMPRE "obrado" (como el cuerpo del Word); "obra(s)" (entidad del codigo) prohibida en los mismos textos. Gate: `grep -icE "fragment" sprints/sprint-N/diagramas/*.puml` y `grep -iwE "obra|obras" sprints/sprint-N/diagramas/*.puml` deben devolver 0 antes de cerrar el sprint (exencion: diagramas de arquitectura del capitulo 3.3 / sprint 0).
+44. **Terminologia del documento, no del codigo (OBLIGATORIO)**: cada par de `convenciones.terminologia` (`termino_codigo: termino_documento`) se respeta en todo texto de entregable, figura, nota y diagrama: el término del código queda prohibido ahí. Ejemplo del proyecto de referencia: la unidad indexable es "segmento" (no "fragmento", que es la entidad interna). Gate por fase: `grep -icwE "<termino_codigo>" sprints/sprint-N/diagramas/*.puml` debe dar 0 por cada par antes de cerrar la fase (exención: diagramas de arquitectura del capítulo de diseño).
 
 45. **Analisis de conceptos usados por sprint (cierre, con la skill asistente-trabajo-de-grado)**: al terminar una pasada de entregables (o a pedido del usuario), invocar la skill `asistente-trabajo-de-grado` (`$SKILLS/asistente-trabajo-de-grado/SKILL.md`) en su modo auditoria para mapear QUE conceptos del marco teorico se usaron en el desarrollo de cada sprint. Entregar una tabla `concepto del marco teorico → sprint(es) → donde se materializa en el codigo/entregable`. Esto detecta conceptos teoricos sin uso practico (gap) y desarrollo sin fundamento teorico. No se redacta dentro del Word; es un insumo de coherencia que se entrega en el chat y se registra en `sources/_zotero/auditorias/`.
 
@@ -206,7 +223,7 @@ Tabla completa y justificacion en `assets/herramientas-diagramacion.md`.
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | DER conceptual (Sprint 0)                  | Generar `.dot` con `graph ER` + `layout=neato` + `overlap=prism` + `K=1` + `splines=true` + aristas `--` (no dirigidas). Notacion Chen: `shape=box` entidades, `shape=diamond` relaciones, `shape=ellipse` atributos. **Convencion**: TODO en minuscula `snake_case`; rombos con un solo verbo en minuscula como label (ej. `abre`, `posee`), sin sufijo ni multilinea; identificadores de nodo pueden ser desambiguadores (`adjunta_msg`, `contiene_norma`) pero el `[label="..."]` es un verbo unico. Sin paleta multiple (solo `fillcolor=white` o `color=lightgrey` en rombos). Renderizar: `neato -Tpng archivo.dot -o archivo.png`. Si hay cruces o queda muy abierto, ajustar `K` (global, repulsion) y `len` (por arista o global, longitud) manualmente y re-renderizar. Generar DESPUES del modelo fisico (Hard Rule 20). Ver `wiki/der-teoria.md` para teoria Chen y `assets/herramientas-diagramacion.md` para tabla completa de parametros `neato` afinables. |
 | Modelo relacional fisico (Sprint 0)        | Generar `sprints/sprint-0/assets/chartdb_diagram.json` leyendo migraciones Alembic. La skill entrega pasos al usuario para abrir ChartDB en navegador e importar el JSON. NO se automatiza export PNG. Generar PRIMERO (Hard Rule 20).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| UML (component/usecase/activity/sequence)  | Generar `.puml` con sintaxis PlantUML correcta (UML 2.5.1: `actor` para usuarios externos, `interface` con lollipop, `database` para PG/Qdrant, `package` para agrupar). **Obligatorio**: `skinparam linetype ortho` (Hard Rule 17), `skinparam defaultFontName "Georgia"` y `skinparam defaultFontColor #4A3B1F` (Hard Rule 19), paleta ámbar institucional (Hard Rule 15), actores fuera del `package`/`rectangle` (Hard Rule 18), swimlane `                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Asistente | `(Hard Rule 20), máx 10 nodos actividades (Hard Rule 21). Renderizar:`plantuml -tpng archivo.puml`. Ver `wiki/uml-diagramas-teoria.md`para teoria UML 2.5.1 y`assets/plantillas-puml.md`para plantillas canonicas. **Excepcion Casos de Uso Expandido**: si el usuario pide "con draw.io", usar`assets/plantilla-drawio-caso-uso.md`(XML draw.io con la MISMA paleta ambar y Georgia; actores como`umlActor`fuera del container;`edgeStyle=orthogonalEdgeStyle`; export PNG con `drawio --export`). El usuario elige la herramienta; por defecto sigue siendo PlantUML. **Post-generacion obligatoria**: guardar el `.drawio`, exportar el PNG con sufijo `-drawio`(nunca pisa el del`.puml`) y abrir el editor (`$LOCAL_BIN/drawio <archivo>.drawio >/dev/null 2>&1 & disown`) para ajuste directo del usuario. GATE DE ADOPCION: el `.md`y el Word solo se actualizan con confirmacion explicita del usuario (ese cambio en el`.md`al PNG`-drawio` marca la fase adoptada); despues, todo cambio detectado (`[ <archivo>.drawio -nt <archivo>-drawio.png ]`) re-exporta el PNG Y reensambla el Word del sprint automaticamente, sin preguntar. |
+| UML (component/usecase/activity/sequence)  | Generar `.puml` con sintaxis PlantUML correcta (UML 2.5.1: `actor` para usuarios externos, `interface` con lollipop, `database` para cada almacén de datos, `package` para agrupar). **Obligatorio**: `skinparam linetype ortho` (Hard Rule 17), `skinparam defaultFontName "Georgia"` y `skinparam defaultFontColor #4A3B1F` (Hard Rule 19), paleta institucional de `proyecto.yaml` (Hard Rule 15), actores fuera del `package`/`rectangle` (Hard Rule 18), swimlane `                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Asistente | `(Hard Rule 20), máx 10 nodos actividades (Hard Rule 21). Renderizar:`plantuml -tpng archivo.puml`. Ver `wiki/uml-diagramas-teoria.md`para teoria UML 2.5.1 y`assets/plantillas-puml.md`para plantillas canonicas. **Excepcion Casos de Uso Expandido**: si el usuario pide "con draw.io", usar`assets/plantilla-drawio-caso-uso.md`(XML draw.io con la MISMA paleta ambar y Georgia; actores como`umlActor`fuera del container;`edgeStyle=orthogonalEdgeStyle`; export PNG con `drawio --export`). El usuario elige la herramienta; por defecto sigue siendo PlantUML. **Post-generacion obligatoria**: guardar el `.drawio`, exportar el PNG con sufijo `-drawio`(nunca pisa el del`.puml`) y abrir el editor (`$LOCAL_BIN/drawio <archivo>.drawio >/dev/null 2>&1 & disown`) para ajuste directo del usuario. GATE DE ADOPCION: el `.md`y el Word solo se actualizan con confirmacion explicita del usuario (ese cambio en el`.md`al PNG`-drawio` marca la fase adoptada); despues, todo cambio detectado (`[ <archivo>.drawio -nt <archivo>-drawio.png ]`) re-exporta el PNG Y reensambla el Word del sprint automaticamente, sin preguntar. |
 | Captura de codigo (S1-S6 Codificacion)     | `sed -n 'START,ENDp' archivo.py > /tmp/snippet.py` luego `silicon /tmp/snippet.py -o snippet.png --language python --theme "GitHub" --background "#FFFFFF" --no-window-controls --pad-horiz 20 --pad-vert 20`. Fondo blanco obligatorio, prohibido temas oscuros. Cada snippet = una Figura independiente con titulo `Figura N: Script de ...`. Sin rutas/parentesis/Reglas en el parrafo intro.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Captura propia pendiente (pgAdmin, Qdrant) | NO generar placeholder. Preguntar al usuario: omitir, placeholder 1x1, o esperar a que suba. Ver Hard Rule 17.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Tabla Scrum                                | Plantilla exacta de `assets/plantillas-tablas.md`. 10pt via `TableCompact` en post-procesamiento.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -216,8 +233,8 @@ Tabla completa y justificacion en `assets/herramientas-diagramacion.md`.
 
 ### Paso 1: Verify scope y tooling
 
-- Leer `marco-practico.md` seccion 3.4.X (segun sprint pedido)
-- Leer teoria: `wiki/der-teoria.md` (DER), `wiki/uml-diagramas-teoria.md` (UML), `wiki/arquitectura-easi-rag-teoria.md` (RAG)
+- Leer `$VAULT/proyecto.yaml` y la subsección de la fase pedida en el TG extraído
+- Leer teoria: notas de DER, UML y de la arquitectura propia en `wiki/`
 - Inspeccionar backend segun `assets/mapa-entregables.md` para el sprint pedido
 - Si hay mockups seleccionados, inspeccionar `assets/patrones-mockups.md`, `$CODE_REPO/DESIGN.md`, `$CODE_REPO/frontend/src/index.css` y el CSS/componente de cada pantalla
 - Verificar herramientas instaladas:
@@ -334,7 +351,7 @@ Tu modelo entidad-relacion esta en el archivo de modelo fisico. Para abrirlo y e
 2. Abrir http://localhost:8080 en el navegador
 3. Click en "Import from File"
 4. Seleccionar sprints/sprint-0/assets/chartdb_diagram.json
-5. ChartDB renderiza el modelo con 19 tablas de dominio y 36 relaciones
+5. ChartDB renderiza el modelo con las tablas y relaciones del dominio
 6. Para reordenar visualmente: arrastrar las tablas (drag & drop)
 7. Para guardar el layout: Export -> Download JSON -> sobrescribe el archivo original
 ```
@@ -344,12 +361,12 @@ Tu modelo entidad-relacion esta en el archivo de modelo fisico. Para abrirlo y e
 ```
 Tu esquema relacional esta en la base de datos real. Para verlo y capturarlo:
 1. Levantar pgAdmin 4 en Docker (misma red que postgres):
-   docker run -d --name pgadmin --network asistente-legal_default -p 5050:80 \
+   docker run -d --name pgadmin --network <convenciones.contenedores.red> -p 5050:80 \
      -e PGADMIN_DEFAULT_EMAIL=admin@local.com -e PGADMIN_DEFAULT_PASSWORD=admin \
      dpage/pgadmin4
 2. Abrir http://localhost:5050 -> login: admin@local.com / admin
 3. Create Server -> Connection:
-   - Host: asistente-legal-postgres-1
+   - Host: <convenciones.contenedores.postgres>
    - Port: 5432
    - Database: (nombre de la BD, leer de .env)
    - Username: (leer de .env)
@@ -359,7 +376,7 @@ Tu esquema relacional esta en la base de datos real. Para verlo y capturarlo:
 6. File -> Export -> Image (PNG) -> guarda como sprints/sprint-0/capturas/esquema-bd-relacional.png
 ```
 
-**Bloque 3: Colecciones de la Base de Datos Vectorial (Qdrant)**
+**Bloque 3 (solo si el proyecto usa BD vectorial; ejemplo con Qdrant): Colecciones de la Base de Datos Vectorial**
 
 ```
 Tus colecciones vectoriales estan en Qdrant. Para verlas:
@@ -416,26 +433,24 @@ Return:
 - Archivos `.md` creados/modificados (ruta completa del vault)
 - Archivos `.png` generados (ruta + herramienta usada)
 - Comando Pandoc ejecutado y ruta completa del `.docx`
-- Capturas propias pendientes (Figuras 47 ChartDB, 48 PostgreSQL y 50 Qdrant si Sprint 0)
+- Capturas propias pendientes (las que el usuario saca a mano)
 - Commits realizados (vault + skill) con hash
 - ID de `mem_save` en Engram
 
 ## References
 
-- `$VAULT/sources/marco-practico.md` — plan de desarrollo de la tesis, seccion 3.4.X por sprint
-- `$VAULT/wiki/uml-diagramas-teoria.md` — teoria UML 2.5.1 componentes
-- `$VAULT/wiki/der-teoria.md` — teoria DER notacion Chen
-- `$VAULT/wiki/arquitectura-easi-rag-teoria.md` — teoria arquitectura RAG
-- `assets/subtitulos-por-sprint.md` — mapeo numerico 1:1 por sprint (7 sprints, doble nivel 3.4.X.Y)
+- `$VAULT/proyecto.yaml` — fases, calendario, producto, hilo conductor, terminologia, paleta
+- `$VAULT/sources/<slug>.md` — el TG extraído, subsección de cada fase
+- `assets/subtitulos-por-sprint.md` — ejemplo de mapeo numérico 1:1 por fase (proyecto de referencia)
 - `assets/plantillas-tablas.md` — 7 plantillas de tablas Scrum con columnas y citas exactas
 - `assets/patrones-redaccion.md` — formula del patron intro+Figura/Tabla+Nota, tabla pasado→presente, capitalizacion, verbos permitidos para casos de uso
 - `assets/plantillas-puml.md` — plantillas canónicas PlantUML (caso de uso, actividades, secuencia) con paleta institucional, tipografía Georgia y linetype ortho
-- `assets/calendario-sprints.md` — fechas Sprint 1-6 (L-V, 5 dias habiles)
-- `assets/notas-por-entregable.md` — mapping Figura/Tabla → cita exacta por sprint
+- `assets/calendario-sprints.md` — ejemplo de calendario (L-V, 5 dias habiles)
+- `assets/notas-por-entregable.md` — ejemplo de mapping Figura/Tabla → cita exacta por sprint
 - `assets/herramientas-diagramacion.md` — que herramienta usar para cada tipo de diagrama, pasos ChartDB visor, capturas propias psql/Qdrant
 - `assets/patrones-regeneracion.md` — 3 modos (generar, regenerar-total, regenerar-selectivo) + checkpoints ligeros
-- `assets/mapa-entregables.md` — tabla Figura/Tabla → archivos + herramienta por sprint
-- `$CODE_REPO/AGENTS.md` — reglas del proyecto (Conventional Commits, RG1-RG10, branching)
+- `assets/mapa-entregables.md` — ejemplo de tabla Figura/Tabla → archivos + herramienta por sprint (el real va en `proyecto.yaml`)
+- `$CODE_REPO/AGENTS.md` — reglas del repo del codigo, si existen
 
 Base directory for this skill: $SKILLS/generar-entregables-tesis
 Relative paths in this skill (e.g. `assets/`, scripts) are relative to this base directory.

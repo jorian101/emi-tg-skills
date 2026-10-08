@@ -1,10 +1,10 @@
-# Modelo de TV.yaml (rutas relativas al yaml). Neutro: cambiar títulos y archivos.
+# Modelo de TV.yaml (rutas relativas al yaml). Neutro: un video por caso de uso principal del TG,
+# en el orden de la demostración; luego los diagramas animados.
 titulo: Respaldo de la demostración
 items:
-  - {tecla: "0", titulo: "Ruta crítica en el asistente", archivo: imagenes/ruta.png}
-  - {tecla: "1", titulo: "Consulta simple", archivo: videos/01-consulta-simple.mp4}
-  - {tecla: "2", titulo: "Borrador en grado de consulta", archivo: videos/02-grado-de-consulta.mp4}
-  - {tecla: "3", titulo: "Borrador en grado de apelación, edición y aprobación", archivo: videos/03-grado-de-apelacion.mp4}
+  - {tecla: "0", titulo: "Ruta crítica", archivo: imagenes/ruta.png}
+  - {tecla: "1", titulo: "Caso de uso principal 1", archivo: videos/01-caso-1.mp4}
+  - {tecla: "2", titulo: "Caso de uso principal 2", archivo: videos/02-caso-2.mp4}
+  - {tecla: "3", titulo: "Caso de uso principal 3", archivo: videos/03-caso-3.mp4}
   - {tecla: "4", titulo: "Arquitectura (diagrama animado)", archivo: videos/04-arquitectura.mp4}
-  - {tecla: "5", titulo: "Ingesta (diagrama animado)", archivo: videos/05-ingesta.mp4}
-  - {tecla: "6", titulo: "Recuperación y generación (diagrama animado)", archivo: videos/06-recuperacion.mp4}
+  - {tecla: "5", titulo: "Flujo principal (diagrama animado)", archivo: videos/05-flujo.mp4}

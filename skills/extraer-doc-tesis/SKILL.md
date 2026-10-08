@@ -3,7 +3,7 @@ name: extraer-doc-tesis
 description: "Trigger: extraé, convertí o actualizá un documento Word/PDF de la tesis. Genera Markdown navegable, HTML legible, tablas, índices, imágenes, detección de citas y trazabilidad de fuentes en el vault."
 license: MIT
 metadata:
-  author: asistente-legal
+  author: emi-tg-skills
   version: "3.0"
 ---
 

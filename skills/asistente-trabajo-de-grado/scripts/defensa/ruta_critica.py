@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Ruta crítica en Excalidraw: carriles por rol, una columna por tarea en orden, y debajo de cada tarea
-cómo la asiste el asistente. Todo sale de ruta-critica.yaml (que cita sus fuentes del TG).
+"""Ruta crítica en Excalidraw (motor de carriles, LEGADO: el principal es diagrama_flujo.py): carriles por
+rol, una columna por tarea en orden, y debajo de cada tarea cómo la asiste el producto del TG. Todo sale de ruta-critica.yaml (que cita sus fuentes del TG).
 
 Uso:
   uv run --with pyyaml --with pillow --with cairosvg python ruta_critica.py crear     <spec.yaml>  # .excalidraw
@@ -25,7 +25,7 @@ AQUI = SPEC.parent
 COLOR = {  # trazo, relleno, rótulo del tipo de tarea
     "analisis": ("#1971c2", "#e7f0fb", "ANÁLISIS"),
     "redaccion": ("#2f9e44", "#ebf7ee", "REDACCIÓN"),
-    "fuera": ("#868e96", "#f1f3f5", "FUERA DEL ASISTENTE"),
+    "fuera": ("#868e96", "#f1f3f5", "FUERA DEL {PRODUCTO}"),
     "total": ("#032154", "#e9ecef", ""),
 }
 ASISTE = ("#6741d9", "#f3f0ff")
@@ -59,6 +59,7 @@ def crear() -> Path:
     for i, t in enumerate(tareas):
         x = IZQ + i * (COL_W + GAP)
         trazo, relleno, rot = COLOR[t["tipo"]]
+        rot = rot.replace("{PRODUCTO}", sp.get("producto", "sistema").upper())
         if t["carril"] == "ambos":
             y0 = y_carril[sp["carriles"][0]] + PAD
             alto = y_carril[sp["carriles"][-1]] + alto_carril - PAD - y0
@@ -101,7 +102,9 @@ def crear() -> Path:
         c = da._texto(x + 20, y + 22, ancho - 40, r["cifra"], 52, trazo, True)
         els += [c, da._texto(x + 20, c["y"] + c["height"] + 8, ancho - 40, r["rotulo"], 30, da.AZUL_OSCURO)]
     y += 200
-    ley = "Rojo: camino crítico (orden de las tareas). Azul: análisis. Verde: redacción. Gris: fuera del asistente. Violeta: cómo asiste el asistente."
+    prod = sp.get("producto", "sistema")  # cómo nombra el TG a su producto
+    ley = (f"Rojo: camino crítico (orden de las tareas). Azul: análisis. Verde: redacción. Gris: fuera del {prod}. "
+           f"Violeta: cómo asiste el {prod}.")
     e_ley = da._texto(40, y, W - 80, ley, 30, da.AZUL_OSCURO, True)
     e_nota = da._texto(40, e_ley["y"] + e_ley["height"] + 12, W - 80, sp["nota"], 28, da.GRIS)
     els += [e_ley, e_nota]

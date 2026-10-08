@@ -54,6 +54,6 @@ Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scr
 - **Guion y notas en tercera persona**, con frases tomadas del documento.
 
 - Solo lo que el documento declara. Lo que no se midió se rotula «siguiente medición» o «de ejemplo»; nunca una cifra inventada.
-- Misma terminología que el documento y orden obligatorio del corpus jurídico (ver memoria del proyecto) cuando se nombran las fuentes.
+- Misma terminología que el documento y, cuando se nombran fuentes o componentes, el mismo orden que fija el documento.
 - Causa y efecto: si un revisor pide ver la causa, la diapositiva muestra lo medido (efecto, calidad de lo citado, juicio de expertos) y dice
   cuál es la medición pendiente; no la presenta como hecha.

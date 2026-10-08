@@ -31,7 +31,7 @@ DEMO_USUARIO_OPERADOR=… DEMO_CLAVE=… \
 - Toda operación con modal se cierra al terminar (Cancelar / Cerrar o Escape).
 - **Material para la institución:** cuentas reales del sistema, nunca cuentas de prueba (sus nombres
   delatan un entorno de pruebas). Si no se conoce la clave, **se pregunta al autor**; no se cambia.
-- Nada con expedientes o datos sensibles se envía a servicios externos durante las capturas.
+- Nada con datos reales de la institución o sensibles se envía a servicios externos durante las capturas.
 
 ## Navegador
 
