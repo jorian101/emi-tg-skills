@@ -27,7 +27,6 @@ def ruta_de_env(nombre: str, ayuda: str) -> Path:
     return Path(os.path.expanduser(valor))
 from xml.etree import ElementTree
 
-BACKUP = ruta_de_env("CORPUS", "Carpeta de tus documentos fuente.") / "BACKUP TG"
 VAULT = ruta_de_env("VAULT", "Raíz de tu vault (datos).") / "sources"
 NS = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
 
@@ -185,15 +184,17 @@ def extraction_state(slug: str, source: Path, report: dict[str, object]) -> dict
 
 
 def extract(filename: str, force: bool = False) -> dict[str, object]:
-    if filename.startswith("~") or "~WRL" in filename:
+    if Path(filename).name.startswith("~") or "~WRL" in filename:
         raise ValueError("No se permiten locks ni temporales de Word")
-    source = BACKUP / filename
+    source = Path(os.path.expanduser(filename))  # ruta directa al .docx (lo que pasa install.sh --docx)
+    if not source.is_file():  # nombre suelto: se busca en la carpeta de respaldo del corpus
+        source = ruta_de_env("CORPUS", "Carpeta de tus documentos fuente.") / "BACKUP TG" / filename
     if not source.is_file():
         raise FileNotFoundError(source)
     if source.suffix.lower() != ".docx":
         raise ValueError("La versión 2 del extractor rápido requiere un DOCX")
 
-    slug = slugify(filename)
+    slug = slugify(source.name)
     VAULT.mkdir(parents=True, exist_ok=True)
     destination = VAULT / f"{slug}.md"
     html_destination = VAULT / f"{slug}.html"
@@ -218,7 +219,7 @@ def extract(filename: str, force: bool = False) -> dict[str, object]:
         md_text = normalize_markdown(markdown.read_text(encoding="utf-8"))
         html_text = html.read_text(encoding="utf-8").replace("media/media/", "media/")
         report = validate(md_text, html_text, expected)
-        report.update({"source": filename, "slug": slug, "tool": "pandoc"})
+        report.update({"source": source.name, "slug": slug, "tool": "pandoc"})
         citations = detect_bibliography(md_text)
         report["citations"] = len(citations)
         if report["contains_data_uri"] or not md_text.strip():
@@ -237,7 +238,7 @@ def extract(filename: str, force: bool = False) -> dict[str, object]:
         fuentes_destination = VAULT / "_zotero" / "fuentes-por-documento" / f"{slug}.fuentes.json"
         fuentes_destination.parent.mkdir(parents=True, exist_ok=True)
         fuentes_destination.write_text(
-            json.dumps({"slug": slug, "source": filename, "citations": citations}, ensure_ascii=False, indent=2) + "\n",
+            json.dumps({"slug": slug, "source": source.name, "citations": citations}, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
     return report

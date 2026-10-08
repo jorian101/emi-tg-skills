@@ -4,9 +4,11 @@
 # Idempotente: nunca sobrescribe un archivo que ya exista. Si ya está todo, no hace nada.
 #
 # Uso:
-#   ./install.sh --destino ~/mi-vault     # crea el vault e instala
-#   ./install.sh --check                  # solo verifica, no escribe nada
-#   ./install.sh                          # usa el vault de config.local.md si existe
+#   ./install.sh --destino ~/mi-vault                      # crea el vault e instala
+#   ./install.sh --destino ~/mi-vault --docx ~/TG.docx     # además extrae tu TG y arma proyecto.yaml
+#   ./install.sh --destino ~/mi-vault --docentes-desde ~/otro-vault   # trae perfiles de docentes ya armados
+#   ./install.sh --check                                   # solo verifica, no escribe nada
+#   ./install.sh                                           # usa el vault de config.local.md si existe
 set -uo pipefail
 
 REPO="$(cd "$(dirname "$0")" && pwd)"
@@ -15,16 +17,20 @@ ALIAS="$HOME/.local/share/tg-skills"
 AGENTE_DEFAULT="$HOME/.agents/skills"
 
 DESTINO=""
+DOCX=""
+DOCENTES_DESDE=""
 CHECK=0
 AGENTES=("$AGENTE_DEFAULT")
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --destino) DESTINO="${2:-}"; shift 2 ;;
+    --docx)    DOCX="${2:-}"; shift 2 ;;
+    --docentes-desde) DOCENTES_DESDE="${2:-}"; shift 2 ;;
     --check)   CHECK=1; shift ;;
     --agentes) AGENTES+=("${2:-}"); shift 2 ;;
     -h|--help)
-      sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'
+      sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
       exit 0 ;;
     *) echo "Opción desconocida: $1 (usá --help)"; exit 2 ;;
   esac
@@ -131,6 +137,46 @@ for n in 1 2; do
   fi
 done
 
+# Carpeta de la defensa: config y plantillas (antes eran pasos manuales de references/defensa/flujo.md).
+D="sources/_propuestas/DEFENSA"
+copiar_asset "$A/defensa/defensa.example.json"           "$D/defensa.json"
+copiar_asset "$A/defensa/correcciones-tg.plantilla.md"   "$D/CORRECCIONES-TG/correcciones-tg.md"
+copiar_asset "$A/defensa/pendientes-defensa.plantilla.md" "$D/PENDIENTES-DEFENSA.md"
+
+# Perfiles de docentes de otro vault (mismo cuerpo docente, otro estudiante). Nunca pisa los propios.
+if [ -n "$DOCENTES_DESDE" ]; then
+  for f in "$DOCENTES_DESDE"/wiki/docentes/*.md; do
+    case "$(basename "$f")" in _*|jerarquia-autoridad.md) continue ;; esac
+    copiar_asset "$f" "wiki/docentes/$(basename "$f")"
+  done
+  warn "agregá cada docente traído al catálogo wiki/docentes/_moc-docentes.md; sus enlaces a notas"
+  warn "del otro vault quedan rotos hasta que los traigas o los quites (verificar-enlaces los lista)"
+fi
+
+# ---------------------------------------------------------------- tu trabajo de grado
+if [ -n "$DOCX" ]; then
+  echo
+  echo "== tu trabajo de grado =="
+  DOCX="$(cd "$(dirname "$DOCX")" && pwd)/$(basename "$DOCX")"
+  if [ ! -f "$DOCX" ]; then
+    err "no existe $DOCX"
+  elif VAULT="$DESTINO" python3 "$SKILLS_REPO/extraer-doc-tesis/scripts/extract_document.py" "$DOCX" >/dev/null; then
+    SLUG="$(python3 -c 'import sys,re,unicodedata as u; s=u.normalize("NFKD",sys.argv[1]).encode("ascii","ignore").decode().lower(); print(re.sub(r"-+","-",re.sub(r"[^a-z0-9]+","-",s)).strip("-"))' "$(basename "${DOCX%.*}")")"
+    ok "extraído en sources/$SLUG.md"
+    if [ -e "$DESTINO/proyecto.yaml" ]; then skip "proyecto.yaml"; else
+      python3 "$REPO/scripts/inicializar_desde_tg.py" "$DESTINO" "$SLUG" || err "inicializar_desde_tg.py"
+    fi
+    # La tabla del documento maestro en ORDEN-DEL-VAULT.md deja de tener placeholders.
+    sed -i -e "s|<ruta al .docx vivo de tu trabajo>|$DOCX|" -e "s|sources/<slug>\.|sources/$SLUG.|g" "$DESTINO/ORDEN-DEL-VAULT.md"
+    sed -i "s|\$TG_DOCX|$DOCX|" "$DESTINO/$D/defensa.json"
+    # El TG extraído cuelga del hub raíz (si no, verificar-enlaces lo da por huérfano).
+    grep -q "\[\[sources/$SLUG\]\]" "$DESTINO/index.md" || \
+      sed -i "s|^## Datos$|## Datos\n\n- [[sources/$SLUG]] — tu trabajo de grado extraído (no se edita: se re-extrae)|" "$DESTINO/index.md"
+  else
+    err "no pude extraer $DOCX (¿falta pandoc?)"
+  fi
+fi
+
 # ---------------------------------------------------------------- config del motor
 echo
 echo "== config del motor =="
@@ -144,8 +190,14 @@ else
   ok "skills/perfil-revisor-tg/config.md (con tu ruta)"
   warn "completá 'estudiante:' y 'evaluadores:' en ese archivo"
 fi
-if [ ! -f "$REPO/.env.local" ]; then
-  warn "creá $REPO/.env.local desde .env.example (rutas de los scripts)"
+if [ -f "$REPO/.env.local" ]; then
+  skip ".env.local"
+else
+  sed -e "s|^VAULT=.*|VAULT=\"$DESTINO\"|" -e "s|^SKILLS=.*|SKILLS=\"$SKILLS_REPO\"|" "$REPO/.env.example" > "$REPO/.env.local"
+  if [ -n "$DOCX" ]; then
+    sed -i -e "s|^CORPUS=.*|CORPUS=\"$(dirname "$DOCX")\"|" -e "s|^TG_DOCX=.*|TG_DOCX=\"$DOCX\"|" "$REPO/.env.local"
+  fi
+  ok ".env.local (VAULT, SKILLS$([ -n "$DOCX" ] && echo ", CORPUS, TG_DOCX")); revisá el resto"
 fi
 
 # ---------------------------------------------------------------- agentes
@@ -183,6 +235,8 @@ if [ "$FALLAS" -eq 0 ]; then
   cat <<FIN
 
 Listo. Próximos pasos:
+  0. Pedile a tu agente: "inicializá el vault desde mi TG" (modo inicializar de
+     asistente-trabajo-de-grado): completa proyecto.yaml y los modelos de la defensa citando tu TG.
   1. Completá skills/perfil-revisor-tg/config.md (estudiante + evaluadores).
   2. Completá el perfil de tus evaluadores en $DESTINO/wiki/revisores/.
   3. Si tenés informes: ponelos en una carpeta por docente, exportá INFORMES y corré

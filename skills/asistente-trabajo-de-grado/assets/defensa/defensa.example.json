@@ -1,7 +1,7 @@
 {
   "_nota": "Config del modo defensa. Copiar como defensa.json a la carpeta de defensa del vault (p. ej. $VAULT/sources/_propuestas/DEFENSA). Rutas: absolutas, con ~ o $VARIABLES, o relativas a esa carpeta. Una entrada por entregable: de qué fuente depende, cómo se regenera, si es final.",
   "fuentes": {
-    "tg": "$CORPUS/RESPALDO/TRABAJO-DE-GRADO.docx",
+    "tg": "$TG_DOCX",
     "frontend": "$CODE_REPO/frontend/src"
   },
   "manual_oficial": "$CORPUS/RESPALDO/MANUAL DE USUARIO OFICIAL.docx",
