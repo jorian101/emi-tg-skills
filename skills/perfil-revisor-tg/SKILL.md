@@ -285,7 +285,6 @@ Trigger: «X me corrigió Y», «registrar corrección», «regla nueva: …», 
 - `wiki/trabajos-grado/reglas-institucionales` — norma contra la que se contrasta en modo revisar.
 - `wiki/contradictions/tg-revisor-indice` — choques revisor ↔ norma ↔ docente.
 - `asistente-trabajo-de-grado` (modo notebooklm) — para consultar explicaciones del docente desde NotebookLM.
-- `wiki/criterio-vocal/` — precedente de destilación de criterio (mismo patrón).
 - `scripts/verificar-enlaces.sh` — validación de la red del vault.
 - `scripts/verificar-propuesta.sh` — suite de verificación de propuestas (regla 37).
 - `scripts/cobertura-fuentes.sh` — gate de cobertura revisor+tutor+reglas (regla 37).

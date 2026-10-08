@@ -3,6 +3,11 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado: [SemVer](https://semver.org/lang/es/).
 
+## [limpieza] — 2026-10-08
+
+- Quitada la skill `extraer-conversaciones-ias` (destilaba criterio de un «vocal» desde chats con IAs: flujo del proyecto del autor, no
+  de un estudiante) y `docs/migracion-desde-vault.md` (solo servía a quien tenía las skills dentro de su vault). Siguen en el historial de git.
+
 ## [instalación 2.0] — 2026-10-08
 
 **El vault es un repositorio nuevo del estudiante y el catálogo de docentes es público sin nombres, con aportes por issue abierto.**

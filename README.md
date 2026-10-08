@@ -3,8 +3,7 @@
 Skills para **revisar y corregir un trabajo de grado con los criterios de tus propios
 evaluadores** (revisor 1, revisor 2, tutor y docentes), en vez de con consejos genéricos.
 
-> **Estado:** el motor y el instalador están listos. Falta el paso de migración del entorno del
-> autor (`docs/migracion-desde-vault.md`), que es opcional para quien instala desde cero.
+> **Estado:** el motor y el instalador están listos para instalar desde cero (ver más abajo).
 
 ## Qué problema resuelve
 
@@ -13,7 +12,7 @@ te había señalado**, o te pide algo que **contradice** lo que te pidió el tut
 modelan a cada evaluador por separado, guardan de dónde sale cada criterio y se niegan a inventar la
 intención de nadie.
 
-## Las cinco skills
+## Las cuatro skills
 
 | Skill | Qué hace |
 |---|---|
@@ -21,7 +20,6 @@ intención de nadie.
 | `asistente-trabajo-de-grado` | Norma, estructura y coherencia del trabajo; catálogo de docentes y consulta de sus explicaciones; **modo defensa**: diapositivas, tríptico, artículo, manual, anexos con QR, ruta crítica, diagramas animados y capturas, todo derivado del documento y enlazado en el vault |
 | `generar-entregables-tesis` | Entregables por sprint: figuras, tablas, mockups y Word |
 | `extraer-doc-tesis` | Extrae el Word/PDF al vault con reporte de validación y trazabilidad de citas |
-| `extraer-conversaciones-ias` | Destila criterio de docentes desde conversaciones previas con IAs, **auditando** su fiabilidad |
 
 ## Cómo está armado: motor y datos
 
@@ -68,7 +66,6 @@ escribir nada: `./install.sh --check`.
 - `docs/como-funciona.md` — el modelo mental: estados de fiabilidad, jerarquía, recorridos y qué
   **no** hace.
 - `docs/arquitectura.md` — motor y datos, el contrato de config, los gates y el guard de predicción.
-- `docs/migracion-desde-vault.md` — solo si venís de tener las skills dentro de un vault.
 - `docs/portar-a-otro-estudiante.md` — qué es del motor, qué es de cada vault y cómo arrancar con otro TG.
 
 ## Límites honestos
