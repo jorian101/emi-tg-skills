@@ -10,6 +10,7 @@ vault/
 
 # --- Documentos fuente y artefactos generados ---
 *.docx
+!catalogo-publico/formatos/**/*.docx
 *.pdf
 media/
 output/
