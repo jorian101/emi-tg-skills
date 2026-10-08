@@ -37,8 +37,18 @@ intención de nadie.
 ```bash
 git clone <url> "$HOME/emi-tg-skills"
 cd "$HOME/emi-tg-skills"
-./install.sh            # symlinks a tus agentes + crea el vault desde vault-template/
+./install.sh --destino ~/mi-vault --docx ~/TRABAJO-DE-GRADO.docx   # vault + tu TG extraído + proyecto.yaml
 ```
+
+Después, tres pasos con tu agente:
+
+1. **«inicializá el vault desde mi TG»** — completa `proyecto.yaml` y los modelos de la defensa citando tu TG
+   (pregunta lo que el TG no dice: revisores, qué anexos llevan QR).
+2. **«ingerir informe»** cada vez que llega una revisión — arma el perfil de cada evaluador.
+3. **modo defensa** — diapositivas, tríptico, ruta crítica, manual, anexos con QR, diagramas animados y guion.
+
+Si compartís tribunal o carrera con otro estudiante que ya usa las skills: `--docentes-desde <su-vault>` trae
+los perfiles de docentes (segunda opinión, no deciden).
 
 El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
 escribir nada: `./install.sh --check`.
@@ -53,7 +63,7 @@ escribir nada: `./install.sh --check`.
   **no** hace.
 - `docs/arquitectura.md` — motor y datos, el contrato de config, los gates y el guard de predicción.
 - `docs/migracion-desde-vault.md` — solo si venís de tener las skills dentro de un vault.
-- `docs/portar-a-otro-estudiante.md` — pendiente.
+- `docs/portar-a-otro-estudiante.md` — qué es del motor, qué es de cada vault y cómo arrancar con otro TG.
 
 ## Límites honestos
 

@@ -297,12 +297,21 @@ Invocación: el usuario pide `audita sprint N`. SOLO lectura hasta que el usuari
 6. Para cada `abierto`: proponer la corrección mínima pero completa — debe cerrar la ambigüedad sin dejar flancos a futura malinterpretación del revisor — sea fix de código o corrección del documento; no tocar el Word sin aprobación explícita.
    6bis. **Docx de partes aplicadas (después del `procede`).** Solo después de que el usuario acepta las decisiones, generar UN `auditoria-sprint-N-aplicado.docx` por sprint. NUNCA es una copia del Word completo (prohibido duplicar el documento de decenas de MB): contiene SOLO las partes modificadas, cada una etiquetada con su ID de decisión y su ubicación en el Word vigente. Formato por ítem: para texto (párrafos, celdas de tabla, Notas), un par `Buscar:` (cadena exacta actual) / `Reemplazar con:` (cadena final); para figuras, la imagen final incrustada (~15 cm) con la leyenda `Figura NN — reemplazar/insertar` (el título del Word no se copia: es numeración automática). Verificar las cadenas `Buscar:` contra el Word vigente con `python-docx` (que cada una exista exactamente una vez, o indicar la ventana de anclaje si hay repetidas). Destino: `sources/_propuestas/auditoria-sprint-N-*/auditoria-sprint-N-aplicado.docx`. Sirve para copiar cada parte al `TRABAJO-DE-GRADO.docx`; no reemplaza al Word vigente. Generación: script `python-docx` que construye el documento desde cero. Verificación obligatoria con `python-docx` (NO `pandoc -t plain | grep`): todo ítem presente, cada imagen con `blip`, tamaño final pequeño. Notas técnicas: usar `python3.13` (tiene `docx`, el 3.12 no); en el Word vigente los placeholders de figuras vacías traen `wp:docPr` con `descr=None`; entre un epígrafe y su Nota puede haber una fila de párrafos vacíos (ventana ±30); los epígrafes son numeración automática (buscar por título real, sin el número).
 
+### Modo inicializar (del TG del estudiante a un vault listo)
+
+Invocación: «inicializá el vault desde mi TG», o después de `install.sh --docx`. **Leer `references/inicializar.md`.**
+Completa `$VAULT/proyecto.yaml` (institución del caso, causa y efecto, convenciones, fases) **citando la sección del TG**
+en cada valor, pregunta lo que el TG no dice (revisores, qué anexos llevan QR, paleta) y arma los modelos de la defensa
+con el contenido de ese TG, adaptados al tipo de proyecto (sin software: sin manual ni demostración). Nunca copia
+valores del proyecto de referencia; lo que falta queda `PENDIENTE`.
+
 ### Modo defensa (materiales de la defensa, para cualquier tema)
 
 Invocación: el usuario pide preparar, actualizar o revisar diapositivas, tríptico/bíptico, artículo,
 manual de usuario, anexos con QR, ruta crítica o diagramas de la defensa, o propagar al resto los cambios
 del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tema que corresponda
-(`entregables.md`, `diapositivas.md`, `triptico.md`, `guion.md`, `tv-videos.md`, `diagramas.md`, `capturas.md`, `trampas.md`).
+(`entregables.md`, `diapositivas.md`, `triptico.md`, `manual.md`, `guion.md`, `tv-videos.md`, `diagramas.md`, `capturas.md`,
+`trampas.md`). Si la carpeta de defensa no tiene sus modelos, correr antes el modo inicializar.
 
 1. **El documento (Word) es la única fuente de verdad del contenido**; lo edita el autor a mano. El autor
    copia a mano solo las correcciones al documento (un **único archivo vivo**, celda por celda) y el
@@ -322,8 +331,8 @@ del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tem
    clave por variable de entorno (si falta, preguntar; nunca cambiarla).
 7. **Vault interconectado:** `notas_vault.py` genera el hub `wiki/defensa/_moc-defensa.md`, una nota por
    entregable y la de estado (`verificar_sincronizacion.py --nota`); `capturas.py` agrega una nota por captura.
-8. **Defensa pública en 30 minutos** (`diapositivas.py`, `triptico.py`, `tv.py`): mazo en el orden que pide el
-   docente, sin leer, con las páginas de evidencia por objetivo y el detalle oculto como respaldo; guion con
+8. **Defensa pública en 30 minutos** (`diapositivas.py crear|…`, `triptico.py`, `tv.py`, `manual.py`): mazo armado
+   desde YAML (≤ 90 palabras por diapositiva) en el orden que pide el docente, sin leer, con las páginas de evidencia por objetivo y el detalle oculto como respaldo; guion con
    marcas de minuto para el tribunal académico y plan de demostración; segunda pantalla con videos en bucle;
    lo que falta se registra en `PENDIENTES-DEFENSA.md`, nunca se muestra como hecho.
 9. **Cierre:** `verificar_sincronizacion.py` sin pendientes (o con los pendientes explicados),
