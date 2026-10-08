@@ -1,7 +1,27 @@
 # Modo defensa — diapositivas de la defensa pública
 
-Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scripts/defensa/diapositivas.py`
+Para que **cualquier modelo** arme o actualice el mazo sin contexto previo. Motor: `scripts/defensa/diapositivas.py`
 (`uv run --with python-pptx --with pillow --with pyyaml python diapositivas.py <comando> MAZO.pptx …`).
+
+## Crear el mazo desde cero (estudiante sin mazo)
+
+1. El modo inicializar (`references/inicializar.md`) arma `DEFENSA/diapositivas/diapositivas.yaml` desde `proyecto.yaml` y el TG,
+   copiando `assets/defensa/diapositivas.example.yaml`: un elemento por diapositiva, con el **contenido de ese TG** (no el del ejemplo).
+   El tipo de proyecto cambia el contenido, no la estructura: sin software no hay demostración ni capturas; sin costos, no hay costos.
+2. `diapositivas.py crear diapositivas.yaml` → `defensa.pptx`. Con `plantilla:` usa el diseño institucional (sus diseños, no sus
+   diapositivas). Sale 1 si alguna diapositiva pasa el tope de palabras.
+3. Desde ahí, el mazo se mantiene con el checklist de abajo (se edita el .pptx, no se vuelve a crear: el autor lo retoca en PowerPoint).
+
+## Densidad de texto (no pasarse)
+
+Medido sobre un mazo real de 30 minutos que el tribunal aprobó: **mediana 46 palabras** por diapositiva visible, objetivos
+específicos 86, conclusiones ~120 **repartidas en tres diapositivas**. Reglas:
+
+- **Tope: 90 palabras** por diapositiva en cajas de texto (`crear` y `verificar` lo controlan; las tablas cuentan aparte). Excepción:
+  el resumen/abstract literal (`literal: true` o `verificar --excepto N`).
+- Letra mínima 14 pt en el cuerpo, 13 pt en la cita del anexo, títulos 32–35 pt.
+- Lo que no entra se **parte** (conclusiones: dos objetivos por diapositiva), pasa a una **figura** o va a las **notas del orador**; el
+  detalle técnico se **oculta** como respaldo. Nunca se achica la letra para que quepa.
 
 ## Estructura que espera el docente de trabajo de grado
 
@@ -12,12 +32,14 @@ Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scr
 3. En las diapositivas de conclusiones va el **rango de páginas exacto** de la evidencia de cada objetivo («OE3: págs. 127 a 172»). Salen del
    índice del documento; si el autor lo actualiza, se revisan.
 4. El detalle que no cabe en el tiempo **no se borra**: se **oculta** (`ocultar`) y queda como respaldo para las preguntas.
-5. Las animaciones y los videos van a la segunda pantalla (ver `tv-videos.md`), no al mazo.
+5. Las animaciones y los videos van a la segunda pantalla (ver `tv-videos.md`). Si el autor quiere un GIF en el proyector, va **solo, en su
+   propia diapositiva a pantalla completa** (como una figura) y la figura estática del documento queda oculta como respaldo.
 
 ## Tiempo: 30 minutos
 
-20 de exposición + 8 de demostración + 2 de preguntas. Se calcula un minuto por diapositiva visible como máximo y se reparte en el guion
-(`guion.md`). Si el mazo tiene más de 22 diapositivas visibles, se ocultan las de detalle técnico antes de recortar texto.
+20 de exposición + 8 de demostración + 2 de preguntas. Se calcula un minuto por diapositiva visible como máximo (**≤ 30 visibles**, contando
+demostración, figuras a pantalla completa y gracias) y se reparte en el guion (`guion.md`). Si hay más, se ocultan las de detalle técnico
+antes de recortar texto.
 
 ## Pasos para actualizar el mazo (checklist)
 
@@ -43,7 +65,7 @@ Para que **cualquier modelo** actualice el mazo sin contexto previo. Motor: `scr
   quita los demás objetos, recorta el margen blanco, escala al máximo y tapa la línea del encabezado. El texto que desplaza va a las notas.
 - No se amplía una imagen más de lo que aguanta: **≥ 110 ppp** en el tamaño proyectado. Si la figura de origen es chica (organigrama, árbol), se
   recorta el margen y se reubica sin sumar diapositivas, y se avisa que su letra seguirá siendo pequeña.
-- Los diagramas animados para público no técnico van a la segunda pantalla; no sustituyen a las figuras del documento en el proyector.
+- Los diagramas animados para público no técnico van a la segunda pantalla; si alguno pasa al proyector, va en diapositiva propia (regla 5).
 
 ## Reglas de contenido
 

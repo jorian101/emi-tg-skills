@@ -1,0 +1,42 @@
+# Modelo del mazo de la defensa (30 min). Lo arma el modo inicializar desde proyecto.yaml y el TG;
+# el autor lo ajusta y corre:  diapositivas.py crear diapositivas.yaml
+# Rutas relativas a este archivo. Todo texto sale literal del TG; cada tabla, figura o cifra cita su anexo.
+# Regla de densidad: ≤ 90 palabras por diapositiva (mediana de un mazo real: 46). Lo que no entra va a
+# `notas:` (guion), a una figura o a una diapositiva `oculta: true` de respaldo.
+salida: defensa.pptx
+plantilla: plantilla-institucional.pptx   # opcional: .pptx con el diseño de la EMI (se usan sus diseños, no sus diapositivas)
+tope_palabras: 90
+diapositivas:
+  - tipo: portada
+    titulo: TÍTULO LITERAL DEL TRABAJO DE GRADO
+    caso: INSTITUCIÓN DEL CASO DE ESTUDIO
+    estudiante: NOMBRE DEL ESTUDIANTE
+    tutor: GRADO Y NOMBRE DEL TUTOR
+    lugar_fecha: LA PAZ, 2026
+    logos: [img/logo-emi.png, img/logo-carrera.png]
+  - {tipo: texto, titulo: RESUMEN, texto: "Resumen literal del TG.", literal: true}   # literal: no cuenta para el tope
+  - tipo: imagenes                                 # sin esta diapositiva se pierden puntos
+    titulo: DOCUMENTACIÓN ADMINISTRATIVA
+    imagenes: [img/carta-solicitud.png, img/carta-conformidad.png, img/aval-tutor.png]
+    pie: "Ver Anexos A y B"
+  - {tipo: texto, titulo: INTRODUCCIÓN, texto: "Una o dos frases del TG.", imagen: img/institucion.jpg}
+  - tipo: texto
+    titulo: PROBLEMÁTICA
+    vinietas: ["Causa: … (literal del árbol de problemas)", "Efecto: …"]
+    imagen: img/arbol-problemas.png
+    anexo: C
+  - {tipo: texto, titulo: OBJETIVO GENERAL, texto: "Objetivo general literal."}
+  - {tipo: texto, titulo: OBJETIVOS ESPECÍFICOS, vinietas: ["OE1 literal", "OE2 literal", "OE3 literal", "OE4 literal"]}
+  - {tipo: figura, imagen: img/figura-36.png, leyenda: "Figura 36 · Procesos actuales", anexo: L}
+  - tipo: tabla
+    titulo: METODOLOGÍA
+    encabezados: [Objetivo, Método, Técnica]
+    filas: [[OE1, Analítico, Entrevista], [OE2, Sintético, Diseño]]
+    anexo: D
+  - {tipo: imagenes, titulo: TRABAJO DE CAMPO, imagenes: [img/campo-1.jpg, img/campo-2.jpg], pie: "Ver Anexo M"}
+  - {tipo: tarjetas, titulo: RESULTADOS, tarjetas: [{cifra: "4,08", texto: "corrección normativa (escala 1-5), juicio de expertos"}], pie: "Ver Anexo X"}
+  - {tipo: seccion, titulo: DEMOSTRACIÓN, imagen: img/demo.png}
+  - {tipo: texto, titulo: CONCLUSIONES, vinietas: ["OE1: … para … (verbo del objetivo)", "OE2: …"], paginas: "págs. 120 a 135"}
+  - {tipo: texto, titulo: RECOMENDACIONES, vinietas: ["Actor → acción", "Actor → acción"]}
+  - {tipo: seccion, titulo: GRACIAS}
+  - {tipo: figura, imagen: img/arquitectura.png, leyenda: "Figura 38 · Arquitectura", anexo: S, oculta: true}

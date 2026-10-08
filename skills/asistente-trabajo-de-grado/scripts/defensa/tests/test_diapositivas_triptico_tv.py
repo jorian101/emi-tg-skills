@@ -100,6 +100,25 @@ def main() -> None:
             ).returncode
             == 0
         )
+        # crear: el mazo sale del yaml, la oculta queda al final y el tope de palabras se hace cumplir
+        from PIL import Image
+
+        Image.new("RGB", (2400, 1350), "white").save(t / "fig.png")
+        largo = " ".join(["palabra"] * 120)
+        spec = {"salida": "nuevo.pptx", "diapositivas": [
+            {"tipo": "portada", "titulo": "T", "caso": "C", "estudiante": "E"},
+            {"tipo": "figura", "imagen": "fig.png", "leyenda": "Figura 1 · F", "anexo": "A", "oculta": True},
+            {"tipo": "texto", "titulo": "OBJETIVO GENERAL", "texto": "Literal."},
+        ]}
+        (t / "d.yaml").write_text(yaml.safe_dump(spec, allow_unicode=True), encoding="utf-8")
+        assert correr("diapositivas.py", "crear", str(t / "d.yaml")).returncode == 0
+        nuevo = Presentation(t / "nuevo.pptx")
+        assert [s._element.get("show") for s in nuevo.slides][-1] == "0"
+        assert "Ver Anexo A" in "".join(f.text_frame.text for f in nuevo.slides[-1].shapes if f.has_text_frame)
+        spec["diapositivas"].append({"tipo": "texto", "titulo": "X", "texto": largo})
+        (t / "d.yaml").write_text(yaml.safe_dump(spec, allow_unicode=True), encoding="utf-8")
+        assert correr("diapositivas.py", "crear", str(t / "d.yaml")).returncode == 1
+        assert correr("diapositivas.py", "verificar", str(t / "nuevo.pptx")).returncode == 1
     print("ok test_diapositivas_triptico_tv")
 
 

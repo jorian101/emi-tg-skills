@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Herramientas genéricas para el mazo de diapositivas de la defensa (python-pptx, sin datos del proyecto).
 
-Uso: uv run --with python-pptx --with pillow python diapositivas.py <comando> MAZO.pptx [opciones]
+Uso: uv run --with python-pptx --with pillow --with pyyaml python diapositivas.py <comando> MAZO.pptx [opciones]
+  crear    SPEC.yaml                     arma el mazo desde cero (diapositivas_crear.py; modelo assets/defensa/diapositivas.example.yaml)
   texto    MAZO [--md SALIDA]            vuelca el texto de cada diapositiva (y si está oculta o tiene notas)
   cifras   MAZO --tg EXTRACCION.md       cada número del mazo debe existir en el documento; sale 1 si falta alguno
-  verificar MAZO                         imágenes con menos de 150 ppp o sin descripción, cajas de texto vacías
+  verificar MAZO [--tope N] [--excepto N,N]  imágenes con menos de 150 ppp o sin descripción, cajas vacías y
+                                         diapositivas visibles con más de N palabras (90 por defecto; tablas aparte)
   notas    MAZO GUION.yaml               escribe el guion en las notas del orador: {numero: "texto"} o lista de {n, texto}
   ocultar  MAZO N [N ...] [--mostrar]    oculta (o muestra) diapositivas: el contenido queda como respaldo
   imagen   MAZO N NOMBRE ARCHIVO         reemplaza una imagen conservando su caja (se centra y no se deforma)
@@ -100,9 +102,13 @@ def cifras(prs: Presentation, tg: Path) -> int:
     return 1 if faltan else 0
 
 
-def verificar(prs: Presentation) -> int:
+def verificar(prs: Presentation, tope: int = 90, excepto: tuple[int, ...] = ()) -> int:
     fallos = []
     for i, s in enumerate(prs.slides, 1):
+        palabras = sum(len(f.text_frame.text.split()) for f in s.shapes
+                       if f.has_text_frame and not _es_numero_de_pagina(f))
+        if palabras > tope and s._element.get("show") != "0" and i not in excepto:
+            fallos.append(f"diapositiva {i}: {palabras} palabras (tope {tope}); partirla o pasar texto a imagen o a las notas")
         for f in s.shapes:
             if f.shape_type == 13:  # imagen
                 px = Image.open(io.BytesIO(f.image.blob)).size[0]
@@ -120,7 +126,7 @@ def verificar(prs: Presentation) -> int:
             ):
                 fallos.append(f"diapositiva {i}: caja de texto vacía «{f.name}»")
     print(
-        "\n".join(fallos) or "ok: imágenes nítidas y con descripción, sin cajas vacías"
+        "\n".join(fallos) or "ok: imágenes nítidas y con descripción, sin cajas vacías, texto dentro del tope"
     )
     return 1 if fallos else 0
 
@@ -348,6 +354,11 @@ def main() -> int:
         return 2
     cmd, mazo = sys.argv[1], Path(sys.argv[2])
     a = sys.argv[3:]
+    if cmd == "crear":
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from diapositivas_crear import crear
+
+        return crear(mazo)
     prs = Presentation(mazo)
     rc = 0
     if cmd == "texto":
@@ -356,7 +367,9 @@ def main() -> int:
     if cmd == "cifras":
         return cifras(prs, Path(a[a.index("--tg") + 1]))
     if cmd == "verificar":
-        return verificar(prs)
+        tope = int(a[a.index("--tope") + 1]) if "--tope" in a else 90
+        excepto = tuple(int(x) for x in a[a.index("--excepto") + 1].split(",")) if "--excepto" in a else ()
+        return verificar(prs, tope, excepto)
     if cmd == "notas":
         notas(prs, Path(a[0]))
     elif cmd == "ocultar":
