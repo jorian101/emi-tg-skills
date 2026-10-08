@@ -15,7 +15,7 @@ Motor: `scripts/defensa/triptico.py` (`generar` y `verificar`). El **contenido**
   (`diagrama_flujo.py exportar ruta-critica.yaml --vertical`, con `vertical: [fila, col]` por nodo para una sola columna) y se inserta
   con `[img, ruta, 7.3]`. Nunca se redibuja a mano: dos fuentes se desincronizan.
 - **Sin texto interpretativo:** nada de «esto demuestra», «revoluciona»; solo lo que el TG afirma.
-- **Bíptico oficial (marco práctico al 100 %):** es otro entregable, no un respaldo del tríptico. Su formato lo da el docente que lo exige
+- **Bíptico oficial (marco práctico al 100 %):** es otro entregable, no un respaldo del tríptico. Es el formato del docente que lo exige (otro distinto del de TG): solo obliga a quien lo tiene como evaluador, y `verificar_formato.py` avisa si ese docente no figura entre los de tu vault. Si tu TG tiene más de 3 objetivos específicos, se respetan los 3 paneles y los últimos se agrupan en el tercero. Su formato lo da el docente que lo exige
   (`formatos/<código>/formato.yaml`, clave `biptico`, con su plantilla `.docx`): hoja carta apaisada, 2 páginas y 4 paneles. Orden:
   **título → formulación del problema → objetivos (general y específicos) → límites → desarrollo del OE1 (análisis, aspectos más relevantes) →
   desarrollo del OE2 (diseño) → desarrollo del OE3 (desarrollo)**, y la portada (comando general, escuela, unidad académica, «Marco práctico»,

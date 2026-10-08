@@ -14,6 +14,7 @@ biptico:
   - clave: titulo
     titulos:
     - TITULO
+    reemplazable: true
   - clave: problema
     titulos:
     - FORMULACION DEL PROBLEMA
@@ -51,6 +52,8 @@ biptico:
     titulos:
     - MARCO PRACTICO
   notas:
+  - 'Marco práctico parcial: se desarrollan solo los objetivos específicos cumplidos
+    (OE1 a OE3); el OE4 y los resultados de evaluación no van en este bíptico.'
   - 'Panel 1: título, formulación del problema, objetivos (general y específicos)
     y límites.'
   - 'Paneles 2 y 3: desarrollo de cada objetivo específico (OE1: análisis, aspectos

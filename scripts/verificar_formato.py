@@ -118,6 +118,8 @@ def textos_docx(doc) -> list[str]:
 def comprobar_orden(inf: Informe, textos: list[str], orden: list[dict], etiqueta: str, aviso: bool = False) -> None:
     pos, faltan, fuera = -1, [], []
     for item in orden:
+        if item.get("reemplazable"):  # marcador que el estudiante sustituye por su dato (p. ej. el título)
+            continue
         titulos = [limpiar(t) for t in item["titulos"]]
         enc = next((i for i in range(pos + 1, len(textos)) if any(textos[i].startswith(t) for t in titulos)), None)
         if enc is not None:
