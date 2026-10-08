@@ -20,4 +20,7 @@ tags:
 
 | informe | docente | estudiante | rol | tipo | fecha | sha256 | fuente_texto | estado |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| <Docente>/<archivo>.pdf | <Docente> | <Estudiante> | R2 | MP | YYYY-MM-DD | <sha256> | pdf | procesado |
+
+<!-- Esta tabla la llena `scripts/ingerir-informe.py`: NO agregar filas de ejemplo acá.
+     Una fila con celdas completas (<Docente>/<archivo>.pdf …) es leída como informe real
+     por `read_registro()` y contamina el registro y el gate `--check` de cualquier vault nuevo. -->

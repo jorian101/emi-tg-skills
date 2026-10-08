@@ -173,12 +173,12 @@ Patron de UN SOLO parrafo: el parrafo unico comienza con la referencia a la Figu
 
 **Ejemplo 1 - der.md (Figura 46)**:
 
-> "En la Figura 46 se presenta el modelo conceptual de la base de datos relacional del asistente legal. El diagrama se construye a partir de las migraciones Alembic que definen las entidades usuario, expediente, obra, norma, fragmento, borrador, espacio_trabajo, chat_privado, mensaje_chat y documento_chat, así como las veinte relaciones de clave foránea que conectan dichas entidades."
+> "En la Figura 46 se presenta el modelo conceptual de la base de datos relacional del asistente. El diagrama se construye a partir de las migraciones Alembic que definen las entidades usuario, expediente, obra, norma, fragmento, borrador, espacio_trabajo, chat_privado, mensaje_chat y documento_chat, así como las veinte relaciones de clave foránea que conectan dichas entidades."
 > (imagen) -> `## Figura 46: Diagrama Entidad-Relación` -> Nota.
 
 **Ejemplo 2 - componentes-bd-vectorial.md (Figura 49)**:
 
-> "En la Figura 49 se ilustra la arquitectura y persistencia vectorial que soporta el ciclo de recuperación del asistente legal. El diagrama de componentes expone los módulos de ingesta, embedding y recuperación que interactúan con la colección corpus_juridico de Qdrant, junto con las interfaces REST y de línea de comandos que exponen estas funcionalidades a los usuarios finales y a las tareas automatizadas. El operador jurídico se representa como actor externo al asistente, mientras que las bases de datos PostgreSQL y Qdrant se modelan como nodos de persistencia diferenciados de los módulos aplicativos."
+> "En la Figura 49 se ilustra la arquitectura y persistencia vectorial que soporta el ciclo de recuperación del asistente. El diagrama de componentes expone los módulos de ingesta, embedding y recuperación que interactúan con la colección corpus_juridico de Qdrant, junto con las interfaces REST y de línea de comandos que exponen estas funcionalidades a los usuarios finales y a las tareas automatizadas. El operador jurídico se representa como actor externo al asistente, mientras que las bases de datos PostgreSQL y Qdrant se modelan como nodos de persistencia diferenciados de los módulos aplicativos."
 > (imagen) -> `## Figura 49: Diagrama de Componentes de la Base de Datos Vectorial` -> Nota.
 
 **Ejemplo 3 - parametros-indice-vectorial.md (Tabla 36)**:

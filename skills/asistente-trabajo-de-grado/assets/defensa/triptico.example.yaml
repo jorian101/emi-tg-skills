@@ -1,0 +1,69 @@
+# Modelo de triptico.yaml: contenido como datos (lo arma el modo inicializar desde proyecto.yaml y el TG).
+# Todo texto es literal del TG y cita su anexo o su fuente; nada que el TG no diga. Rutas relativas al yaml.
+# Tipos: h (título), hb (título sobre fondo oscuro), p, pw (párrafo claro sobre oscuro), pb (párrafo destacado),
+# li (viñeta con sangría francesa), c (centrado), titulo, sep (espacio), img (clave o ruta, ancho en cm), pie,
+# cifra (número, rótulo).
+hoja: carta            # carta (Bolivia) | a4
+fuente: Calibri        # una sola tipografía en todo el tríptico, la misma de la ruta crítica
+colores: {oscuro: "032154", accion: "0a3a82"}
+imagenes: {logo: img/logo.png, foto: img/foto.jpg}
+salida: {triptico: triptico.docx, biptico: biptico.docx}
+solapa:                # datos del proyecto (EMI) y la ruta crítica vertical
+  - [h, DATOS DEL PROYECTO]
+  - [p, "Área general: <carrera>"]
+  - [p, "Estudiante: <nombre>"]
+  - [p, "Tutor: <grado y nombre>"]
+  - [p, "Caso: <institución del caso de estudio>"]
+  - [p, "Escuela Militar de Ingeniería «Mcal. Antonio José de Sucre» · <ciudad>, <año>"]
+  - [p, "Área de investigación: <la que declara el TG>"]
+  - [p, "Línea de investigación: <la que declara el TG>"]
+  - [sep]
+  - [img, ruta-critica/ruta-critica-vertical.png, 7.3]   # diagrama_flujo.py exportar ruta-critica.yaml --vertical
+contratapa:            # el caso de estudio: quién es y qué hace la institución
+  - [h, CASO DE ESTUDIO]
+  - [img, foto, 8.8]
+  - [pie, "Pie de la foto (Anexo …)"]
+  - [h, MISIÓN]
+  - [p, "«Misión literal» (Autor, año, p. N)."]
+  - [h, VISIÓN]
+  - [p, "«Visión literal» (Autor, año, p. N)."]
+  - [h, "<UNIDAD DEL CASO>"]
+  - [p, "Función de la unidad donde se aplica el trabajo, tomada del TG."]
+portada:
+  - [img, logo, 6.0]
+  - [sep]
+  - [c, TRABAJO DE GRADO]
+  - [sep]
+  - [titulo, "TÍTULO LITERAL DEL TRABAJO"]
+  - [sep]
+  - [c, "CASO: <INSTITUCIÓN>"]
+  - [sep]
+  - [c, "<ESTUDIANTE>"]
+  - [c, "TUTOR: <GRADO Y NOMBRE>"]
+  - [sep]
+  - [c, "<CIUDAD>, <AÑO>"]
+interior:
+  - - [h, FORMULACIÓN DEL PROBLEMA]
+    - [p, "Texto literal del TG (causa → efecto)."]
+    - [img, img/arbol-problemas.png, 6.4]
+    - [pie, "Árbol de problemas (Anexo …)"]
+    - [h, OBJETIVO GENERAL]
+    - [pb, "Texto literal del TG."]
+  - - [h, OBJETIVOS ESPECÍFICOS]
+    - [li, "1. Literal del TG."]
+    - [li, "2. Literal del TG."]
+    - [h, "<EL PRODUCTO>"]
+    - [p, "Qué hace, en lenguaje llano, con las palabras del TG."]
+  - - [h, RESULTADOS]
+    - [cifra, "00 %", "Rótulo de la cifra · ámbito de la medición (Anexo …)"]
+    - [h, RECOMENDACIÓN]
+    - [p, "Actor → acción, literal del TG."]
+biptico:
+  - fondo: oscuro
+    elementos:
+      - [img, logo, 5.0]
+      - [titulo, "TÍTULO DEL TRABAJO"]
+      - [hb, FORMULACIÓN DEL PROBLEMA]
+      - [pw, "Texto literal del documento."]
+  - - [h, RESULTADOS]
+    - [cifra, "00 %", "Rótulo de la cifra · ámbito"]

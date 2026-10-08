@@ -46,3 +46,11 @@ Sale 1 y bloquea. La allowlist se declara en `ORDEN-DEL-VAULT.md`, no en el cód
 - Las skills viven en el repo del motor y se comparten con tus agentes por symlink.
 - `config.local.md` (en el repo del motor) dice dónde está este vault. Está fuera de git.
 - Los gates están en `<este-vault>/scripts/`, symlinkeados al repo del motor: no edites ahí.
+
+## Materiales de la defensa
+
+Los materiales de la defensa (diapositivas, tríptico, artículo, manual, anexos con QR, ruta crítica,
+diagramas animados y capturas) se preparan con el **modo defensa** de `asistente-trabajo-de-grado`. Su
+carpeta va en `sources/_propuestas/DEFENSA/` con su `defensa.json` (modelo en
+`assets/defensa/defensa.example.json` de la skill) y su hub se genera en `wiki/defensa/_moc-defensa.md`
+(`notas_vault.py`). Agregar `sources/_propuestas/DEFENSA/.sync-estado.json` al `.gitignore`.

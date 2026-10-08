@@ -45,7 +45,7 @@ tags:
 > [!note] Origen
 > Extraído de `{Path(args.src).name}`. Revisar si es variante de material ya
 > volcado en el vault antes de duplicar (ej. skill AUTO DE VISTA ya existía en
-> `sources/casos-estudio/raw/promt/promt-operativo.md`).
+> `sources/<carpeta-de-casos>/raw/promt/promt-operativo.md`).
 
 ## Contenido extraído (verbatim del .docx)
 

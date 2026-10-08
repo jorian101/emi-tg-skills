@@ -16,9 +16,8 @@ informes_en: /ruta/a/tu/vault/sources/informes-revisores
 
 ## Notas
 
-- **`evaluadores:` es la lista de los que sí mandan.** Los perfiles de `docentes_en` con
-  `origen: informes-revisores` son segunda opinión: nunca emiten `confirmado` sobre tu trabajo y no
-  se pasan al gate de cobertura. El sistema no adivina quién te evalúa por el nombre del archivo:
-  lo lee de acá.
+- **`evaluadores:` es la lista de los que sí mandan.** Cada uno se vincula a su perfil compartido con
+  `scripts/asignar_evaluador.py`; los docentes que no te evalúan no se leen. El sistema no adivina quién te evalúa por el
+  nombre del archivo: lo lee de acá y del `docente:` de cada perfil.
 - Si todavía no tenés vault, `install.sh` te crea uno desde `vault-template/`.
 - `config.local.md` y `.env.local` están en `.gitignore`.

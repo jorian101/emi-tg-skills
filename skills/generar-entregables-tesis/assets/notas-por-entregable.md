@@ -1,5 +1,9 @@
 # Notas obligatorias por entregable (citas exactas)
 
+> **Ejemplo del proyecto de referencia.** Los números, nombres y fechas de este archivo son de un TG
+> concreto y muestran la *forma*. Los valores de tu TG viven en `$VAULT/proyecto.yaml` (sección
+> `entregables`), que arma el modo inicializar desde el índice de figuras y tablas de tu documento.
+
 ## Sprint 0 - Citas exactas (confirmadas)
 
 | Entregable                                   | Cita exacta                                                                                                                                                                                                                                                                                                       |

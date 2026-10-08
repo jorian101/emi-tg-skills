@@ -13,9 +13,13 @@ bad()  { echo "FALLA $1"; FAIL=1; }
 N=$(pandoc -t plain "$MD" | grep -c ': - ' || true)
 [ "$N" -eq 0 ] && ok "0 viñetas inline" || bad "$N viñetas inline (pandoc -t plain ': - ')"
 
-# 2. siglas prohibidas (MP-5)
-N=$(grep -c -E '\b(la institución|TPJM|SAC)\b' "$MD" || true)
-[ "$N" -eq 0 ] && ok "0 siglas la institución/TPJM/SAC" || bad "$N siglas prohibidas"
+# 2. siglas prohibidas (MP-5): TERMINOS_PROHIBIDOS en .env.local, separadas por | (p. ej. "ABC|XYZ")
+if [ -n "${TERMINOS_PROHIBIDOS:-}" ]; then
+  N=$(grep -c -E "\\b(${TERMINOS_PROHIBIDOS})\\b" "$MD" || true)
+  [ "$N" -eq 0 ] && ok "0 siglas prohibidas (${TERMINOS_PROHIBIDOS})" || bad "$N siglas prohibidas"
+else
+  ok "siglas prohibidas: sin TERMINOS_PROHIBIDOS, se omite"
+fi
 
 # 3. sin H5 (MP-7/MP-14)
 N=$(grep -c '^##### ' "$MD" || true)

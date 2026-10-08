@@ -119,13 +119,13 @@ jurídica o de estructura del vault.
    - **Duplicado por hash** de contenido: deduplicar listando la referencia al
      primer volcado.
 4. **Borrador vinculado a caso ya documentado**: si el doc es un borrador/v2 de
-   un caso existente en `sources/casos-estudio/casos/`, volcar como material
+   un caso existente en `sources/<carpeta-de-casos>/casos/`, volcar como material
    vinculado con wikilink al caso; nunca duplicar el caso.
-5. **Material de otra jurisdicción** (no flujo SAC — no es consulta/apelación
-   la institución): crear caso como **contexto** con `nivel_evidencia: mixta` (primaria
-   para piezas de instancia inferior oficiales, secundaria para producción del
-   vocal). NO agregarlo a `seed_casos_estudio.py` ni indexarlo en RAG.
-6. **Clasificación jurídica**: decisión del agente, sin preguntar. El agente
+5. **Material fuera del flujo del caso de estudio** (otra institución o
+   proceso): crear caso como **contexto** con `nivel_evidencia: mixta` (primaria
+   para piezas oficiales, secundaria para producción del experto). NO agregarlo
+   a los seeds del producto ni indexarlo en su corpus.
+6. **Clasificación por categoría del dominio**: decisión del agente, sin preguntar. El agente
    construye el JSON de clasificación revisando cada conversación/Gem; el
    script nunca la inventa.
 
@@ -159,7 +159,7 @@ N, nuevas IAs). Antes de clasificar CADA lote nuevo:
    `sources/conversaciones-ias/categorias.md` en el vault). Solo esas.
 2. **Categoría nueva** → agregarla en AMBOS (yaml + vault) ANTES de clasificar.
    Nunca inventar una categoría al vuelo.
-3. **Caso recurrente** (Uscamayta, Mendoza, Sapiencia, Colque, anteproyectos)
+3. **Caso recurrente** (un mismo caso o expediente citado en varias conversaciones)
    → consultar `sources/conversaciones-ias/casos-conocidos.md` ANTES de volcar.
    Si el caso ya está → vincular con callout `[!note] Caso vinculado`; no
    duplicar. Si es caso nuevo en ≥2 fuentes → agregar fila a la tabla.

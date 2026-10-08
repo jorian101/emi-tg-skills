@@ -1,0 +1,32 @@
+# Modelo de diagrama de flujo (diagrama_flujo.py). Cada nodo va en una celda (fila, col); las filas pueden
+# ir en serpentina (la fila 1 de derecha a izquierda). Tipos: inicio, paso (se numera solo), decision, fin.
+# Una arista entre celdas vecinas es recta; `vuelta: arriba` sube por el pasillo entre filas y
+# `vuelta: izquierda` rodea por el margen izquierdo. `fase` da el color; las que tienen `leyenda` van abajo.
+# Opcionales: `separacion: [x, y]` (pasillos más anchos para rótulos largos), `numero` en un paso (ramas
+# paralelas con el mismo número) y `recuadro: {fase, titulo, lineas}` (destacado bajo la leyenda).
+# Versión angosta (solapa del tríptico): `crear|exportar --vertical` traspone filas y columnas; para una sola
+# columna real, cada nodo puede traer `vertical: [fila, col]` (ej. todos en col 0 y la salida «No» en col 1).
+# `terminos_tg`: términos técnicos que el documento debe declarar (verificar --tg <extracción>.md).
+slug: flujo-ejemplo
+titulo: "Flujo de trabajo en el sistema: de la solicitud al documento aprobado"
+subtitulo: "Un solo flujo para todos los perfiles que redactan"
+escala_export: 3
+fases:
+  borde:     {trazo: "#032154", relleno: "#032154", texto: "#ffffff"}
+  datos:     {trazo: "#1971c2", relleno: "#e7f0fb", leyenda: "Datos"}
+  redaccion: {trazo: "#2f9e44", relleno: "#ebfbee", leyenda: "Redacción"}
+  decision:  {trazo: "#f08c00", relleno: "#fff9db", leyenda: "Decisión"}
+nodos:
+  - {id: inicio, tipo: inicio, fase: borde, fila: 0, col: 0, texto: "Inicia sesión"}
+  - {id: carga, tipo: paso, fase: datos, fila: 0, col: 1, texto: "Carga la solicitud", detalle: "con sus anexos"}
+  - {id: redacta, tipo: paso, fase: redaccion, fila: 0, col: 2, texto: "Redacta el borrador", detalle: "con la plantilla"}
+  - {id: revisa, tipo: decision, fase: decision, fila: 1, col: 2, texto: "¿Se aprueba?"}
+  - {id: fin, tipo: fin, fase: borde, fila: 1, col: 1, texto: "Documento aprobado"}
+aristas:
+  - {de: inicio, a: carga}
+  - {de: carga, a: redacta}
+  - {de: redacta, a: revisa}
+  - {de: revisa, a: fin, rotulo: "Sí"}
+  - {de: revisa, a: carga, vuelta: arriba, rotulo: "No: se corrige", fase: decision}
+nota: "El sistema propone; la decisión final es siempre de la persona responsable."
+terminos_tg: []

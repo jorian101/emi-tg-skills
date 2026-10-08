@@ -5,6 +5,8 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 status: en-elaboracion
 n_revisor: N
+docente: por-asignar        # lo escribe asignar_evaluador.py con el slug del docente del catálogo
+asignado: por-asignar
 sources: []
 aliases:
   - Revisor N
