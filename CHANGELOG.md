@@ -3,6 +3,31 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado: [SemVer](https://semver.org/lang/es/).
 
+## [asistente-trabajo-de-grado 3.2 · perfil-revisor-tg 1.42 · generar-entregables-tesis 3.3] — 2026-10-08
+
+**Cualquier TG, cualquier estudiante**: el vault se arma desde el `.docx` y lo propio de cada proyecto vive en
+`proyecto.yaml`, no en las skills.
+
+- **`install.sh --docx`**: extrae el TG, arma `proyecto.yaml` con lo que el TG dice de sí mismo (carátula,
+  objetivos, antecedentes, problema, anexos, figuras y tablas; `scripts/inicializar_desde_tg.py`), crea la carpeta
+  de defensa y `.env.local`. `--docentes-desde` trae perfiles de docentes de otro vault como segunda opinión.
+  Probado con tres TG reales de temas distintos.
+- **Modo inicializar** (`references/inicializar.md`): el agente completa `proyecto.yaml` citando la sección del TG y
+  arma los modelos de la defensa adaptados al tipo de proyecto.
+- **Diapositivas desde cero**: `diapositivas.py crear diapositivas.yaml` y tope de **90 palabras** por diapositiva
+  en `crear` y `verificar` (calibrado con un mazo real de 30 min: mediana 46).
+- **Manual de usuario** como motor genérico (`manual.py`): Markdown con marcas, capturas con marcadores y la
+  plantilla Word del autor; tablas y glosario en `manual.yaml`.
+- **Ruta crítica vertical** para la solapa del tríptico desde el mismo YAML (`diagrama_flujo.py --vertical`); la
+  ruta crítica es el único diagrama en Excalidraw.
+- **Tríptico** en hoja carta por defecto, con misión, visión y función de la institución del caso y el bloque EMI.
+- **Diagramas animados**: `escenas.py` no exporta si un texto se sale del escenario o se pisa con otro.
+- **perfil-revisor-tg**: clases semilla `SEM-01..06` (causa vs efecto, mejora sin número, declarado sin verificar,
+  concepto central sin definir, caja negra, validación de un solo sentido) y regla para transcripciones sin hablantes.
+- **Sin dominio del proyecto de referencia** en las skills: paleta, producto, hilo conductor, terminología y siglas
+  prohibidas se leen del vault (`TERMINOS_PROHIBIDOS`, `proyecto.yaml`); los mapas por sprint quedan como ejemplo.
+  `.pii-denylist.local` acepta también términos del dominio para que no vuelvan.
+
 ## [asistente-trabajo-de-grado 3.1] — 2026-10-06
 
 **Modo defensa**: cualquier agente puede preparar y mantener los materiales de la defensa a partir del
