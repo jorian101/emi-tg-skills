@@ -13,8 +13,10 @@ metadata:
 
 Se activa cuando el usuario entrega archivos o texto de conversaciones con IAs
 (DeepSeek JSON, Gems de Gemini HTML, resúmenes .docx, ChatGPT u otras) para
-extraer al vault de conocimiento. Objetivo: que el asistente legal gane
-criterio del vocal (prompts) sin contaminarse con respuestas erróneas de la IA.
+extraer al vault de conocimiento. Objetivo: que el producto del TG gane
+criterio del experto del caso de estudio (sus prompts; en el proyecto de referencia, el
+«vocal» de un tribunal) sin contaminarse con respuestas erróneas de la IA. Los nombres de
+carpetas, categorías y tipos de documento salen de `assets/categorias.yaml` del vault del usuario.
 
 ## Hard Rules
 
@@ -57,10 +59,10 @@ genuina de clasificación jurídica o de estructura del vault.
    por hash = deduplicar listando la referencia.
 4. **Borrador vinculado a caso existente**: volcar como material vinculado con
    wikilink al caso; nunca duplicar el caso.
-5. **Material de otra jurisdicción** (no flujo SAC: consulta/apelación TSJM):
-   contexto con evidencia mixta (primaria para instancia inferior, secundaria
-   para producción del vocal); NO indexar en RAG ni en `seed_casos_tsjm.py`.
-6. **Clasificación jurídica**: decisión del agente sin preguntar; el JSON de
+5. **Material fuera del flujo del caso de estudio** (otra institución o proceso):
+   contexto con evidencia mixta (primaria para piezas oficiales, secundaria
+   para producción del experto); NO indexar en el corpus del producto ni en sus seeds.
+6. **Clasificación por categoría del dominio**: decisión del agente sin preguntar; el JSON de
    clasificación lo construye el agente, nunca lo inventa el script.
 7. **Nunca descartar por nombre**: el título del chat no define la
    clasificación. Abrir el contenido (primer prompt + respuesta) antes de

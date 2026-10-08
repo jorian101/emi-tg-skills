@@ -16,6 +16,15 @@ tags:
 > Fuente de verdad **única** que vincula las skills del área. Todas la referencian, ninguna la
 > reescribe. Define **quién manda cuando las fuentes chocan** y **a quién escalar una duda**.
 
+## 0. Quiénes cuentan: solo tus evaluadores identificados
+
+Para tu TG cuentan **solo** quienes te evalúan: tu **tutor**, tus **revisores** (el Revisor 2 suele asignarse
+después) y tu **docente de TG** (el que dicta la materia; puede variar de un paralelo a otro). Cada uno se vincula
+desde su perfil en `wiki/revisores/` (campo `docente:` con el slug del docente) al catálogo compartido de docentes con
+`scripts/asignar_evaluador.py`. **Los demás docentes del catálogo se ignoran**, aunque tengan criterios parecidos:
+pueden contradecirse y no te evalúan. Mientras un evaluador está `por-asignar`, solo valen las clases genéricas
+`SEM-NN` de la matriz de generalizaciones.
+
 ## 1. Jerarquía de autoridad (qué prevalece)
 
 En lo **específico** que corrige o decide:
@@ -23,52 +32,62 @@ En lo **específico** que corrige o decide:
 ```
 norma de la institución
       <   tutor
-      <   evaluadores + docentes
+      <   revisores + docente de TG
 ```
 
-- **Los evaluadores y los docentes van juntos arriba**: casi nunca chocan, porque el docente da
-  **forma** y los evaluadores revisan **fondo y coherencia**. Si chocan, se documenta y se pregunta.
-- **El tutor queda último**: sus consejos valen salvo que un evaluador o un docente digan lo
-  contrario.
+- **Los revisores y el docente de TG van juntos arriba**: casi nunca chocan, porque el docente da
+  **forma** (norma EMI, estructura) y los revisores revisan **fondo y coherencia**. Si chocan, se documenta y
+  se pregunta.
+- **El tutor queda último**: sus consejos valen salvo que un revisor o el docente digan lo contrario.
 - **La norma de la institución** es el fondo institucional sobre el que se apoya todo.
+- Entre lo propio, **lo `confirmado`** (lo que ese evaluador te corrigió a vos) **manda sobre lo predicho** de su
+  perfil del catálogo (`inferido (predicción)`).
 
 > [!note] Matiz importante
-> No es una línea plana: el **evaluador gana en su punto concreto**, pero el **docente aporta
-> contexto** que el evaluador no trata. Un dato del docente que no contradiga al evaluador sigue
+> No es una línea plana: el **revisor gana en su punto concreto**, pero el **docente aporta
+> contexto** que el revisor no trata. Un dato del docente que no contradiga al revisor sigue
 > valiendo como complemento.
 
-## 2. Cadena de escalación (a quién consultar ante una duda)
+## 2. Qué suele revisar cada rol (dirige la predicción)
+
+| Rol | Suele revisar | Alcance |
+|---|---|---|
+| Docente de TG | todo el documento contra la norma EMI: formato, estructura del perfil y de los capítulos, matriz de consistencia, defensa | forma (y estructura) |
+| Revisor 1 / Revisor 2 | marco práctico, coherencia con los objetivos, números y validación, evaluación técnica y económica, conclusiones | fondo |
+| Tutor | alcance, estructura, marco teórico, avance; aconseja | fondo, como consejo |
+
+El campo `revisa:` del perfil de cada docente en el catálogo precisa esto para esa persona. Una predicción se aplica
+**solo en los capítulos que ese evaluador suele revisar**; fuera de ellos no se caza.
+
+## 3. Cadena de escalación (a quién consultar ante una duda)
 
 | Situación | Quién responde |
 |---|---|
-| Duda de contenido del trabajo | Tu **docente** principal → su material es la base |
-| Tu docente no resuelve / necesitás 2ª opinión | Un **docente transversal** (`ambito: general`) |
-| Un evaluador corrigió algo concreto | El **evaluador** (gana sobre docentes y norma) |
-| Cuestionás un punto | Se escala por esta misma cadena |
+| Duda de forma o de estructura | Tu **docente de TG** → su material es la base |
+| Un revisor corrigió algo concreto | El **revisor** (gana sobre docente y norma en ese punto) |
+| Duda de alcance o de avance | Tu **tutor** |
+| Cuestionás un punto | Se escala por esta misma cadena, siempre entre tus evaluadores |
 
-## 3. Regla anti-contradicción (obligatoria)
+Una segunda opinión de un docente que **no** te evalúa solo se consulta si el usuario la pide explícitamente, y
+nunca entra a las propuestas como criterio.
 
-Cuando chocan dos fuentes (norma ↔ evaluador, evaluador ↔ evaluador, evaluador ↔ tutor,
-docente ↔ evaluador):
+## 4. Regla anti-contradicción (obligatoria)
+
+Cuando chocan dos fuentes (norma ↔ revisor, revisor ↔ revisor, revisor ↔ tutor, docente ↔ revisor):
 
 1. **NO se aplica nada en silencio.**
 2. Se documenta en `wiki/contradictions/` con `status: abierto`.
 3. Se **pregunta al usuario** qué prevalece.
 4. Solo tras su decisión → `status: resuelto` con `resolution` (fuente, fecha, resultado).
 
-## 4. Docentes externos y casos límite
+## 5. Casos límite
 
-**Tier de segunda opinión.** Los docentes con `origen: informes-revisores` **no** evalúan tu trabajo:
-sus criterios salen de informes a otros estudiantes. Nunca emiten `confirmado` sobre tu trabajo
-—techo `inferido`— y **no se pasan** a `scripts/cobertura-fuentes.sh`, que es el gate de obligaciones.
+**Sin evaluadores identificados.** Todo queda `inferido` desde las clases `SEM-NN`; el modo revisar **no puede
+cerrar propuestas** y se avisa al estudiante que identifique a sus evaluadores. El sistema sabe quiénes son por
+`config.md` → `evaluadores:` y por el `docente:` de cada perfil, nunca por el nombre del archivo.
 
-**Convergencia entre externos.** Que dos docentes externos coincidan **no** sube el techo (sigue
-`inferido`). Sí cuenta como segunda ocurrencia para promover el criterio a regla propia.
-
-**Sin evaluadores propios.** Si solo tenés criterios de docentes externos, no hay desempate posible:
-todo queda `inferido`, el modo revisar **no puede cerrar propuestas** y hay que completar los
-evaluadores propios primero. El sistema sabe quiénes son por `config.local.md` → `evaluadores:`,
-nunca por el nombre del archivo.
+**Cambio de evaluador.** Si te reasignan un revisor, `asignar_evaluador.py` desvincula al anterior: su perfil deja
+de leerse en tu vault (lo que te corrigió queda como historial en tu perfil de revisor).
 
 ## Relaciones
 - [[_moc-docentes]]

@@ -63,7 +63,7 @@ while IFS= read -r target; do
     if [[ -n "${NAMES[$base]:-}" ]]; then continue; fi
     echo "ROTO: [[$t]]"
     ROTOS=$((ROTOS+1))
-done < <(rg -o '\[\[[^]]+' "$VAULT"/wiki "$VAULT"/sources "$VAULT"/index.md "$VAULT"/log.md 2>/dev/null | sed 's/^.*\[\[//' | sort -u)
+done < <(rg -L -o '\[\[[^]]+' "$VAULT"/wiki "$VAULT"/sources "$VAULT"/index.md "$VAULT"/log.md 2>/dev/null | sed 's/^.*\[\[//' | sort -u)
 
 # --- Passada 2: huérfanas (0 links entrantes y salientes) ---
 # La allowlist NO vive acá: se lee del bloque ```allowlist de ORDEN-DEL-VAULT.md.

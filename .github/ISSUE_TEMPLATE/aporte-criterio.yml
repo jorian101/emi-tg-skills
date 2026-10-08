@@ -1,0 +1,63 @@
+name: Aporte de criterio de un docente
+description: Sumá lo que un docente (tutor, revisor o docente de TG) te corrigió, sin dar su nombre ni partes del informe
+title: "Criterios: <código del docente>"
+labels: ["aporte-criterio"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Esto es público.** No escribas el nombre del docente, ni frases textuales del informe, ni nombres de estudiantes
+        (solo iniciales). El docente se identifica por su **código** del catálogo público (`d-xxxxxx`); si todavía no está,
+        escribí `nuevo` y pegá sus huellas (`python3 scripts/resolver_docente.py "Nombre Apellido" --huellas`: es un hash, no el nombre).
+        Lo más cómodo: `python3 scripts/contribuir.py --enviar` arma este aporte por vos.
+  - type: input
+    id: docente
+    attributes:
+      label: Código del docente
+      description: "El de tu catálogo (p. ej. d-3f9a1c) o la palabra nuevo."
+    validations:
+      required: true
+  - type: dropdown
+    id: rol
+    attributes:
+      label: Rol del docente con vos
+      options: ["Tutor", "Revisor", "Docente de TG"]
+    validations:
+      required: true
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo de aporte
+      options: ["Criterio nuevo", "Confirma un criterio existente (+1 ocurrencia)", "Docente nuevo"]
+    validations:
+      required: true
+  - type: textarea
+    id: criterio
+    attributes:
+      label: Criterio, en general
+      description: "Lo que pide, redactado en general (no «en mi Tabla 3»). Si confirma uno existente, el ID (p. ej. CR3)."
+    validations:
+      required: true
+  - type: input
+    id: capitulo
+    attributes:
+      label: Capítulo o sección donde suele aplicarlo
+  - type: input
+    id: fuente
+    attributes:
+      label: Fuente (iniciales y fecha)
+      description: "p. ej. informe a X.Y., MP 15/05. Sin citas textuales."
+    validations:
+      required: true
+  - type: textarea
+    id: huellas
+    attributes:
+      label: Huellas del nombre (solo si el docente es nuevo)
+      description: "Una por línea, de resolver_docente.py --huellas. Permiten reconocerlo después sin publicar su nombre."
+  - type: checkboxes
+    id: saneado
+    attributes:
+      label: Antes de enviar
+      options:
+        - label: No incluí el nombre del docente, ni partes del informe, ni nombres completos de estudiantes.
+          required: true

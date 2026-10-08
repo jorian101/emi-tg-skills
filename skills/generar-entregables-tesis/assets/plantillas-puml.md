@@ -7,7 +7,7 @@ Plantillas obligatorias para todos los diagramas UML de la tesis (Sprints 0-6). 
 - **Sin `title`** dentro del `.puml` (Hard Rule 16). El titulo vive solo en el H2 del `.md`.
 - **`skinparam linetype ortho`** para lineas rectas (Hard Rule 17).
 - **`skinparam defaultFontName "Georgia"`** y **`skinparam defaultFontColor #4A3B1F`** (Hard Rule 19).
-- **Paleta institucional del Tribunal Supremo Militar** (Hard Rule 15):
+- **Paleta institucional** (Hard Rule 15; la real va en `convenciones.paleta_uml` de `proyecto.yaml`; abajo, la ámbar del proyecto de referencia):
   - Ambar claro: `#FFF7D6` (fondo acciones/usecase)
   - Ambar medio: `#FDE68A` (fondo actores/decisiones)
   - Ambar muy claro: `#FFFBEB` (fondo rectangle/notas)

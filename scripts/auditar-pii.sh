@@ -22,7 +22,7 @@ filtrar() {
 buscar() { # $1=etiqueta  $2=regex
   local etiqueta="$1" extra="$2" hits
   hits="$(grep -rnEi "$extra" "$RAIZ" \
-    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ \
+    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ --exclude-dir=catalogo \
     --include='*.md' --include='*.sh' --include='*.py' --include='*.mjs' \
     --include='*.yaml' --include='*.yml' --include='*.json' --include='*.txt' 2>/dev/null \
     | filtrar || true)"
@@ -51,7 +51,7 @@ buscar_slugs() {
   [ -f "$DENY" ] || return 0
   local tokens deny_low hits
   tokens="$(grep -rhoE '[A-Za-z0-9._/-]+\.(md|py|sh|yaml|yml|json|txt)' "$RAIZ" \
-    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ 2>/dev/null \
+    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ --exclude-dir=catalogo 2>/dev/null \
     | tr 'A-Z' 'a-z' | sort -u || true)"
   deny_low="$(grep -vE '^[[:space:]]*(#|$)' "$DENY" | tr 'A-Z' 'a-z' || true)"
   [ -n "$deny_low" ] || return 0   # denylist solo con comentarios: no hay patrones
@@ -68,7 +68,7 @@ buscar_slugs() {
 # capitalizados, así "terceros" (palabra común) no matchea el apellido "Terceros".
 if [ -f "$DENY" ]; then
   HITS="$(grep -rnEf <(grep -vE '^[[:space:]]*(#|$)' "$DENY") "$RAIZ" \
-    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ \
+    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ --exclude-dir=catalogo \
     --include='*.md' --include='*.sh' --include='*.py' --include='*.mjs' \
     --include='*.yaml' --include='*.yml' --include='*.json' --include='*.txt' 2>/dev/null \
     | filtrar || true)"

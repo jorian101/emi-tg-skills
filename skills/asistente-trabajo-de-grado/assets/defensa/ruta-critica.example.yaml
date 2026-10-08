@@ -1,0 +1,17 @@
+# Ruta crítica: carriles por rol, una columna por tarea en orden y, debajo, cómo asiste el sistema.
+# Regla: cada tarea, tiempo y apoyo sale del documento del trabajo de grado (citar la fuente arriba).
+slug: ruta-critica
+titulo: "Ruta crítica del proceso y cómo asiste el sistema en cada tarea"
+subtitulo: "Tiempos observados por tarea (registro de observación del documento)"
+escala_export: 2
+carriles: [Rol A, Rol B]
+tareas:
+  - {id: t1, carril: Rol A, tipo: fuera, tiempo: "20 min", tarea: "Recibe el caso", asiste: "Fuera del sistema: la entrega es física"}
+  - {id: t2, carril: Rol A, tipo: analisis, tiempo: "2 h", tarea: "Revisa los antecedentes", asiste: "Busca los datos en los documentos cargados (RF-01)"}
+  - {id: t3, carril: Rol B, tipo: redaccion, tiempo: "4 h", tarea: "Redacta el informe", asiste: "Genera el borrador con su plantilla; el rol lo revisa (RF-02)"}
+  - {id: t4, carril: ambos, tipo: fuera, tiempo: "1 h", tarea: "Reunión de decisión", asiste: "Fuera del sistema: la decisión es de las personas"}
+resumen:
+  - {cifra: "2 h → 1,5 h", rotulo: "Análisis por caso (−25 %)", tipo: analisis}
+  - {cifra: "4 h → 3 h", rotulo: "Redacción por caso (−25 %)", tipo: redaccion}
+  - {cifra: "6 h → 4,5 h", rotulo: "Total por caso (−25 %)", tipo: total}
+nota: "Valores de ejemplo. Reemplazar por los del documento."

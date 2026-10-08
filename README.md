@@ -18,7 +18,7 @@ intención de nadie.
 | Skill | Qué hace |
 |---|---|
 | `perfil-revisor-tg` | Perfila evaluadores, ingiere sus informes, predice qué van a corregir y corre las pasadas de revisión del **fondo** |
-| `asistente-trabajo-de-grado` | Norma, estructura y coherencia del trabajo; catálogo de docentes y consulta de sus explicaciones |
+| `asistente-trabajo-de-grado` | Norma, estructura y coherencia del trabajo; catálogo de docentes y consulta de sus explicaciones; **modo defensa**: diapositivas, tríptico, artículo, manual, anexos con QR, ruta crítica, diagramas animados y capturas, todo derivado del documento y enlazado en el vault |
 | `generar-entregables-tesis` | Entregables por sprint: figuras, tablas, mockups y Word |
 | `extraer-doc-tesis` | Extrae el Word/PDF al vault con reporte de validación y trazabilidad de citas |
 | `extraer-conversaciones-ias` | Destila criterio de docentes desde conversaciones previas con IAs, **auditando** su fiabilidad |
@@ -37,8 +37,24 @@ intención de nadie.
 ```bash
 git clone <url> "$HOME/emi-tg-skills"
 cd "$HOME/emi-tg-skills"
-./install.sh            # symlinks a tus agentes + crea el vault desde vault-template/
+./install.sh --destino ~/mi-vault --docx ~/TRABAJO-DE-GRADO.docx --code-repo ~/mi-proyecto
 ```
+
+Eso deja tu **vault como un repositorio nuevo** (con su pre-commit y primer commit; `--remoto <nombre>` crea el repo
+privado en GitHub, sin push), tu TG extraído, las skills enlazadas a tu agente y el repo de tu proyecto conectado.
+Detalle, otra máquina y problemas frecuentes: [`docs/instalacion.md`](docs/instalacion.md).
+
+Después, tres pasos con tu agente:
+
+1. **«inicializá el vault desde mi TG»** — completa `proyecto.yaml` y los modelos de la defensa citando tu TG
+   (pregunta lo que el TG no dice: revisores, qué anexos llevan QR).
+2. **«ingerir informe»** y **«registrar corrección»** con cada revisión — arma el perfil de cada evaluador.
+3. **modo defensa** — diapositivas, tríptico, ruta crítica, manual, anexos con QR, diagramas animados y guion.
+
+**Catálogo de docentes (colaborativo, sin nombres).** `catalogo-publico/` trae los perfiles de tutores, revisores y docentes de TG
+**sin nombres** (código y huellas); descargarlo es opcional (`--catalogo-publico`) y el nombre de tu docente lo reconocés vos, en tu
+máquina. Lo que te corrigen se comparte por **issue abierto a todos** (`scripts/contribuir.py`), sin invitaciones. Los nombres viven solo en el
+catálogo privado del mantenedor. Detalle y límites: [`docs/instalacion.md`](docs/instalacion.md).
 
 El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
 escribir nada: `./install.sh --check`.
@@ -53,7 +69,7 @@ escribir nada: `./install.sh --check`.
   **no** hace.
 - `docs/arquitectura.md` — motor y datos, el contrato de config, los gates y el guard de predicción.
 - `docs/migracion-desde-vault.md` — solo si venís de tener las skills dentro de un vault.
-- `docs/portar-a-otro-estudiante.md` — pendiente.
+- `docs/portar-a-otro-estudiante.md` — qué es del motor, qué es de cada vault y cómo arrancar con otro TG.
 
 ## Límites honestos
 
@@ -62,8 +78,8 @@ escribir nada: `./install.sh --check`.
 - **No escribe tu trabajo.** Entrega propuestas; el Word lo tocás vos.
 - **No adivina.** Todo criterio lleva su estado: `confirmado` (el evaluador lo dijo), `inferido`
   (hipótesis) o `abierto` (hay que preguntar). Si no puede citar de dónde sale, no entra.
-- **Un docente que no te evalúa no manda.** Sus criterios son segunda opinión, nunca norma, y no
-  pueden convertirse en obligación.
+- **Solo cuentan tus evaluadores.** Tutor, revisores y docente de TG; los demás docentes se ignoran, porque pueden
+  contradecirse y no te evalúan.
 
 ## Relación con `emi-professor-skill`
 

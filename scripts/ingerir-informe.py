@@ -10,7 +10,7 @@ correcciones manuales de `registro.md`. Nunca escribe en la carpeta de origen.
 
 Uso:
     python3 scripts/ingerir-informe.py                 # ingesta completa
-    python3 scripts/ingerir-informe.py --only magueno  # un docente
+    python3 scripts/ingerir-informe.py --only <docente>  # un docente
     python3 scripts/ingerir-informe.py --check         # solo verificar (exit 1 si hay pendientes)
 """
 

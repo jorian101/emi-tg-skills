@@ -1,0 +1,24 @@
+# Modelo de manual.yaml (manual.py). Rutas relativas a este archivo. Lo arma el modo inicializar;
+# el texto vive en el .md y los datos de tablas y glosario acá, nunca en el código.
+fuente: manual-de-usuario.md          # capítulos con "## CAPÍTULO N: Título" y marcas {{FIG: …}}, {{TABLA-…}}
+plantilla: plantilla-manual.docx      # opcional: el Word del manual que el autor ajustó (portada, índices, estilos)
+capturas: capturas                    # PNG de la interfaz (capturas.py) y su marcadores.json
+figuras: figuras                      # salida de las capturas con marcadores
+salida: manual-de-usuario.docx
+anio: 2026                            # «Elaboración propia, 2026.»
+ancho_figura_cm: 15
+# estilos: {cuerpo: "Normal oficial", pasos: "Numeracion"}   # solo si la plantilla usa otros nombres
+recortes:                              # captura: [x0, y0, x1, y1] para mostrar solo una parte
+  panel-principal: [256, 466, 1342, 652]
+marcadores:                            # captura: [[x, y], …] (además de los que mide capturas.py)
+  inicio-sesion: [[498, 361], [498, 455], [498, 534]]
+tablas:
+  ROLES:
+    titulo: Roles del producto
+    nota: La tabla presenta los roles que declara el trabajo de grado y lo que puede hacer cada uno.
+    encabezados: [Rol, Cargos, ¿Qué puede hacer?]
+    filas:
+      - [Administrador, <cargo del caso>, <acciones literales del TG>]
+      - [Usuario, <cargo del caso>, <acciones literales del TG>]
+glosario:
+  - [Término, Definición en lenguaje llano.]

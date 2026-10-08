@@ -3,7 +3,7 @@ name: extraer-doc-tesis
 description: "Trigger: extraé, convertí o actualizá un documento Word/PDF de la tesis. Genera Markdown navegable, HTML legible, tablas, índices, imágenes, detección de citas y trazabilidad de fuentes en el vault."
 license: MIT
 metadata:
-  author: asistente-legal
+  author: emi-tg-skills
   version: "3.0"
 ---
 
@@ -13,7 +13,7 @@ Usá esta skill cuando el usuario pida extraer, convertir o actualizar un `.docx
 
 ## Hard Rules
 
-- Fuente: `$CORPUS/BACKUP TG`; destino: `$VAULT/sources`.
+- Fuente: la ruta al `.docx` (o un nombre suelto, que se busca en `$CORPUS/BACKUP TG`); destino: `$VAULT/sources`. `install.sh --docx` lo corre solo.
 - Rechazá locks (`~$`) y temporales (`~WRL`). Nunca extraigas un archivo inexistente.
 - Para DOCX usá `scripts/extract_document.py`, que genera Markdown, HTML, media, reporte de validación, estado de extracción y detección de citas.
 - **Protección contra sobrescritura**: si el Markdown destino tiene cambios manuales sin commitear, el extractor aborta (RuntimeError) salvo `--force`. Antes de usar `--force`, mostrá el `git diff` y pedí confirmación.
