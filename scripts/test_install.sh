@@ -10,7 +10,7 @@ chk() { if eval "$2"; then printf '  ok    %s\n' "$1"; else printf '  FALLA %s\n
 copiar_repo() { # $1=destino: el árbol de trabajo (sin .git ni datos locales), para no tocar el config.md real
   mkdir -p "$1"
   ( cd "$AQUI" && git ls-files -co --exclude-standard -z ) | while IFS= read -r -d '' f; do
-    [ -e "$AQUI/$f" ] && ( cd "$AQUI" && cp --parents "$f" "$1/" )
+    [ -f "$AQUI/$f" ] && ( cd "$AQUI" && cp --parents "$f" "$1/" )
   done
 }
 
@@ -85,5 +85,11 @@ echo "== sin acceso al catálogo: uno local y vacío =="
 copiar_repo "$T/r3"; mkdir -p "$T/home3"
 HOME="$T/home3" bash "$T/r3/install.sh" --destino "$T/vault3" --catalogo "file://$T/no-existe" > "$T/salida3.txt" 2>&1
 chk "catálogo local vacío creado y vault funcional" '[ -d "$T/home3/.local/share/tg-docentes/docentes" ] && [ "$(git -C "$T/vault3" rev-list --count HEAD)" = 1 ]'
+
+echo "== submódulo del catálogo inalcanzable (sin acceso al repo privado) =="
+copiar_repo "$T/r4"; mkdir -p "$T/home4"
+chk "el repo trae .gitmodules con el catálogo privado" 'grep -q "path = catalogo" "$T/r4/.gitmodules"'
+HOME="$T/home4" bash "$T/r4/install.sh" --destino "$T/vault4" > "$T/salida4.txt" 2>&1
+chk "avisa y sigue con un catálogo local vacío" 'grep -q "sin acceso al catálogo privado" "$T/salida4.txt" && [ -d "$T/home4/.local/share/tg-docentes/docentes" ] && [ "$(git -C "$T/vault4" rev-list --count HEAD)" = 1 ]'
 
 if [ "$FALLO" -eq 0 ]; then echo "ok test_install"; else echo "FALLÓ test_install"; tail -30 "$T/salida1.txt"; exit 1; fi
