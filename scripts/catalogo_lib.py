@@ -8,9 +8,12 @@ Ubicación del catálogo: `$DOCENTES_EMI` o `~/.local/share/tg-docentes`. Los ca
 from __future__ import annotations
 
 import getpass
+import hashlib
+import itertools
 import os
 import re
 import subprocess
+import unicodedata
 from pathlib import Path
 
 import yaml
@@ -80,9 +83,13 @@ def commit_local(cat: Path, mensaje: str) -> bool:
 
 
 def base_remota(cat: Path) -> str | None:
+    """Con remoto, origin/main; en el catálogo local sembrado desde el público, la rama `main` (el último snapshot)."""
     for rama in ("origin/main", "origin/master"):
         if git(cat, "rev-parse", "--verify", "-q", rama).returncode == 0:
             return rama
+    actual = git(cat, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+    if actual != "main" and git(cat, "rev-parse", "--verify", "-q", "main").returncode == 0:
+        return "main"
     return None
 
 
@@ -120,8 +127,8 @@ def fila_de(cols: list[str], valores: dict[str, str]) -> str:
 
 
 def prefijo_id(texto: str, slug: str) -> str:
-    ids = re.findall(r"^\| ([A-Z]{2,}[A-Z]*)\d+ \|", texto, re.MULTILINE)
-    return ids[0] if ids else (re.sub(r"[^a-z]", "", slug.lower())[:3].upper() or "DOC")
+    """Los IDs son neutros (CR1, CR2…): un prefijo con el apellido delataría al docente en el catálogo público."""
+    return "CR"
 
 
 def siguiente_id(texto: str, prefijo: str) -> str:
@@ -295,3 +302,129 @@ def poner_campo(texto: str, clave: str, valor: str) -> str:
     cab = re.sub(rf"^{clave}:.*$", linea, cab, count=1, flags=re.MULTILINE) if re.search(rf"^{clave}:", cab, re.MULTILINE) \
         else cab + "\n" + linea
     return f"---\n{cab}\n---\n" + texto[m.end():]
+
+
+# ------------------------------------------------------------------ seudónimos: código + huellas del nombre
+# La sal es PÚBLICA a propósito: cada estudiante calcula en su máquina las huellas del nombre de SU docente y las busca en
+# el catálogo público. Es seudonimización, no anonimato: quien ya sepa un nombre puede comprobarlo.
+SAL = "emi-docentes/v1"
+TITULOS_NOMBRE = {"ing", "lic", "msc", "cnl", "daen", "dr", "dra", "mcal", "sr", "sra", "mgr", "phd", "tcnl", "crnl", "cap",
+                  "tte", "del", "los", "las", "von", "van", "docente", "tutor"}
+MIN_COINCIDENCIAS_AUTO = 3  # tokens en común (3 pares) para vincular sin preguntar
+
+
+def normalizar(texto: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFKD", texto.casefold()) if unicodedata.category(c) != "Mn")
+
+
+def tokens_nombre(nombre: str) -> list[str]:
+    return sorted({t for t in re.findall(r"[a-z]{3,}", normalizar(nombre)) if t not in TITULOS_NOMBRE})
+
+
+def claves_de_nombre(nombre: str) -> list[str]:
+    """Huella de cada par no ordenado de tokens del nombre (16 hex): sirve para reconocer un nombre sin guardarlo."""
+    return sorted(hashlib.sha256(f"{SAL}|{a}|{b}".encode()).hexdigest()[:16] for a, b in itertools.combinations(tokens_nombre(nombre), 2))
+
+
+def codigo_de_slug(slug: str) -> str:
+    return "d-" + hashlib.sha256(f"{SAL}|slug|{slug}".encode()).hexdigest()[:6]
+
+
+def coincidencias(nombre: str, perfiles: dict[str, list[str]]) -> list[tuple[str, int]]:
+    """[(código, pares en común)] de mayor a menor, con al menos un par en común."""
+    mias = set(claves_de_nombre(nombre))
+    res = [(cod, len(mias & set(claves))) for cod, claves in perfiles.items()]
+    return sorted(((c, n) for c, n in res if n), key=lambda x: -x[1])
+
+
+def claves_del_catalogo(cat: Path) -> dict[str, list[str]]:
+    out = {}
+    for p in (cat / "docentes").glob("*.md"):
+        fm = frontmatter(p.read_text(encoding="utf-8"))
+        if fm.get("type") == "docente":
+            claves = fm.get("claves") or (claves_de_nombre(str(fm.get("nombre", ""))) if fm.get("nombre") else [])
+            if claves:
+                out[p.stem] = [str(c) for c in claves]
+    return out
+
+
+# ------------------------------------------------------------------ export público (sin nombres)
+CITA = re.compile(r"[\"«“][^\"»”]*[\"»”]")
+
+
+def rol_generico(rol: str) -> str:
+    r = normalizar(rol)
+    if "tutor" in r:
+        return "Tutor"
+    if "docente de trabajo" in r or "docente de tg" in r or "cnl" in r:
+        return "Docente de TG"
+    return "Revisor"
+
+
+def _limpiar_fuente(celda: str) -> str:
+    sin_citas = CITA.sub("", celda)
+    return re.sub(r"\s{2,}", " ", re.sub(r"\s*;\s*;", ";", sin_citas)).strip(" ;,—-")
+
+
+def _tabla_limpia(bloque: str) -> str:
+    """Tabla de criterios sin citas literales en la columna de fuente (se conservan iniciales, fechas y ocurrencias)."""
+    lineas = bloque.split("\n")
+    k, cols = cabecera(lineas)
+    if k < 0:
+        return bloque
+    destino = next((cols.index(c) for c in ("Fuente", "Evidencia") if c in cols), None)
+    for n in range(k + 2, len(lineas)):
+        if lineas[n].startswith("|") and destino is not None:
+            cs = celdas(lineas[n])
+            if len(cs) == len(cols):
+                cs[destino] = _limpiar_fuente(cs[destino]) or "—"
+                lineas[n] = "| " + " | ".join(cs) + " |"
+    return "\n".join(lineas)
+
+
+def perfil_publico(texto: str, slug: str) -> tuple[str, str]:
+    """Perfil sin nombre: (código, texto). Solo criterios (sin citas literales), forma e historial de roles."""
+    fm = frontmatter(texto)
+    codigo = codigo_de_slug(slug)
+    claves = claves_de_nombre(str(fm.get("nombre", "")))
+    partes = []
+    for titulo in ("Criterios de fondo", "Criterios de forma"):
+        i, j = seccion(texto, titulo)
+        if i < 0:
+            ip = texto.find(f"## {titulo}")  # «Criterios de forma (fuera del alcance…)»
+            i, j = (-1, -1) if ip < 0 else (ip, seccion(texto[ip:], titulo)[1] + ip)
+        if i >= 0:
+            bloque = _tabla_limpia(texto[i:j].rstrip("\n"))
+            bloque = re.sub(r"^## .*$", f"## {titulo}", bloque, count=1, flags=re.MULTILINE)
+            partes.append(bloque)
+    i, j = seccion(texto, "Historial de roles")
+    if i >= 0:
+        partes.append(texto[i:j].rstrip("\n"))
+    cab = {"title": f"Docente {codigo}", "type": "docente", "codigo": codigo, "status": "activo",
+           "revisa": str(fm.get("revisa", "por registrar")), "alcance": str(fm.get("alcance", "por registrar")),
+           "rol": rol_generico(str(fm.get("rol", ""))), "updated": str(fm.get("updated", "")), "claves": claves}
+    cuerpo = f"# Docente {codigo}\n\n{PLANTILLA_CALLOUT_PUBLICO}\n\n" + "\n\n".join(partes) + "\n\n## Relaciones\n- [[_moc-docentes]] · [[jerarquia-autoridad]]\n"
+    return codigo, "---\n" + yaml.safe_dump(cab, allow_unicode=True, sort_keys=False, width=200).rstrip() + "\n---\n\n" + cuerpo
+
+
+PLANTILLA_CALLOUT_PUBLICO = """> [!important] Perfil público sin nombre
+> El nombre de este docente **no** está aquí: se reconoce localmente con `scripts/resolver_docente.py "Nombre Apellido"`,
+> que calcula huellas del nombre en tu máquina y las compara con `claves`. Los criterios son generales y las fuentes llevan
+> iniciales y fecha, sin citas. Es seudonimización, no anonimato."""
+
+
+def nombres_privados(cat: Path) -> set[str]:
+    """Todo lo que identificaría a un docente del catálogo privado: tokens de su nombre y partes de su slug (normalizados)."""
+    out: set[str] = set()
+    for p in (cat / "docentes").glob("*.md"):
+        fm = frontmatter(p.read_text(encoding="utf-8"))
+        if fm.get("type") != "docente":
+            continue
+        out.update(t for t in re.findall(r"[a-z]{4,}", normalizar(p.stem)))
+        out.update(t for t in re.findall(r"[a-z]{4,}", normalizar(str(fm.get("nombre", "")))) if t not in TITULOS_NOMBRE)
+    return out
+
+
+def nombres_en(texto: str, prohibidos: set[str], permitir: frozenset[str] = frozenset()) -> list[str]:
+    palabras = set(re.findall(r"[a-z]{4,}", normalizar(texto)))
+    return sorted((palabras & prohibidos) - permitir)
