@@ -41,13 +41,13 @@ No se usa para producir el corregido (eso es modo revisar) ni como sustituto de 
 Un **brief por evaluador**, nunca el mismo texto neutro a todos. Dos o más delegados, cada uno con
 un perfil distinto. Si solo hay un canal disponible, el tribunal **no aplica**: se delega normal.
 
-**Los docentes que no te evalúan quedan `N/A` por default**: son segunda opinión, no norma. Solo
-entran si el usuario lo pide, y en ese caso van como brief aparte, con el tope de 1 hallazgo por
-sección y las tres puertas del guard.
+**Solo participan tus evaluadores identificados** (tutor, revisores, docente de TG). Un docente que no te evalúa
+no tiene brief ni fila de cobertura: se ignora, porque sus criterios pueden contradecir a los tuyos. Un rol
+`por-asignar` entra con las clases `SEM-NN` y lo declara en su brief.
 
 ## 4. Armado del brief (uno por evaluador)
 
-1. Leer su perfil (`Revisor_N.md`, `Tutor.md` o `wiki/docentes/<slug>.md`).
+1. Leer su perfil del vault (`Revisor_N.md`, `Tutor.md` o `Docente_TG.md`: lo `confirmado`) y su perfil del catálogo enlazado en `wiki/docentes/<slug>.md` (la predicción, solo en lo que revisa).
 2. Leer `reglas-propias.md` y `matriz-generalizaciones.md`.
 3. **Extraer solo las filas aplicables a la sección** (no el perfil entero, no el vault entero).
 4. El brief declara: perfil, ámbito, capítulos que revisa, sus filas aplicables, sus clases de

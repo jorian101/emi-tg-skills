@@ -6,7 +6,7 @@
 # Uso:
 #   ./install.sh --destino ~/mi-vault                      # crea el vault e instala
 #   ./install.sh --destino ~/mi-vault --docx ~/TG.docx     # además extrae tu TG y arma proyecto.yaml
-#   ./install.sh --destino ~/mi-vault --docentes-desde ~/otro-vault   # trae perfiles de docentes ya armados
+#   ./install.sh --destino ~/mi-vault --catalogo <emi-docentes>   # enlaza el catálogo compartido de docentes
 #   ./install.sh --check                                   # solo verifica, no escribe nada
 #   ./install.sh                                           # usa el vault de config.local.md si existe
 set -uo pipefail
@@ -18,7 +18,7 @@ AGENTE_DEFAULT="$HOME/.agents/skills"
 
 DESTINO=""
 DOCX=""
-DOCENTES_DESDE=""
+CATALOGO=""
 CHECK=0
 AGENTES=("$AGENTE_DEFAULT")
 
@@ -26,7 +26,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --destino) DESTINO="${2:-}"; shift 2 ;;
     --docx)    DOCX="${2:-}"; shift 2 ;;
-    --docentes-desde) DOCENTES_DESDE="${2:-}"; shift 2 ;;
+    --catalogo) CATALOGO="${2:-}"; shift 2 ;;
     --check)   CHECK=1; shift ;;
     --agentes) AGENTES+=("${2:-}"); shift 2 ;;
     -h|--help)
@@ -143,14 +143,11 @@ copiar_asset "$A/defensa/defensa.example.json"           "$D/defensa.json"
 copiar_asset "$A/defensa/correcciones-tg.plantilla.md"   "$D/CORRECCIONES-TG/correcciones-tg.md"
 copiar_asset "$A/defensa/pendientes-defensa.plantilla.md" "$D/PENDIENTES-DEFENSA.md"
 
-# Perfiles de docentes de otro vault (mismo cuerpo docente, otro estudiante). Nunca pisa los propios.
-if [ -n "$DOCENTES_DESDE" ]; then
-  for f in "$DOCENTES_DESDE"/wiki/docentes/*.md; do
-    case "$(basename "$f")" in _*|jerarquia-autoridad.md) continue ;; esac
-    copiar_asset "$f" "wiki/docentes/$(basename "$f")"
-  done
-  warn "agregá cada docente traído al catálogo wiki/docentes/_moc-docentes.md; sus enlaces a notas"
-  warn "del otro vault quedan rotos hasta que los traigas o los quites (verificar-enlaces los lista)"
+# Catálogo compartido de docentes: alias estable; en el vault solo se enlazan los evaluadores propios.
+if [ -n "$CATALOGO" ]; then
+  CATALOGO="$(cd "$CATALOGO" && pwd)"
+  mkdir -p "$(dirname "$HOME/.local/share/tg-docentes")"
+  ln -sfn "$CATALOGO" "$HOME/.local/share/tg-docentes" && ok "alias ~/.local/share/tg-docentes -> $CATALOGO"
 fi
 
 # ---------------------------------------------------------------- tu trabajo de grado
@@ -169,6 +166,9 @@ if [ -n "$DOCX" ]; then
     # La tabla del documento maestro en ORDEN-DEL-VAULT.md deja de tener placeholders.
     sed -i -e "s|<ruta al .docx vivo de tu trabajo>|$DOCX|" -e "s|sources/<slug>\.|sources/$SLUG.|g" "$DESTINO/ORDEN-DEL-VAULT.md"
     sed -i "s|\$TG_DOCX|$DOCX|" "$DESTINO/$D/defensa.json"
+    if [ -d "$HOME/.local/share/tg-docentes/docentes" ]; then
+      python3 "$REPO/scripts/asignar_evaluador.py" "$DESTINO" --desde-tg || err "asignar_evaluador.py --desde-tg"
+    fi
     # El TG extraído cuelga del hub raíz (si no, verificar-enlaces lo da por huérfano).
     grep -q "\[\[sources/$SLUG\]\]" "$DESTINO/index.md" || \
       sed -i "s|^## Datos$|## Datos\n\n- [[sources/$SLUG]] — tu trabajo de grado extraído (no se edita: se re-extrae)|" "$DESTINO/index.md"

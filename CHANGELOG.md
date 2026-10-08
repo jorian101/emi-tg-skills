@@ -3,6 +3,20 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado: [SemVer](https://semver.org/lang/es/).
 
+## [perfil-revisor-tg 1.43 · asistente-trabajo-de-grado 3.3] — 2026-10-08
+
+**Catálogo compartido de docentes y solo los evaluadores propios.**
+
+- **Catálogo único** (`<emi-docentes>`, alias `~/.local/share/tg-docentes`): un perfil por docente con lo que
+  suele revisar (`revisa:`, `alcance:`), criterios con ocurrencias, historial de roles y estudiantes por iniciales.
+  Cada vault enlaza **solo** a su tutor, revisores y docente de TG; los demás no se leen (pueden contradecirse).
+- `scripts/asignar_evaluador.py` (`--rol`, `--docente`/`--por-asignar`, `--desde-tg`, `--check`): vincula, desenlaza
+  al reasignar y muestra la predicción inicial. `install.sh --catalogo` crea el alias y vincula al tutor de la carátula.
+- Reglas pulidas: se reemplaza el «tier de segunda opinión» por «solo los evaluadores identificados»; la predicción se
+  acota a lo que cada evaluador revisa; evaluador `por-asignar` (típico del Revisor 2) usa solo las clases `SEM`.
+- Modos nuevos en `perfil-revisor-tg`: **asignar** y **registrar corrección** (lo recibido suma al perfil compartido).
+- `jerarquia-autoridad.md` reescrita: quiénes cuentan, jerarquía, qué suele revisar cada rol, escalación entre evaluadores.
+
 ## [asistente-trabajo-de-grado 3.2 · perfil-revisor-tg 1.42 · generar-entregables-tesis 3.3] — 2026-10-08
 
 **Cualquier TG, cualquier estudiante**: el vault se arma desde el `.docx` y lo propio de cada proyecto vive en

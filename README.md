@@ -47,8 +47,9 @@ Después, tres pasos con tu agente:
 2. **«ingerir informe»** cada vez que llega una revisión — arma el perfil de cada evaluador.
 3. **modo defensa** — diapositivas, tríptico, ruta crítica, manual, anexos con QR, diagramas animados y guion.
 
-Si compartís tribunal o carrera con otro estudiante que ya usa las skills: `--docentes-desde <su-vault>` trae
-los perfiles de docentes (segunda opinión, no deciden).
+Con `--catalogo <emi-docentes>` se enlaza el catálogo compartido de docentes: cada vault ve **solo** a sus
+evaluadores (tutor, revisores, docente de TG; `scripts/asignar_evaluador.py`), con lo que cada uno suele revisar, y lo
+que un estudiante registra de un docente sirve a los demás que lo tengan.
 
 El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
 escribir nada: `./install.sh --check`.
@@ -72,8 +73,8 @@ escribir nada: `./install.sh --check`.
 - **No escribe tu trabajo.** Entrega propuestas; el Word lo tocás vos.
 - **No adivina.** Todo criterio lleva su estado: `confirmado` (el evaluador lo dijo), `inferido`
   (hipótesis) o `abierto` (hay que preguntar). Si no puede citar de dónde sale, no entra.
-- **Un docente que no te evalúa no manda.** Sus criterios son segunda opinión, nunca norma, y no
-  pueden convertirse en obligación.
+- **Solo cuentan tus evaluadores.** Tutor, revisores y docente de TG; los demás docentes se ignoran, porque pueden
+  contradecirse y no te evalúan.
 
 ## Relación con `emi-professor-skill`
 

@@ -42,16 +42,6 @@ tags:
 | SEM-05 | revisores EMI | **Algoritmo como caja negra**: técnica o modelo sin ecuaciones ni gráficas por fase | subsecciones que nombran algoritmos | (regla propia por crear) | inferido |
 | SEM-06 | revisores EMI | **Validación de un solo sentido**: los expertos valoran la salida, pero nadie la contrasta con los errores reales ya conocidos del caso | juicio de expertos y su anexo, demostración | (regla propia por crear) | inferido |
 
-## Criterios de docentes que NO te evalúan
-
-> Estos **no** llevan ID numérico ni entran a esta matriz: siguen el precedente "sin clases de
-> caza". Sus criterios viven en su perfil de `wiki/docentes/` y se aplican con las tres puertas
-> del guard (evidencia, transferibilidad, autoridad) más el tope de 1 hallazgo por sección.
-
-| Criterio externo | Corrobora | Qué agrega |
-|---|---|---|
-| XX1 (<docente>) | <regla propia o clase existente> | <nada, o qué aporta de nuevo> |
-
 ## Modelo de intención por fuente
 
 Para resolver casos no marcados: cómo revisa cada evaluador y qué hacer ante un caso nuevo.

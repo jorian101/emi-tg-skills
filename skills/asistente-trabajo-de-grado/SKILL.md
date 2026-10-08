@@ -32,22 +32,18 @@ Esta skill trabaja sobre el **área general de trabajos de grado** del vault, no
 
 - **Documento maestro**: `sources/<slug>.md` (por ejemplo `trabajo-de-grado.md` o `marco-practico.md`), según lo registrado en `ORDEN-DEL-VAULT.md`.
 - **Conocimiento destilado**: `wiki/trabajos-grado/` (estructura, perfil, marcos, metodología) — notas con frontmatter `fuente_original` + `seccion_original`.
-- **Docentes dinámicos**: `wiki/docentes/_moc-docentes.md` es el **catálogo**. Cada docente es un `.md` con su `ambito` (`general` | `especifico`), su canal (`audio`, `pdf`, `apuntes`) y sus `fuente_id` de NotebookLM. La lista crece sin tocar la skill: crear el `.md` desde `_plantilla-docente.md` + agregar fila al catálogo. **Nunca hardcodear un docente en `SKILL.md`.**
+- **Docentes**: solo tus **evaluadores identificados** (tutor, revisores, docente de TG). Sus perfiles viven en el catálogo compartido (`$DOCENTES_EMI`, por defecto `~/.local/share/tg-docentes`) y `wiki/docentes/` enlaza **únicamente** a los tuyos; `wiki/docentes/_moc-docentes.md` los lista (lo mantiene `scripts/asignar_evaluador.py`). Un docente que no te evalúa no se lee: sus criterios pueden contradecir a los de tus evaluadores. **Nunca hardcodear un docente en `SKILL.md`.**
 
-### Catálogo de docentes (se lee en cada corrida)
+### Docentes y material de clase (se lee en cada corrida)
 
-> Fuente de verdad **única**: `wiki/docentes/_moc-docentes.md`. El catálogo **no se espeja acá**
-> (regla de esta skill: "nunca hardcodear un docente en `SKILL.md`"). Leerlo en cada corrida.
->
-> El catálogo tiene dos bloques: los **docentes con material propio** (cada uno con su `ambito`
-> y su canal: audios, PDF o apuntes) y los **docentes revisores externos**
-> (`origen: informes-revisores`), cuyos criterios se destilaron de informes de
-> revisión a otros estudiantes y valen como **segunda opinión**, nunca como norma.
+> Fuente de verdad **única**: `wiki/docentes/_moc-docentes.md` (tus evaluadores vinculados) y, para cada uno,
+> su perfil del catálogo (`revisa:`, criterios con ocurrencias, historial de roles). El modo notebooklm consulta el
+> material de clase (audios, PDF, apuntes) **del docente de TG** y de nadie más.
 
-**Uso real de cada docente**: el docente `especifico` es el principal (fuente de criterio de contenido). El `general` es **segunda opinión de emergencia**: se consulta solo cuando no se sabe qué hacer o se buscan puntos de vista distintos, no como norma del trabajo específico.
+**Uso real**: el **docente de TG** es la fuente de criterio de forma, estructura y norma EMI; los **revisores** mandan en su punto de fondo; el **tutor** aconseja. El docente de TG puede variar de un paralelo a otro: se vincula el que corresponde y los demás se ignoran.
 
 > [!important] Desambiguación de docentes
-> La skill NUNCA asume "explicación general = norma del trabajo". Cada consulta debe resolver el `docente` y su `ambito`. Si no se puede determinar el docente de una fuente, marcarla `pendiente` y no usarla como norma. Jerarquía y cadena de escalación: `wiki/docentes/jerarquia-autoridad.md` (fuente única, compartida con `perfil-revisor-tg`).
+> La skill NUNCA asume "explicación de un docente = norma del trabajo". Cada consulta resuelve el docente y su rol (evaluador identificado o no). Si una fuente no se puede atribuir a un evaluador, se marca `pendiente` y no se usa como norma. Jerarquía, qué suele revisar cada rol y cadena de escalación: `wiki/docentes/jerarquia-autoridad.md` (fuente única, compartida con `perfil-revisor-tg`).
 
 ## Reglas de oro
 
@@ -114,7 +110,7 @@ cita: <texto o cita textual>
 ### Reglas anti-confusión
 
 1. **No mezclar años** sin `tipo_consulta=comparativa`. Si una query mezcla años, abortar y pedir aclarar.
-2. **No mezclar docentes.** Un docente `general` ≠ un docente `especifico` ≠ la norma del trabajo de grado. El `ambito` resuelve el conflicto de fuente.
+2. **No mezclar docentes.** Solo se consulta el material del docente de TG vinculado; el de otro docente no se usa, y ninguno es la norma del trabajo de grado.
 3. **Fuentes incompletas o antiguas con errores** aportan ideas, no definiciones. Siempre callout de advertencia.
 4. **Apuntes de clase** son `referencia`, nunca norma.
 5. Solo `año=2025 + oficial` alimenta el destilado canónico en `wiki/trabajos-grado/`.
@@ -146,8 +142,8 @@ Para el área de TG como conocimiento transversal, el orden es:
 
 1. **Norma / documento oficial del área** (documento maestro aprobado de la EMI). Prevalece sobre explicaciones de docentes.
 2. **Documento académico maestro** del área (`sources/<slug>.md`).
-3. **Docentes con `ambito=especifico`** — explican el contenido del TG.
-4. **Docentes con `ambito=general`** — metodología transversal; respalda pero no es norma del trabajo específico, y es **segunda opinión de emergencia**.
+3. **Tu docente de TG** — explica el contenido y la forma del TG; sus audios y apuntes son la base del modo notebooklm.
+4. **Tus revisores y tu tutor** — su criterio vive en `wiki/revisores/` (jerarquía en `jerarquia-autoridad.md`); un docente que no te evalúa no entra.
 5. **Apuntes de clase** — solo `referencia`, nunca norma.
 6. **Trabajos de otros años / incompletos / antiguos** — solo ideas y comparativa.
 7. **Zotero** y **NotebookLM** — fuentes, en ese orden.

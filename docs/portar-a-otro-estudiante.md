@@ -10,13 +10,14 @@ también acepta los términos del dominio de tu proyecto).
 | --- | --- |
 | Reglas de forma de la EMI, modos, motores de la defensa | `proyecto.yaml`: datos del TG y convenciones (producto, paleta, terminología, fases) |
 | Plantillas (`assets/`) y modelos `*.example.*` | `sources/<slug>.md`: el TG extraído |
-| Clases genéricas de corrección (`matriz-generalizaciones`) | Perfiles de sus evaluadores y docentes, informes, reglas propias |
+| Clases genéricas de corrección (`matriz-generalizaciones`) | Lo `confirmado` de sus evaluadores, informes, reglas propias |
+| — | Perfil de cada docente en el **catálogo compartido** (`emi-docentes`), enlazado solo para sus evaluadores |
 | Ejemplos marcados «proyecto de referencia» | `sources/_propuestas/DEFENSA/`: los YAML y entregables de su defensa |
 
 ## Arrancar con otro TG
 
 ```bash
-./install.sh --destino ~/vault-de-ana --docx "~/Ana/TRABAJO DE GRADO.docx" [--docentes-desde ~/otro-vault]
+./install.sh --destino ~/vault-de-ana --docx "~/Ana/TRABAJO DE GRADO.docx" --catalogo <emi-docentes>
 ```
 
 1. El instalador crea el vault, extrae el TG, arma `proyecto.yaml` (carátula, objetivos, anexos, figuras) y la
@@ -30,3 +31,11 @@ también acepta los términos del dominio de tu proyecto).
 El contenido se adapta; la estructura de la EMI no. Sin producto de software no hay manual de usuario, capturas ni
 demostración, y la ruta crítica es la del proceso del caso de estudio. Con sprints o fases, `generar-entregables-tesis`
 lee las fases de `proyecto.yaml`.
+
+## Evaluadores y correcciones
+
+- `asignar_evaluador.py <vault> --rol tutor|revisor_1|revisor_2|docente_tg --docente <slug>` vincula a cada uno (o
+  `--por-asignar`, típico del Revisor 2) y muestra su predicción inicial. `--check` verifica que solo estén los propios.
+- Si te reasignan un revisor, se vuelve a correr: el anterior deja de leerse en tu vault.
+- «Registrar corrección» (skill `perfil-revisor-tg`) deja lo recibido como `confirmado` en tu vault y, si es
+  generalizable, suma al perfil del docente en el catálogo (estudiantes por iniciales).

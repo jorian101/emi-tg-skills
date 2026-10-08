@@ -7,7 +7,7 @@ El vault del proyecto de referencia es un ejemplo de resultado, nunca una planti
 ## 0. Precondición (determinística, ya la hace el instalador)
 
 ```bash
-./install.sh --destino <vault> --docx <TG.docx> [--docentes-desde <otro-vault>]
+./install.sh --destino <vault> --docx <TG.docx> [--catalogo <emi-docentes>]
 ```
 
 Eso extrae el TG (`sources/<slug>.md`), crea `proyecto.yaml` con lo que el TG dice de sí mismo (carátula, objetivos,
@@ -32,12 +32,20 @@ dice queda `PENDIENTE` y se pregunta al usuario. Nunca se copia un valor del pro
 | `convenciones.paleta_uml` | la paleta institucional del caso de estudio (preguntar; si no hay, la neutra del ejemplo) |
 | `entregables.seccion_desarrollo/fases/calendario` | índice del TG: la sección de desarrollo y sus subsecciones (sprints, fases o iteraciones) con fechas de sus tablas de planificación |
 
-## 2. Docentes y evaluadores
+## 2. Evaluadores (tutor, revisores, docente de TG)
 
-- Si el usuario comparte docentes con otro vault (mismo tribunal o carrera), `--docentes-desde` trae sus perfiles a
-  `wiki/docentes/` como **segunda opinión** (predicen, no deciden). Agregar cada uno al catálogo `_moc-docentes.md`.
-- Los evaluadores propios (`wiki/revisores/Revisor_N.md`, `Tutor.md`) empiezan vacíos: se llenan con sus informes
-  (`perfil-revisor-tg`, «ingerir informe»), nunca copiando el perfil de un docente de otro estudiante.
+Solo cuentan quienes evalúan a este estudiante; los demás docentes del catálogo se ignoran (ver `jerarquia-autoridad`).
+
+1. Si el instalador tenía `--catalogo`, el **tutor** de la carátula ya quedó vinculado si está en el catálogo
+   (`asignar_evaluador.py --desde-tg`).
+2. Preguntar al usuario: **Revisor 1, Revisor 2 y docente de TG** (el Revisor 2 suele asignarse después: queda
+   `--por-asignar` y mientras tanto solo valen las clases `SEM-NN`).
+3. Por cada uno: `python3 scripts/asignar_evaluador.py <vault> --rol <rol> --docente <slug>`. Si el docente no está en
+   el catálogo, crearlo desde su `_plantilla-docente.md` (queda con criterios vacíos hasta que lleguen informes).
+4. Mostrar la **predicción inicial** que imprime el script y ofrecer una pasada de revisión sobre los capítulos que
+   cada uno suele revisar, para corregir desde el principio.
+5. Lo que el estudiante vaya recibiendo se registra con «registrar corrección» (`perfil-revisor-tg`): queda en su
+   vault y suma al perfil compartido del docente.
 
 ## 3. Modelos de la defensa (en `DEFENSA/`, desde los `assets/defensa/*.example.*`)
 
