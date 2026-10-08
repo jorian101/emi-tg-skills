@@ -90,7 +90,7 @@ El notebook fuente se declara en `.env.local` (`NLM_NOTEBOOK_ID`). Las consultas
 ### Parámetros obligatorios
 
 - **`año`**: default `2025` (canónico del trabajo actual). Si `año != 2025`, la respuesta se envuelve en callout de **comparación** y no se propone como corrección.
-- **`docente`**: `salgueiro` | `narvaez` | `desconocido`. Si `desconocido`, marcar `pendiente`, no usar como norma.
+- **`docente`**: el slug del docente vinculado (p. ej. `<docente-a>`, `<docente-b>`) | `desconocido`. Si `desconocido`, marcar `pendiente`, no usar como norma.
 - **`estado`** (opcional): `oficial` | `borrador` | `incompleto` | `antiguo_con_errores` | `apuntes`. Solo `año=2025 + estado=oficial` es **canónico**; el resto son ideas o comparativa.
 
 ### Output contract de cada consulta
@@ -101,7 +101,7 @@ Cada hallazgo devuelve, como mínimo:
 fuente: <título de la fuente / source_id>
 año: <2025 | 2024 | otros>
 estado: <oficial | borrador | incompleto | antiguo_con_errores | apuntes>
-docente: <salgueiro | narvaez | desconocido>
+docente: <slug-del-docente | desconocido>
 ambito: <general | especifico | - >
 flag: <canonico_2025 | comparativa | ideas | referencia | general>
 cita: <texto o cita textual>

@@ -32,7 +32,7 @@ def main() -> int:
     ap.add_argument("--catalogo", type=Path, default=catalogo_default())
     a = ap.parse_args()
     if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", a.slug):
-        sys.exit("El slug va en minúsculas, sin tildes y con guiones (p. ej. mamani-titto).")
+        sys.exit("El slug va en minúsculas, sin tildes y con guiones (p. ej. apellido-apellido).")
     destino = a.catalogo / "docentes" / f"{a.slug}.md"
     if destino.exists():
         sys.exit(f"{destino.name} ya existe en el catálogo.")
