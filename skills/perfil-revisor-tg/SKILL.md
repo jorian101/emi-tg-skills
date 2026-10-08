@@ -224,8 +224,8 @@ Todos entran por `Modo perfilar` / `Auto-mejora`; cambia la **procedencia del cr
 ### Modo asignar (evaluador recién identificado)
 
 1. Identificar el rol (tutor, revisor_1, revisor_2, docente_tg) y el docente. Buscar su slug en el catálogo
-   (`_moc-docentes.md` del catálogo); si no está, crearlo desde `_plantilla-docente.md` del catálogo.
-2. `python3 scripts/asignar_evaluador.py $VAULT --rol <rol> --docente <slug>` (o `--por-asignar`). El script enlaza solo
+   (`_moc-docentes.md` del catálogo); si no está, `scripts/nuevo_docente.py` (cualquier rol).
+2. `python3 scripts/asignar_evaluador.py $VAULT --rol <rol> --docente <slug>` (o `--por-asignar`; en otra máquina, `--sync`). El script enlaza solo
    a ese docente, desenlaza al anterior del rol, suma la fila al historial de roles del catálogo y muestra la
    predicción inicial (criterios × capítulos que revisa).
 3. Correr una pasada de predicción sobre las secciones que ese docente revisa (Modo revisar o tribunal) para que el
@@ -235,15 +235,20 @@ Todos entran por `Modo perfilar` / `Auto-mejora`; cambia la **procedencia del cr
 ### Modo registrar corrección (lo nuevo suma)
 
 Trigger: «X me corrigió Y», «registrar corrección», «regla nueva: …», o un informe recién ingerido.
-1. **Quién**: el evaluador del vault (rol y docente vinculado). Si no es evaluador del estudiante, no se registra.
+1. **Quién**: el evaluador del vault (rol y docente vinculado). Si el docente no está en el catálogo (cualquier rol: tutor,
+   revisor o docente de TG), crearlo antes: `python3 scripts/nuevo_docente.py <slug> --nombre … --rol …` y vincularlo con
+   `asignar_evaluador.py`. Si no es evaluador del estudiante, no se registra.
 2. **Vault**: fila `confirmado` en su perfil de `wiki/revisores/` (frase literal + fecha + fuente), como siempre.
 3. **Clasificar**: `fondo` | `forma` | `dominio` (regla 39-b). Lo de `dominio` (propio de ese TG) no sube al catálogo.
-4. **Catálogo** (solo `fondo`/`forma` generalizables): si ya existe un criterio equivalente del docente, `Ocurrencias +1` y
-   la fuente nueva por iniciales; si no, criterio nuevo con su ID de prefijo; si cambia lo que suele revisar,
-   ajustar `revisa:`. Gate: `scripts/auditar-pii.sh <catálogo>` en 0.
-5. **Generalizar**: clase en `matriz-generalizaciones.md` del vault (o subir a `confirmado` una `SEM-NN` que él pidió) y,
-   si el usuario la formula como regla, fila en `reglas-propias.md`.
-6. Commit en vault y catálogo. Cualquier otro estudiante con ese docente la ve en su próxima pasada.
+4. **Catálogo local** (solo lo generalizable): `python3 scripts/registrar_criterio.py <slug> --criterio "…" --capitulo … --fuente
+   "informe a <INICIALES>, MP 15/05"`; si ya existe un criterio equivalente, `--ocurrencia <ID>` suma una ocurrencia. El script
+   escribe en la rama `local/<usuario>` del catálogo y se niega si la fuente trae un nombre completo.
+5. **Generalizar**: clase en `matriz-generalizaciones.md` del vault (o subir a `confirmado` una `SEM-NN` que él pidió) y, si el
+   usuario la formula como regla, fila en `reglas-propias.md`.
+6. **Compartir** (solo si el usuario lo pide): `python3 scripts/contribuir.py` muestra la contribución saneada (criterios,
+   ocurrencias, iniciales; nunca el informe ni nombres) y, con `--enviar`, la abre como issue en el repo del catálogo; el
+   mantenedor la integra con `aplicar_contribucion.py`. Las novedades de los demás llegan con `scripts/actualizar_catalogo.sh`.
+7. Commit en el vault. Lo del catálogo ya queda commiteado en su rama local.
 
 ### Auto-mejora
 

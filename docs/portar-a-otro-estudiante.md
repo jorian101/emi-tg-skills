@@ -14,7 +14,7 @@ también acepta los términos del dominio de tu proyecto).
 | — | Perfil de cada docente en el **catálogo compartido** (`emi-docentes`), enlazado solo para sus evaluadores |
 | Ejemplos marcados «proyecto de referencia» | `sources/_propuestas/DEFENSA/`: los YAML y entregables de su defensa |
 
-## Arrancar con otro TG
+## Arrancar con otro TG (resumen; el detalle está en `docs/instalacion.md`)
 
 ```bash
 ./install.sh --destino ~/vault-de-ana --docx "~/Ana/TRABAJO DE GRADO.docx" --catalogo <emi-docentes>
@@ -23,8 +23,8 @@ también acepta los términos del dominio de tu proyecto).
 1. El instalador crea el vault, extrae el TG, arma `proyecto.yaml` (carátula, objetivos, anexos, figuras) y la
    carpeta de defensa. Avisa qué quedó `PENDIENTE`.
 2. Con el agente: **modo inicializar** (`skills/asistente-trabajo-de-grado/references/inicializar.md`).
-3. `skills/perfil-revisor-tg/config.md` es **uno por clon**: si manejás varios vaults desde el mismo clon, cambiá
-   `data_dir`, `estudiante` y `evaluadores` al pasar de uno a otro (o usá un clon por estudiante).
+3. `skills/perfil-revisor-tg/config.md` es **uno por clon** y lo escribe `install.sh` (y `asignar_evaluador.py --sync`): un clon por
+   estudiante.
 
 ## Tipo de proyecto
 

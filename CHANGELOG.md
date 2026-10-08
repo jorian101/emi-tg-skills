@@ -3,6 +3,21 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado: [SemVer](https://semver.org/lang/es/).
 
+## [instalación 2.0] — 2026-10-08
+
+**El vault es un repositorio nuevo del estudiante y el catálogo de docentes se comparte por issue o PR.**
+
+- `install.sh`: `git init` del vault con pre-commit (0 wikilinks rotos, 0 huérfanas, ningún enlace versionado) y primer
+  commit; `--remoto` crea el repo **privado** en GitHub sin push; `--code-repo` conecta el repo del proyecto con el agente;
+  `--agentes` repetible y sin pisar copias; dependencias opcionales por entregable en `--check`.
+- Lo que lleva rutas de una máquina (`scripts/`, `wiki/docentes/<docente>.md`, `config.md`) ya no se versiona: se rehace con
+  `asignar_evaluador.py --sync` (clonar el vault en otra máquina).
+- Catálogo de docentes como submódulo privado `catalogo/`, por URL o carpeta, o uno local vacío si no hay acceso.
+- Colaboración: `registrar_criterio.py`, `nuevo_docente.py` (cualquier docente y rol), `contribuir.py` (contribución saneada,
+  iniciales, issue con `gh` previa confirmación o PR), `aplicar_contribucion.py` y `actualizar_catalogo.sh`.
+- `scripts/test_install.sh` y `test_catalogo.py`: instalación desde cero, otra máquina, sin catálogo y flujo completo de
+  contribución. El extractor ya no falla con un TG sin imágenes.
+
 ## [perfil-revisor-tg 1.43 · asistente-trabajo-de-grado 3.3] — 2026-10-08
 
 **Catálogo compartido de docentes y solo los evaluadores propios.**

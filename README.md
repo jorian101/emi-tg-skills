@@ -35,21 +35,25 @@ intención de nadie.
 ## Instalación
 
 ```bash
-git clone <url> "$HOME/emi-tg-skills"
+git clone --recurse-submodules <url> "$HOME/emi-tg-skills"
 cd "$HOME/emi-tg-skills"
-./install.sh --destino ~/mi-vault --docx ~/TRABAJO-DE-GRADO.docx   # vault + tu TG extraído + proyecto.yaml
+./install.sh --destino ~/mi-vault --docx ~/TRABAJO-DE-GRADO.docx --code-repo ~/mi-proyecto
 ```
+
+Eso deja tu **vault como un repositorio nuevo** (con su pre-commit y primer commit; `--remoto <nombre>` crea el repo
+privado en GitHub, sin push), tu TG extraído, las skills enlazadas a tu agente y el repo de tu proyecto conectado.
+Detalle, otra máquina y problemas frecuentes: [`docs/instalacion.md`](docs/instalacion.md).
 
 Después, tres pasos con tu agente:
 
 1. **«inicializá el vault desde mi TG»** — completa `proyecto.yaml` y los modelos de la defensa citando tu TG
    (pregunta lo que el TG no dice: revisores, qué anexos llevan QR).
-2. **«ingerir informe»** cada vez que llega una revisión — arma el perfil de cada evaluador.
+2. **«ingerir informe»** y **«registrar corrección»** con cada revisión — arma el perfil de cada evaluador.
 3. **modo defensa** — diapositivas, tríptico, ruta crítica, manual, anexos con QR, diagramas animados y guion.
 
-Con `--catalogo <emi-docentes>` se enlaza el catálogo compartido de docentes: cada vault ve **solo** a sus
-evaluadores (tutor, revisores, docente de TG; `scripts/asignar_evaluador.py`), con lo que cada uno suele revisar, y lo
-que un estudiante registra de un docente sirve a los demás que lo tengan.
+**Catálogo de docentes (colaborativo).** `catalogo/` es un submódulo privado con los perfiles de los docentes (tutores,
+revisores y docentes de TG). Cada vault ve **solo** a sus evaluadores; lo que corrigen a cada estudiante se registra en su
+catálogo local y se comparte por issue o PR (`scripts/contribuir.py`), así los perfiles se enriquecen entre todos.
 
 El instalador es idempotente: nunca sobrescribe un archivo que ya exista. Para ver qué haría sin
 escribir nada: `./install.sh --check`.
