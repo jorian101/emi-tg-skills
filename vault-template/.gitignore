@@ -17,3 +17,10 @@ Thumbs.db
 
 # Estado local del modo defensa (por máquina)
 sources/_propuestas/DEFENSA/.sync-estado.json
+
+# Enlaces propios de esta máquina (llevan rutas absolutas): se rehacen con
+#   python3 <emi-tg-skills>/scripts/asignar_evaluador.py <este-vault> --sync
+/scripts
+/wiki/docentes/*.md
+!/wiki/docentes/_*.md
+!/wiki/docentes/jerarquia-autoridad.md

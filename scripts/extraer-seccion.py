@@ -17,8 +17,8 @@ import hashlib
 import json
 import os
 import sys
-from xml.etree import ElementTree as ET
 import zipfile
+from xml.etree import ElementTree as ET
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 

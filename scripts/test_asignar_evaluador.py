@@ -1,5 +1,6 @@
 """Check de asignar_evaluador.py con un vault y un catálogo temporales (python3 scripts/test_asignar_evaluador.py)."""
 
+import os
 import subprocess
 import sys
 import tempfile
@@ -35,11 +36,13 @@ nombre: Ana Prueba Rojas
 
 
 def correr(*args):
-    return subprocess.run([sys.executable, str(SCRIPT), *map(str, args)], capture_output=True, text=True, check=False)
+    return subprocess.run([sys.executable, str(SCRIPT), *map(str, args)], capture_output=True, text=True, check=False,
+                          env={**os.environ, "TG_CONFIG": os.environ["TG_CONFIG"]})
 
 
 with tempfile.TemporaryDirectory() as t:
     t = Path(t)
+    os.environ["TG_CONFIG"] = str(t / "config.md")  # nunca el config.md real del clon
     cat, vault = t / "cat", t / "vault"
     (cat / "docentes").mkdir(parents=True)
     (cat / "docentes/ana.md").write_text(DOCENTE, encoding="utf-8")
@@ -67,4 +70,12 @@ with tempfile.TemporaryDirectory() as t:
     r = correr(vault, "--rol", "revisor_2", "--docente", "beto", "--catalogo", cat)
     assert r.returncode == 0 and not (vault / "wiki/docentes/ana.md").exists(), r.stdout
     assert (vault / "wiki/docentes/beto.md").is_symlink()
+
+    # --sync: lo que no se versiona se rehace (vault clonado en otra máquina)
+    for f in (vault / "wiki/docentes").glob("*.md"):
+        f.unlink()
+    assert correr(vault, "--sync", "--catalogo", cat).returncode == 0
+    assert (vault / "wiki/docentes/beto.md").is_symlink() and (vault / "scripts").is_symlink()
+    cfg = (t / "config.md").read_text(encoding="utf-8")
+    assert f"data_dir: {vault}/wiki/revisores" in cfg and "estudiante: LUIS PEREZ" in cfg and "Revisor_2.md" in cfg
 print("ok test_asignar_evaluador")

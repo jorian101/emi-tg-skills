@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# pre-commit del vault: 0 wikilinks rotos, 0 huérfanas y ningún enlace simbólico versionado.
+# Lo activa install.sh (`git config core.hooksPath .githooks`). Si un chequeo falla, el commit no se hace.
+set -uo pipefail
+RAIZ="$(git rev-parse --show-toplevel)"
+
+# Los enlaces (scripts/, wiki/docentes/<docente>.md) llevan la ruta de ESTA máquina: no se versionan.
+if git diff --cached --raw --diff-filter=ACMRT | awk '$2 == "120000" || $1 ~ /^:120000/ {f=1} END{exit !f}'; then
+  echo "pre-commit: hay enlaces simbólicos en el commit (se rompen en otra máquina)."
+  echo "  Sacalos con: git rm --cached <enlace>  (el .gitignore del vault ya los excluye)"
+  exit 1
+fi
+
+if [ ! -x "$RAIZ/scripts/verificar-enlaces.sh" ]; then
+  echo "pre-commit: falta scripts/. Rehacelo con: python3 <emi-tg-skills>/scripts/asignar_evaluador.py \"$RAIZ\" --sync"
+  exit 1
+fi
+SALIDA="$(bash "$RAIZ/scripts/verificar-enlaces.sh" 2>&1)" || { echo "$SALIDA" | grep -E "ROTO|HUERFANA|ERROR" | head -20; exit 1; }

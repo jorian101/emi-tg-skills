@@ -6,6 +6,7 @@ Uso:
   python3 scripts/asignar_evaluador.py <vault> --rol revisor_2 --por-asignar
   python3 scripts/asignar_evaluador.py <vault> --check
   python3 scripts/asignar_evaluador.py <vault> --desde-tg     # vincula al tutor que nombra proyecto.yaml, si está en el catálogo
+  python3 scripts/asignar_evaluador.py <vault> --sync         # rehace scripts/, los enlaces de wiki/docentes y config.md
 
 Qué hace al asignar:
 - escribe `docente:` y `asignado:` en el perfil del rol (`wiki/revisores/Revisor_N.md`, `Tutor.md` o `Docente_TG.md`;
@@ -14,7 +15,8 @@ Qué hace al asignar:
   desenlaza al anterior de ese rol si ya no evalúa en ningún otro: un estudiante nunca ve a quien no lo evalúa;
 - suma la fila al historial de roles del docente en el catálogo (estudiante por iniciales);
 - rehace la tabla de `wiki/docentes/_moc-docentes.md` e imprime la predicción inicial (sus criterios y qué revisa).
-`--check` lista roles sin vincular, enlaces rotos, docentes en `wiki/docentes/` que no evalúan, y docentes del
+`--sync` es el paso de «cloné mi vault en otra máquina»: los enlaces (rutas absolutas de ESTA máquina) no se versionan, se
+regeneran desde el `docente:` de cada perfil. `--check` lista roles sin vincular, enlaces rotos, docentes en `wiki/docentes/` que no evalúan, y docentes del
 catálogo cuyo nombre aparece en `proyecto.yaml`. Catálogo: `--catalogo`, `$DOCENTES_EMI` o `~/.local/share/tg-docentes`.
 """
 
@@ -29,6 +31,8 @@ import unicodedata
 from pathlib import Path
 
 import yaml
+
+from catalogo_lib import commit_local, historial_texto, rama_local
 
 REPO = Path(__file__).resolve().parent.parent
 PLANTILLA = REPO / "skills/perfil-revisor-tg/assets/Revisor_N.md"
@@ -106,18 +110,12 @@ def desenlazar(vault: Path, slug: str) -> None:
 
 def sumar_historial(catalogo: Path, slug: str, rol: str, quien: str, fecha: str) -> None:
     perfil = catalogo / "docentes" / f"{slug}.md"
-    s = perfil.read_text(encoding="utf-8")
-    fila = f"| {rol} | {quien} | {fecha} |"
-    if f"| {rol} | {quien} |" in s:
-        return
-    if "## Historial de roles" not in s:
-        s = s.replace("\n## Relaciones", "\n## Historial de roles\n\n| Rol | Estudiante | Desde |\n|---|---|---|\n\n## Relaciones", 1)
-    i = s.index("## Historial de roles")
-    j = s.find("\n\n## ", i + 1)
-    j = len(s) if j < 0 else j
-    bloque = s[i:j].replace("| — | — | — |\n", "").replace("| — | — | — |", "")
-    s = s[:i] + bloque.rstrip("\n") + "\n" + fila + s[j:]
-    perfil.write_text(s, encoding="utf-8")
+    antes = perfil.read_text(encoding="utf-8")
+    despues = historial_texto(antes, rol, quien, fecha)
+    if despues != antes:
+        rama_local(catalogo)
+        perfil.write_text(despues, encoding="utf-8")
+        commit_local(catalogo, f"docs(docentes): {rol} de {quien} en {slug}")
 
 
 def rehacer_moc(vault: Path) -> None:
@@ -136,16 +134,6 @@ def rehacer_moc(vault: Path) -> None:
     s = moc.read_text(encoding="utf-8")
     s = s[: s.index(INICIO) + len(INICIO)] + "\n" + tabla + "\n" + s[s.index(FIN):]
     moc.write_text(s, encoding="utf-8")
-
-
-def config_evaluadores(vault: Path, archivo: str) -> None:
-    cfg = REPO / "skills/perfil-revisor-tg/config.md"
-    if not cfg.is_file():
-        return
-    s = cfg.read_text(encoding="utf-8")
-    if f"data_dir: {vault}/wiki/revisores" not in s or f"  - {archivo}" in s:
-        return  # el config es de otro vault, o ya lo tiene
-    cfg.write_text(s.replace("evaluadores:\n", f"evaluadores:\n  - {archivo}\n", 1), encoding="utf-8")
 
 
 def prediccion(catalogo: Path, slug: str) -> str:
@@ -178,7 +166,7 @@ def asignar(vault: Path, catalogo: Path, rol: str, slug: str | None, quien: str 
     if slug:
         print(f"  ok    {nombre} = {slug}; enlazado: {', '.join(enlazar(vault, catalogo, slug))}")
         sumar_historial(catalogo, slug, nombre, quien or iniciales(vault), fecha[:7])
-        config_evaluadores(vault, archivo)
+        escribir_config(vault, [a for a, _ in ROLES.values() if docente_de(vault / "wiki/revisores" / a)])
     else:
         print(f"  ok    {nombre} por asignar: hasta entonces solo valen las clases SEM de la matriz")
     rehacer_moc(vault)
@@ -215,6 +203,50 @@ def check(vault: Path, catalogo: Path) -> int:
     return 1 if problemas else 0
 
 
+def sync(vault: Path, catalogo: Path) -> int:
+    """Regenera lo que no se versiona: vault/scripts, los enlaces a los docentes propios y config.md de este vault."""
+    hechos = []
+    destino = vault / "scripts"
+    if destino.is_symlink() or not destino.exists():
+        destino.unlink(missing_ok=True)
+        destino.symlink_to(REPO / "scripts")
+        hechos.append("scripts/")
+    vinculados = []
+    for archivo, _ in ROLES.values():
+        d = docente_de(vault / "wiki/revisores" / archivo)
+        if d and d != "por-asignar":
+            if (catalogo / "docentes" / f"{d}.md").is_file():
+                enlazar(vault, catalogo, d)
+                hechos.append(f"wiki/docentes/{d}")
+            else:
+                print(f"  aviso {archivo}: el catálogo no tiene a {d} (¿catálogo sin acceso o desactualizado?)")
+        if d:
+            vinculados.append(archivo)
+    escribir_config(vault, vinculados)
+    rehacer_moc(vault)
+    print("  ok    sync: " + (", ".join(hechos) or "nada que rehacer"))
+    return 0
+
+
+def escribir_config(vault: Path, evaluadores: list[str]) -> None:
+    """config.md del clon (una instalación = un estudiante). No pisa el de otro vault."""
+    cfg = Path(os.environ.get("TG_CONFIG") or REPO / "skills/perfil-revisor-tg/config.md")
+    if cfg.is_file() and f"data_dir: {vault}/wiki/revisores" not in cfg.read_text(encoding="utf-8"):
+        print(f"  aviso {cfg.name} apunta a otro vault: no lo toco (un clon = un estudiante)")
+        return
+    py = vault / "proyecto.yaml"
+    estudiante = ((yaml.safe_load(py.read_text(encoding="utf-8")) or {}).get("tg", {}).get("estudiante", "")
+                  if py.is_file() else "") or "Nombre Apellido"
+    lineas = "\n".join(f"  - {e}" for e in evaluadores) or "  - Revisor_1.md"
+    texto = (REPO / "skills/perfil-revisor-tg/config.example.md").read_text(encoding="utf-8")
+    texto = re.sub(r"^data_dir: .*$", f"data_dir: {vault}/wiki/revisores", texto, flags=re.MULTILINE)
+    texto = re.sub(r"^estudiante: .*$", f"estudiante: {estudiante}", texto, flags=re.MULTILINE)
+    texto = re.sub(r"^evaluadores:\n(  - .*\n)+", f"evaluadores:\n{lineas}\n", texto, flags=re.MULTILINE)
+    texto = re.sub(r"^docentes_en: .*$", f"docentes_en: {vault}/wiki/docentes", texto, flags=re.MULTILINE)
+    texto = re.sub(r"^informes_en: .*$", f"informes_en: {vault}/sources/informes-revisores", texto, flags=re.MULTILINE)
+    cfg.write_text(texto, encoding="utf-8")
+
+
 def desde_tg(vault: Path, catalogo: Path, fecha: str) -> int:
     """El tutor sale de la carátula (proyecto.yaml): si su nombre está en el catálogo, se vincula solo."""
     py = vault / "proyecto.yaml"
@@ -240,12 +272,15 @@ def main() -> int:
                     default=Path(os.environ.get("DOCENTES_EMI") or Path.home() / ".local/share/tg-docentes"))
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--desde-tg", action="store_true")
+    ap.add_argument("--sync", action="store_true")
     a = ap.parse_args()
     vault, catalogo = a.vault.expanduser().resolve(), a.catalogo.expanduser()
     if not (catalogo / "docentes").is_dir():
         sys.exit(f"No encuentro el catálogo de docentes en {catalogo} (--catalogo o $DOCENTES_EMI).")
     if a.check:
         return check(vault, catalogo)
+    if a.sync:
+        return sync(vault, catalogo)
     if a.desde_tg:
         return desde_tg(vault, catalogo, a.fecha)
     if not a.rol or bool(a.docente) == a.por_asignar:

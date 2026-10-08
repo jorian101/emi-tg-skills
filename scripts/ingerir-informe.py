@@ -27,6 +27,7 @@ import unicodedata
 from datetime import date
 from pathlib import Path
 
+
 def ruta_de_env(nombre: str, ayuda: str) -> Path:
     """Resuelve una ruta desde el entorno del usuario.
 
