@@ -3,6 +3,15 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado: [SemVer](https://semver.org/lang/es/).
 
+## [formatos EMI] — 2026-10-08
+
+- **Formatos oficiales por docente** en el catálogo (`formatos/<código>/formato.yaml` + plantilla vacía sin autor): Word del TG y diapositivas
+  (docente de TG), bíptico del marco práctico, artículo de la revista y ejemplo de tríptico, cada uno con medidas y **orden** exigido.
+- `verificar_formato.py` comprueba un entregable contra el formato de TUS evaluadores (hoja, márgenes, columnas, páginas, orden de partes).
+- `sanear_plantilla.py` y la puerta anti-nombres de `exportar_publico.py` ahora revisan también los .docx/.pptx (propiedades y texto).
+- `reglas-institucionales.md` deja de ser plantilla en blanco; el ejemplo de diapositivas sigue el orden oficial (problemática, software,
+  hardware, marco práctico ≤ 10, trabajo de campo, costos, demostración).
+
 ## [limpieza] — 2026-10-08
 
 - Quitada la skill `extraer-conversaciones-ias` (destilaba criterio de un «vocal» desde chats con IAs: flujo del proyecto del autor, no

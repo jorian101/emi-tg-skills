@@ -7,6 +7,7 @@ Ubicación del catálogo: `$DOCENTES_EMI` o `~/.local/share/tg-docentes`. Los ca
 
 from __future__ import annotations
 
+import base64
 import getpass
 import hashlib
 import itertools
@@ -14,6 +15,7 @@ import os
 import re
 import subprocess
 import unicodedata
+import zipfile
 from pathlib import Path
 
 import yaml
@@ -466,3 +468,50 @@ def docente_publico_nuevo(nombre: str, rol: str, revisa: str, alcance: str, fech
     cuerpo = (f"# Docente {codigo}\n\n{PLANTILLA_CALLOUT_PUBLICO}\n\n## Criterios de fondo\n\n{ENCABEZADO_CRITERIOS}\n"
               "## Historial de roles\n\n| Rol | Estudiante | Desde |\n|---|---|---|\n\n## Relaciones\n- [[_moc-docentes]] · [[jerarquia-autoridad]]\n")
     return codigo, "---\n" + yaml.safe_dump(cab, allow_unicode=True, sort_keys=False, width=200).rstrip() + "\n---\n\n" + cuerpo
+
+
+# ------------------------------------------------------------------ plantillas de Office (.docx/.pptx): saneo y escaneo
+def texto_de_oficina(path: Path) -> str:
+    """Todo el texto y las propiedades de un .docx/.pptx (sin etiquetas), para buscar nombres en archivos binarios."""
+    partes = []
+    with zipfile.ZipFile(path) as z:
+        for n in z.namelist():
+            if n.endswith(".xml") and n.split("/")[0] in ("word", "ppt", "docProps"):
+                crudo = re.sub(r"</(?:w|a):p>", "\n", z.read(n).decode("utf-8", "ignore"))  # una palabra partida en runs sigue entera
+                partes.append(re.sub(r"<[^>]+>", "", crudo))
+    return " ".join(partes)
+
+
+# Logos institucionales que sí viajan en las plantillas (sha256); cualquier otra imagen es de ejemplo y se reemplaza por un píxel blanco.
+LOGOS_PLANTILLA = frozenset({
+    "bdc0e69ec11873420483a2cd70f9a9ae2301f66bc23120ac5203325fd82b71ad",
+    "ad485386c6165c75193a808994d1d5f408224c97e6a2c5cfa09559e9e0bdbda8",
+    "3a39083025ff88f75bdc51d3cecb294c263e0cf869f27edd9962615846dce0f8",
+})
+_PIXEL = {
+    ".png": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC",
+    ".jpg": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigD//2Q==",
+}
+_PIXEL[".jpeg"] = _PIXEL[".jpg"]
+
+
+def sanear_oficina(origen: Path, destino: Path) -> None:
+    """Copia un .docx/.pptx sin autor, último editor, título, empresa ni responsable (propiedades de persona)."""
+    with zipfile.ZipFile(origen) as zin, zipfile.ZipFile(destino, "w", zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            datos = zin.read(item.filename)
+            if item.filename == "docProps/core.xml":
+                t = datos.decode("utf-8")
+                for tag in ("dc:creator", "cp:lastModifiedBy", "dc:title", "dc:subject", "dc:description", "cp:keywords"):
+                    t = re.sub(rf"(<{tag}[^>]*>).*?(</{tag}>)", r"\1\2", t, flags=re.DOTALL)
+                datos = t.encode("utf-8")
+            elif item.filename == "docProps/app.xml":
+                t = datos.decode("utf-8")
+                for tag in ("Company", "Manager"):
+                    t = re.sub(rf"(<{tag}[^>]*>).*?(</{tag}>)", r"\1\2", t, flags=re.DOTALL)
+                datos = t.encode("utf-8")
+            elif item.filename.startswith("docProps/thumbnail"):
+                continue
+            elif "/media/" in item.filename and Path(item.filename).suffix.lower() in _PIXEL and hashlib.sha256(datos).hexdigest() not in LOGOS_PLANTILLA:
+                datos = base64.b64decode(_PIXEL[Path(item.filename).suffix.lower()])
+            zout.writestr(item, datos)

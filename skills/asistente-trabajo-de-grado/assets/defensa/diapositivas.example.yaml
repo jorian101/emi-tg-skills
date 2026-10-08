@@ -33,9 +33,17 @@ diapositivas:
     encabezados: [Objetivo, Método, Técnica]
     filas: [[OE1, Analítico, Entrevista], [OE2, Sintético, Diseño]]
     anexo: D
-  - {tipo: imagenes, titulo: TRABAJO DE CAMPO, imagenes: [img/campo-1.jpg, img/campo-2.jpg], pie: "Ver Anexo M"}
-  - {tipo: tarjetas, titulo: RESULTADOS, tarjetas: [{cifra: "4,08", texto: "corrección normativa (escala 1-5), juicio de expertos"}], pie: "Ver Anexo X"}
-  - {tipo: seccion, titulo: DEMOSTRACIÓN, imagen: img/demo.png}
+  # Orden del formato del docente de TG (verificar_formato.py --tipo diapositivas): ... METODOLOGÍA → SOFTWARE → HARDWARE →
+  # MARCO PRÁCTICO (máx. 10: situación actual antes y con el sistema, y el flujograma de la demostración) → TRABAJO DE CAMPO →
+  # COSTOS → DEMOSTRACIÓN → CONCLUSIONES → RECOMENDACIONES → GRACIAS.
+  - {tipo: texto, titulo: SOFTWARE, vinietas: ["Software usado, con su versión"]}
+  - {tipo: texto, titulo: HARDWARE, vinietas: ["Hardware necesario"]}
+  - {tipo: imagenes, titulo: MARCO PRÁCTICO, imagenes: [img/situacion-actual.png], pie: "Análisis de la situación actual (antes del sistema) · Ver Anexo L"}
+  - {tipo: imagenes, titulo: MARCO PRÁCTICO, imagenes: [img/situacion-con-sistema.png], pie: "Análisis de la situación (con el sistema) · Ver Anexo L"}
+  - {tipo: imagenes, titulo: MARCO PRÁCTICO, imagenes: [img/flujograma-demostracion.png], pie: "Pasos de la demostración · Ver Anexo L"}
+  - {tipo: imagenes, titulo: TRABAJO DE CAMPO, imagenes: [img/campo-1.jpg, img/campo-2.jpg], pie: "Solo imágenes, a explicar · Ver Anexo M"}
+  - {tipo: tarjetas, titulo: COSTOS, tarjetas: [{cifra: "0 Bs", texto: "costo del software según el modelo del TG"}], pie: "Ver Anexo X"}
+  - {tipo: seccion, titulo: DEMOSTRACIÓN, imagen: img/demo.png}   # con el enlace al ejecutable
   - {tipo: texto, titulo: CONCLUSIONES, vinietas: ["OE1: … para … (verbo del objetivo)", "OE2: …"], paginas: "págs. 120 a 135"}
   - {tipo: texto, titulo: RECOMENDACIONES, vinietas: ["Actor → acción", "Actor → acción"]}
   - {tipo: seccion, titulo: GRACIAS}
