@@ -42,4 +42,3 @@ tags:
 
 - Mapa de contenido: [[wiki/_moc]]
 - Documento revisado: `sources/<slug>.md` (tu extracción del Word)
-- Precedente de destilación de criterio: [[criterio-vocal/indice]]
