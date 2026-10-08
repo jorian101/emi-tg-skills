@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 from catalogo_lib import claves_de_nombre, codigo_de_slug
@@ -59,4 +60,25 @@ with tempfile.TemporaryDirectory() as t:
     assert (destino / f"docentes/{codigo}.md").read_text(encoding="utf-8") == anterior
     # una palabra común que coincide con un apellido se declara y pasa
     assert exportar(origen, destino, "--permitir", "prueba", "rojas").returncode == 0
+
+    # formatos: la plantilla sale sin autor bajo el código; un nombre dentro de la plantilla aborta sin escribir
+    def plantilla(path, autor, cuerpo):
+        with zipfile.ZipFile(path, "w") as z:
+            z.writestr("docProps/core.xml", f"<cp:coreProperties><dc:creator>{autor}</dc:creator></cp:coreProperties>")
+            z.writestr("word/document.xml", f"<w:document><w:p><w:t>{cuerpo}</w:t></w:p></w:document>")
+
+    fdir = origen / "formatos/ana-prueba"
+    fdir.mkdir(parents=True)
+    (fdir / "formato.yaml").write_text("docente: ana-prueba\nbiptico:\n  plantilla: biptico.docx\n  orden:\n    - {clave: titulo, titulos: [TITULO]}\n", encoding="utf-8")
+    plantilla(fdir / "biptico.docx", "Ana Prueba", "TITULO")
+    (origen / "docentes/ana-prueba.md").write_text(PERFIL.format(criterio="Cifras con porcentaje"), encoding="utf-8")
+    destino2 = t / "pub2"
+    r = exportar(origen, destino2)
+    assert r.returncode == 0, r.stdout + r.stderr
+    salida = destino2 / f"formatos/{codigo}"
+    assert codigo in (salida / "formato.yaml").read_text(encoding="utf-8") and "ana-prueba" not in (salida / "formato.yaml").read_text(encoding="utf-8")
+    assert "Ana" not in zipfile.ZipFile(salida / "biptico.docx").read("docProps/core.xml").decode()
+    plantilla(fdir / "biptico.docx", "", "Elaborado por Ana Prueba")
+    r = exportar(origen, t / "pub3")
+    assert r.returncode == 1 and "formatos" in r.stdout and not (t / "pub3").exists()
 print("ok test_exportar_publico")

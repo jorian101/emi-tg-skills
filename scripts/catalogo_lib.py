@@ -14,6 +14,7 @@ import os
 import re
 import subprocess
 import unicodedata
+import zipfile
 from pathlib import Path
 
 import yaml
@@ -466,3 +467,35 @@ def docente_publico_nuevo(nombre: str, rol: str, revisa: str, alcance: str, fech
     cuerpo = (f"# Docente {codigo}\n\n{PLANTILLA_CALLOUT_PUBLICO}\n\n## Criterios de fondo\n\n{ENCABEZADO_CRITERIOS}\n"
               "## Historial de roles\n\n| Rol | Estudiante | Desde |\n|---|---|---|\n\n## Relaciones\n- [[_moc-docentes]] · [[jerarquia-autoridad]]\n")
     return codigo, "---\n" + yaml.safe_dump(cab, allow_unicode=True, sort_keys=False, width=200).rstrip() + "\n---\n\n" + cuerpo
+
+
+# ------------------------------------------------------------------ plantillas de Office (.docx/.pptx): saneo y escaneo
+def texto_de_oficina(path: Path) -> str:
+    """Todo el texto y las propiedades de un .docx/.pptx (sin etiquetas), para buscar nombres en archivos binarios."""
+    partes = []
+    with zipfile.ZipFile(path) as z:
+        for n in z.namelist():
+            if n.endswith(".xml") and n.split("/")[0] in ("word", "ppt", "docProps"):
+                crudo = re.sub(r"</(?:w|a):p>", "\n", z.read(n).decode("utf-8", "ignore"))  # una palabra partida en runs sigue entera
+                partes.append(re.sub(r"<[^>]+>", "", crudo))
+    return " ".join(partes)
+
+
+def sanear_oficina(origen: Path, destino: Path) -> None:
+    """Copia un .docx/.pptx sin autor, último editor, título, empresa ni responsable (propiedades de persona)."""
+    with zipfile.ZipFile(origen) as zin, zipfile.ZipFile(destino, "w", zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            datos = zin.read(item.filename)
+            if item.filename == "docProps/core.xml":
+                t = datos.decode("utf-8")
+                for tag in ("dc:creator", "cp:lastModifiedBy", "dc:title", "dc:subject", "dc:description", "cp:keywords"):
+                    t = re.sub(rf"(<{tag}[^>]*>).*?(</{tag}>)", r"\1\2", t, flags=re.DOTALL)
+                datos = t.encode("utf-8")
+            elif item.filename == "docProps/app.xml":
+                t = datos.decode("utf-8")
+                for tag in ("Company", "Manager"):
+                    t = re.sub(rf"(<{tag}[^>]*>).*?(</{tag}>)", r"\1\2", t, flags=re.DOTALL)
+                datos = t.encode("utf-8")
+            elif item.filename.startswith("docProps/thumbnail"):
+                continue
+            zout.writestr(item, datos)

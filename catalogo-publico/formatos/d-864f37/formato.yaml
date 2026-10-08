@@ -1,0 +1,59 @@
+docente: d-864f37
+vigencia: '2026'
+biptico:
+  plantilla: biptico.docx
+  hoja: carta
+  orientacion: apaisada
+  paginas: 2
+  margenes_cm:
+    sup: 3.0
+    inf: 3.0
+    izq: 2.5
+    der: 2.5
+  orden:
+  - clave: titulo
+    titulos:
+    - TITULO
+  - clave: problema
+    titulos:
+    - FORMULACION DEL PROBLEMA
+  - clave: objetivos
+    titulos:
+    - OBJETIVOS
+  - clave: objetivo_general
+    titulos:
+    - OBJETIVO GENERAL
+  - clave: objetivos_especificos
+    titulos:
+    - OBJETIVOS ESPECIFICOS
+  - clave: limites
+    titulos:
+    - LIMITES
+  - clave: oe1
+    titulos:
+    - DESARROLLO DEL OBJETIVO ESP. 1
+  - clave: oe2
+    titulos:
+    - DESARROLLO DEL OBJETIVO ESP. 2
+  - clave: oe3
+    titulos:
+    - DESARROLLO DEL OBJETIVO ESP. 3
+  - clave: portada_comando
+    titulos:
+    - COMANDO GENERAL DEL EJERCITO
+  - clave: portada_escuela
+    titulos:
+    - ESCUELA MILITAR DE INGENIERIA
+  - clave: portada_unidad
+    titulos:
+    - UNIDAD ACADEMICA LA PAZ
+  - clave: portada_etapa
+    titulos:
+    - MARCO PRACTICO
+  notas:
+  - 'Panel 1: título, formulación del problema, objetivos (general y específicos)
+    y límites.'
+  - 'Paneles 2 y 3: desarrollo de cada objetivo específico (OE1: análisis, aspectos
+    más relevantes; OE2: diseño; OE3: desarrollo).'
+  - 'Panel 4 (portada): comando general del ejército, escuela y unidad académica,
+    «Marco práctico», logo, título, estudiante y año.'

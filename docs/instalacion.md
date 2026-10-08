@@ -51,6 +51,8 @@ Tres capas, para que cualquiera colabore **sin invitaciones** y los nombres no s
 | Privada | repo del mantenedor | los mismos perfiles **con** nombre y la fuente de verdad; nadie más la ve |
 | Tuya | `~/.local/share/tg-docentes` y tu vault | tu copia local del catálogo y el nombre de **tus** docentes (`wiki/docentes/_nombres.local.yaml`, ignorado por git) |
 
+- Trae también los **formatos oficiales** de cada docente (`formatos/<código>/`: medidas, orden y plantilla vacía del Word del TG, artículo, bíptico, tríptico
+  y diapositivas); `scripts/verificar_formato.py` comprueba tus entregables contra los de tus evaluadores.
 - **Descargarlo es opcional**: `./install.sh --catalogo-publico` (en una terminal el instalador te lo pregunta; por defecto no).
 - **Reconocer a tu docente**: `python3 scripts/resolver_docente.py "Nombre Apellido" --vault <vault> --guardar`. Se calculan
   huellas del nombre en **tu** máquina y se comparan con las del catálogo: el nombre no sale de tu computadora. Con

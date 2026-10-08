@@ -29,10 +29,16 @@
 
 ## Tríptico y bíptico
 
-Ver [triptico.md](triptico.md): se generan desde `triptico.yaml` con `scripts/defensa/triptico.py`.
+Ver [triptico.md](triptico.md): se generan desde `triptico.yaml` con `scripts/defensa/triptico.py`. El bíptico oficial y el ejemplo de tríptico del
+docente tienen su propio orden en `formatos/`.
 
 ## Artículo
 
+- El formato oficial lo da la carrera (`formatos/<código>/formato.yaml`, clave `articulo`, con su plantilla `.docx`): revista PARADIGMA, estilo IEEE, carta, márgenes
+  1,78 sup/inf y 1,65 izq/der, encabezado (título 22 pt, autores, resumen 9 pt y 4 o 5 palabras clave, español e inglés) a una columna y **cuerpo a dos
+  columnas**, **máximo 12 hojas**; secciones **Introducción → Materiales y métodos → Resultados → Conclusiones → Apéndices → Reconocimientos →
+  Referencias** (IEEE numeradas, «Fig. 1.» en los pies), y la biografía de los autores. No se cambia el tamaño de letra ni el interlineado para
+  reducir páginas. `verificar_formato.py --tipo articulo` comprueba hoja, márgenes, columnas, páginas y el orden.
 - Si hay un «oficial» formateado por el autor (por ejemplo a dos columnas), se cambia **solo el texto de
   los runs** de los párrafos afectados; nunca estilos, columnas ni figuras.
 - Exportar a PDF antes y después: mismo número de páginas y mismas secciones. Si un párrafo se corre de

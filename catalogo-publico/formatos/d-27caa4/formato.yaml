@@ -1,0 +1,46 @@
+docente: d-27caa4
+vigencia: '2026'
+articulo:
+  plantilla: articulo.docx
+  revista: PARADIGMA (estilo IEEE)
+  hoja: carta
+  margenes_cm:
+    sup: 1.78
+    inf: 1.78
+    izq: 1.65
+    der: 1.65
+  columnas: 2
+  max_hojas: 12
+  fuentes_pt:
+    titulo: 22
+    resumen: 9
+    referencias: 8
+  palabras_clave:
+  - 4
+  - 5
+  referencias: IEEE numeradas, «Fig. 1.» en los pies de figura
+  orden:
+  - clave: introduccion
+    titulos:
+    - INTRODUCCION
+  - clave: metodos
+    titulos:
+    - MATERIALES Y METODOS
+    - DESARROLLO
+    - EJECUCION
+  - clave: resultados
+    titulos:
+    - RESULTADOS
+  - clave: conclusiones
+    titulos:
+    - CONCLUSIONES
+    - DISCUSION
+  - clave: referencias
+    titulos:
+    - REFERENCIAS
+  notas:
+  - No cambiar el tamaño de letra ni el interlineado para reducir páginas; énfasis
+    en cursiva, no subrayado.
+  - Título en español y en inglés; resumen y abstract; palabras clave y keywords.
+  - Apéndices antes de reconocimientos; reconocimientos antes de referencias; biografía
+    breve de los autores al final.

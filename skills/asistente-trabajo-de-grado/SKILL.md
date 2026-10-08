@@ -305,7 +305,9 @@ valores del proyecto de referencia; lo que falta queda `PENDIENTE`.
 
 Invocación: el usuario pide preparar, actualizar o revisar diapositivas, tríptico/bíptico, artículo,
 manual de usuario, anexos con QR, ruta crítica o diagramas de la defensa, o propagar al resto los cambios
-del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tema que corresponda
+del documento. **Leer primero `references/defensa/flujo.md`** y la guía del tema que corresponda; los formatos oficiales de cada evaluador
+(Word del TG, artículo, bíptico, tríptico, diapositivas, con su plantilla) vienen en `formatos/<código>/` del catálogo y se comprueban con
+`scripts/verificar_formato.py <archivo> --tipo articulo|biptico|triptico|diapositivas|tg --vault <vault>` (usa los de TUS evaluadores y no los mezcla)
 (`entregables.md`, `diapositivas.md`, `triptico.md`, `manual.md`, `guion.md`, `tv-videos.md`, `diagramas.md`, `capturas.md`,
 `trampas.md`). Si la carpeta de defensa no tiene sus modelos, correr antes el modo inicializar.
 

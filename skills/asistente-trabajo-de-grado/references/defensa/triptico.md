@@ -15,7 +15,16 @@ Motor: `scripts/defensa/triptico.py` (`generar` y `verificar`). El **contenido**
   (`diagrama_flujo.py exportar ruta-critica.yaml --vertical`, con `vertical: [fila, col]` por nodo para una sola columna) y se inserta
   con `[img, ruta, 7.3]`. Nunca se redibuja a mano: dos fuentes se desincronizan.
 - **Sin texto interpretativo:** nada de «esto demuestra», «revoluciona»; solo lo que el TG afirma.
-- **Bíptico:** respaldo de dos paneles con lo mismo, más corto.
+- **Bíptico oficial (marco práctico al 100 %):** es otro entregable, no un respaldo del tríptico. Su formato lo da el docente que lo exige
+  (`formatos/<código>/formato.yaml`, clave `biptico`, con su plantilla `.docx`): hoja carta apaisada, 2 páginas y 4 paneles. Orden:
+  **título → formulación del problema → objetivos (general y específicos) → límites → desarrollo del OE1 (análisis, aspectos más relevantes) →
+  desarrollo del OE2 (diseño) → desarrollo del OE3 (desarrollo)**, y la portada (comando general, escuela, unidad académica, «Marco práctico»,
+  logo, título, estudiante, año). Se edita la plantilla oficial, sin cambiar sus encabezados ni su orden; `verificar_formato.py --tipo biptico`
+  lo comprueba.
+- **Ejemplo de tríptico del docente:** hoja carta apaisada, exterior e interior de tres columnas (tablas de 1 × 3), márgenes ≈ 1,0 / 0,8 / 0,6 / 0,6 cm, títulos de panel
+  13 pt, cuerpo 8,5 pt, pies de figura 7,5 pt y viñeta «▪»; interior en el orden **el problema → la solución → resultados y aporte**, y
+  exterior con cifras, datos del proyecto, tecnologías y la portada. Es un ejemplo (no norma): `verificar_formato.py --tipo triptico` informa
+  los desvíos como avisos.
 - **Contenido literal del documento**: problema, objetivos, perfiles, configuración, cifras. Cada número debe existir en el documento:
   `triptico.py verificar triptico.yaml --tg <extracción>.md` sale 1 si falta alguno.
 - **Imágenes:** del propio documento (`word/media`, o extraídas de las diapositivas) y a resolución suficiente (más de 150 ppp en el tamaño

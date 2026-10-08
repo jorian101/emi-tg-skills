@@ -25,9 +25,13 @@ específicos 86, conclusiones ~120 **repartidas en tres diapositivas**. Reglas:
 
 ## Estructura que espera el docente de trabajo de grado
 
-1. Portada → abstract (resumen ejecutivo) → **documentación administrativa** (la primera imagen es la carta de solicitud al caso de estudio)
-   → introducción → objetivo general (completo) → objetivos específicos (una sola diapositiva) → metodología → marco práctico → trabajo de campo
-   → costos → demostración → conclusiones → recomendaciones → gracias.
+1. **El orden lo fija el formato del docente de TG** (`formatos/<código>/formato.yaml`, con su `.pptx` de plantilla; `verificar_formato.py --tipo diapositivas`
+   lo comprueba). Portada → abstract (resumen ejecutivo) → **documentación administrativa** (la primera imagen es la carta de solicitud al caso de
+   estudio) → introducción → **problemática** (con la formulación del problema) → objetivo general (completo) → objetivos específicos (una sola
+   diapositiva) → **metodología** (paradigma, método y técnicas; paradigma positivista) → **software** usado → **hardware** necesario →
+   **marco práctico (máximo 10 diapositivas**: análisis de la situación actual antes del sistema y con el sistema, y un **flujograma de los pasos de
+   la demostración**) → **trabajo de campo** (solo imágenes, que se explican) → costos → **demostración** (enlace al ejecutable) → conclusiones →
+   recomendaciones → gracias. Un mazo al que le falte una de estas partes o las tenga en otro orden pierde puntos: se avisa antes de exportar.
 2. **No se lee**: texto solo en título, objetivos y formulación del problema; todo lo demás son imágenes, esquemas y diagramas.
 3. En las diapositivas de conclusiones va el **rango de páginas exacto** de la evidencia de cada objetivo («OE3: págs. 127 a 172»). Salen del
    índice del documento; si el autor lo actualiza, se revisan.

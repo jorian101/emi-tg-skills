@@ -1,0 +1,118 @@
+docente: d-a35f06
+vigencia: '2026'
+tg_word:
+  reglas: reglas-tg.md
+  hoja: carta
+  margenes_cm:
+    sup: 2.54
+    inf: 2.54
+    izq: 3.0
+    der: 2.54
+  fuente: Arial
+  tamano_pt: 12
+  interlineado: 1.5
+  sangria_primera_linea: false
+diapositivas:
+  plantilla: diapositivas.pptx
+  tam_cm:
+  - 33.87
+  - 19.05
+  max_marco_practico: 10
+  orden:
+  - clave: abstract
+    titulos:
+    - ABSTRACT
+    - RESUMEN
+  - clave: documentacion
+    titulos:
+    - DOCUMENTACION ADMINISTRATIVA
+  - clave: introduccion
+    titulos:
+    - INTRODUCCION
+  - clave: problematica
+    titulos:
+    - PROBLEMATICA
+    - FORMULACION DEL PROBLEMA
+  - clave: objetivo_general
+    titulos:
+    - OBJETIVO GENERAL
+  - clave: objetivos_especificos
+    titulos:
+    - OBJETIVOS ESPECIFICOS
+  - clave: metodologia
+    titulos:
+    - METODOLOGIA
+  - clave: software
+    titulos:
+    - SOFTWARE
+  - clave: hardware
+    titulos:
+    - HARDWARE
+  - clave: marco_practico
+    titulos:
+    - MARCO PRACTICO
+  - clave: trabajo_campo
+    titulos:
+    - TRABAJO DE CAMPO
+  - clave: costos
+    titulos:
+    - COSTOS
+  - clave: demostracion
+    titulos:
+    - DEMOSTRACION
+  - clave: conclusiones
+    titulos:
+    - CONCLUSIONES
+  - clave: recomendaciones
+    titulos:
+    - RECOMENDACIONES
+  - clave: gracias
+    titulos:
+    - GRACIAS
+  notas:
+  - 'Metodología: paradigma, método y técnicas de investigación (paradigma positivista).'
+  - 'Marco práctico: máximo 10 diapositivas; situación actual antes del sistema y
+    con el sistema, y un flujograma con los pasos de la demostración.'
+  - 'Trabajo de campo: solo imágenes (fotos, entrevistas) a explicar.'
+  - 'Demostración: enlace al ejecutable.'
+  - 'Conclusiones: rango de páginas exacto de la evidencia de cada objetivo.'
+triptico:
+  obligatorio: false
+  hoja: carta
+  orientacion: apaisada
+  paginas: 2
+  margenes_cm:
+    sup: 1.02
+    inf: 0.76
+    izq: 0.64
+    der: 0.64
+  tablas:
+  - - 1
+    - 3
+  - - 1
+    - 3
+  fuentes_pt:
+    titulo_panel: 13
+    cuerpo: 8.5
+    pie_de_figura: 7.5
+  viñeta: ▪
+  orden:
+  - clave: cifras
+    titulos:
+    - EL SISTEMA EN CIFRAS
+    - RESULTADOS EN CIFRAS
+  - clave: datos
+    titulos:
+    - DATOS DEL PROYECTO
+  - clave: tecnologias
+    titulos:
+    - TECNOLOGIAS
+  - clave: problema
+    titulos:
+    - EL PROBLEMA
+  - clave: solucion
+    titulos:
+    - LA SOLUCION
+  - clave: resultados
+    titulos:
+    - RESULTADOS Y APORTE
