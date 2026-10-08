@@ -5,7 +5,7 @@ Uso: uv run --with python-docx --with pyyaml python triptico.py generar TRIPTICO
      uv run --with python-docx --with pyyaml python triptico.py verificar TRIPTICO.yaml --tg EXTRACCION.md
 TRIPTICO.yaml (modelo: assets/defensa/triptico.example.yaml):
   colores: {oscuro: "032154", accion: "0a3a82"}      imagenes: {logo: ruta, foto: ruta}   (rutas relativas al yaml)
-  salida: {triptico: nombre.docx, biptico: nombre.docx}   hoja: a4 | carta (horizontal; por defecto a4)
+  salida: {triptico: nombre.docx, biptico: nombre.docx}   hoja: carta | a4 (horizontal; por defecto carta)
   solapa, contratapa, portada: lista de elementos       interior: [panel, panel, panel]      biptico: [panel, panel]
 Elemento = lista: [h, texto] barra de título · [hb, texto] título sobre fondo oscuro · [p, texto] · [pb, texto] negrita
   · [pw, texto] párrafo blanco · [c, texto] centrado · [titulo, texto] · [li, texto] viñeta · [cifra, valor, rótulo]
@@ -39,7 +39,7 @@ BLANCO = RGBColor(0xFF, 0xFF, 0xFF)
 AZUL_TRIBUNAL, AZUL_ACCION = "032154", "0a3a82"  # se reemplazan con `colores` del yaml
 FUENTE = "Calibri"  # una sola tipografía en todo el documento (`fuente` en el yaml)
 HOJAS = {"a4": (29.7, 21.0), "carta": (27.94, 21.59)}  # horizontal, en cm
-HOJA = "a4"  # `hoja` en el yaml
+HOJA = "carta"  # `hoja` en el yaml (Bolivia imprime en carta)
 
 
 def sombrear(celda, hex_):

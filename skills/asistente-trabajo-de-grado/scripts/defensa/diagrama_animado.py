@@ -243,8 +243,8 @@ def navegador() -> str:
     sys.exit("No encuentro Chrome: definí CHROME o instalá chromium / chrome-headless-shell.")
 
 
-def exportar(spec: str) -> Path:
-    sp = leer(spec)
+def exportar(spec: str, slug: str | None = None) -> Path:
+    sp = {**leer(spec), **({"slug": slug} if slug else {})}  # slug: otra versión de la misma spec (p. ej. -vertical)
     doc = (FUENTE / f"{sp['slug']}.excalidraw").read_bytes()
     cuerpo, res, listo = {"/": _PAGINA.encode(), "/escena": doc}, {}, threading.Event()
 

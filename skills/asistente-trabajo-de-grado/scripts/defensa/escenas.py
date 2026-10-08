@@ -64,6 +64,7 @@ class Lienzo:
     def __init__(self, img: Image.Image):
         self.img = img
         self.d = ImageDraw.Draw(img, "RGBA")
+        self.cajas_texto: list[tuple] | None = None  # se llena solo mientras se dibuja la escena (chequeo geométrico)
 
     def texto(self, xy, txt, tam=32, color=AZUL_OSC, negrita=False, ancho=None, centro=False, mono=False,
               interlinea=1.25, alfa=255) -> float:
@@ -76,6 +77,8 @@ class Lienzo:
         for i, linea in enumerate(lineas):
             lx = x + (ancho - f.getlength(linea)) / 2 if (centro and ancho) else x
             self.d.text((lx, y + i * tam * interlinea), linea, font=f, fill=(*color[:3], alfa))
+            if self.cajas_texto is not None and alfa > 0 and linea.strip():
+                self.cajas_texto.append((*self.d.textbbox((lx, y + i * tam * interlinea), linea, font=f), linea))
         return y + len(lineas) * tam * interlinea
 
     def caja(self, x0, y0, x1, y1, relleno=CELESTE, borde=AZUL, ancho=3, radio=16, alfa=255):
@@ -128,16 +131,32 @@ def cuadro(mod, i: int, t: float, final=False) -> Image.Image:
         px = x0 + 14 + (ancho - 28) * ease(min(1, t * 1.6))
         c.d.ellipse([px - 11, BARRA[3] - 21, px + 11, BARRA[3] + 1], fill=ROJO, outline="white", width=3)
     c.caja(*ESCENA, (251, 252, 253), (206, 212, 218), 2, 20)
+    c.cajas_texto = []
     if final:
         mod.PASOS[-1][2](c, 1.0)
         rotulo, num = mod.CIERRE, "Recorrido completo"
     else:
         mod.PASOS[i][2](c, t)
         rotulo, num = mod.PASOS[i][1], f"Paso {i + 1} de {n}"
+    img.info["textos"], c.cajas_texto = c.cajas_texto, None
     c.d.rectangle([0, FRANJA_Y, W, H], fill=AZUL_OSC)
     c.texto((40, FRANJA_Y + 12), num, 30, AMARILLO, True)
     c.texto((40, FRANJA_Y + 54), rotulo, 38, (255, 255, 255), ancho=W - 80, interlinea=1.2)
     return img
+
+
+def problemas_geometricos(img: Image.Image) -> list[str]:
+    """Textos de la escena que se salen del escenario o se pisan entre sí (en el cuadro final de cada paso)."""
+    x0, y0, x1, y1 = ESCENA
+    cajas, out = img.info.get("textos", []), []
+    for a in cajas:
+        if a[0] < x0 or a[1] < y0 or a[2] > x1 or a[3] > y1:
+            out.append(f"fuera del escenario: {a[4][:40]!r}")
+    for k, a in enumerate(cajas):
+        for b in cajas[k + 1:]:
+            if min(a[2], b[2]) - max(a[0], b[0]) > 2 and min(a[3], b[3]) - max(a[1], b[1]) > 2:
+                out.append(f"se pisan: {a[4][:30]!r} y {b[4][:30]!r}")
+    return out
 
 
 def _sin_tildes(s: str) -> str:
@@ -170,6 +189,11 @@ def render(nombre: str, tg: Path | None, modulos: Path | None = None) -> None:
             cuadros.append(cuadro(mod, i, k / (CUADROS_PASO - 1)))
     for _ in range(CUADROS_FINAL):
         cuadros.append(cuadro(mod, 0, 1.0, final=True))
+    geom = [f"paso {j + 1}: {m}" for j in range(len(mod.PASOS))
+            for m in problemas_geometricos(cuadros[j * CUADROS_PASO + CUADROS_PASO - 1])]
+    if geom:
+        sys.exit("Chequeo geométrico (corregir posiciones antes de exportar):\n" + "\n".join(geom))
+    print("ok geometría: ningún texto fuera del escenario ni pisado")
     SALIDA.mkdir(exist_ok=True)
     base = SALIDA / mod.SLUG
     cuadros[-1].save(f"{base}-final.png")

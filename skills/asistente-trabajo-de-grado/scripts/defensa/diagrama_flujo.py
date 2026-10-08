@@ -6,6 +6,8 @@ Uso:
   uv run --with pyyaml --with pillow python diagrama_flujo.py crear     <spec.yaml>
   uv run --with pyyaml --with pillow python diagrama_flujo.py verificar <spec.yaml> [--tg extraccion.md]
   uv run --with pyyaml --with pillow python diagrama_flujo.py exportar  <spec.yaml>   # .png y .pdf
+Con `--vertical` (en los tres comandos) sale <slug>-vertical: la misma spec traspuesta (filas ↔ columnas) o, si los
+nodos traen `vertical: [fila, col]`, en esas celdas; para una columna angosta como la solapa del tríptico. Así hay una sola fuente y las dos versiones no se desincronizan.
 La salida queda junto a la spec. Modelo comentado: assets/defensa/flujo.example.yaml.
 Cada nodo va en una celda (fila, col) de la grilla; una arista entre celdas vecinas es recta, y una con
 `vuelta: arriba` sube por el pasillo entre filas o, con `vuelta: izquierda`, rodea por el margen izquierdo.
@@ -29,13 +31,29 @@ NW, NH, GX, GY, MX = 440, 250, 130, 170, 150  # nodo, separaciones y margen
 T_TEXTO, T_DETALLE, T_ROTULO = 34, 25, 26
 
 
+def _spec() -> dict:
+    """La spec tal cual o, con --vertical, traspuesta: cada fila pasa a columna y las vueltas van por el pasillo lateral."""
+    sp = da.leer(SPEC)
+    if "--vertical" not in sys.argv:
+        return sp
+    sp["slug"] += "-vertical"
+    for n in sp["nodos"]:  # `vertical: [fila, col]` en un nodo fija su celda; si no, se traspone
+        n["fila"], n["col"] = n.get("vertical") or (n["col"], n["fila"])
+    if "separacion" in sp:
+        sp["separacion"] = sp["separacion"][::-1]
+    for a in sp["aristas"]:
+        if a.get("vuelta"):
+            a["vuelta"] = "lateral"
+    return sp
+
+
 def _caja(n: dict, arriba: float) -> tuple[float, float, float, float]:
     return MX + n["col"] * (NW + GX), arriba + n["fila"] * (NH + GY), NW, NH
 
 
 def crear() -> Path:
     global GX, GY
-    sp = da.leer(SPEC)
+    sp = _spec()
     GX, GY = sp.get("separacion", [GX, GY])  # más pasillo si los rótulos de las flechas son largos
     cols = max(n["col"] for n in sp["nodos"]) + 1
     filas = max(n["fila"] for n in sp["nodos"]) + 1
@@ -82,9 +100,12 @@ def crear() -> Path:
     for clave, f in fases.items():
         if not f.get("leyenda"):
             continue
+        t = da._texto(x_ley + 60, y_ley + 6, 900, f["leyenda"], 30, da.AZUL_OSCURO)
+        if x_ley > MX and x_ley + 60 + t["width"] > W - MX:  # en la versión angosta la leyenda baja de renglón
+            x_ley, y_ley = MX, y_ley + 70
+            t["y"] = y_ley + 6
         els.append(da._base("rectangle", x_ley, y_ley, 48, 48, strokeColor=f["trazo"], backgroundColor=f["relleno"],
                             strokeWidth=3, roundness={"type": 3}))
-        t = da._texto(x_ley + 60, y_ley + 6, 900, f["leyenda"], 30, da.AZUL_OSCURO)
         t["x"] = x_ley + 60
         els.append(t)
         x_ley += 60 + t["width"] + 70
@@ -117,7 +138,13 @@ def _flecha(o, d, a, fases) -> list[dict]:
     """Recta entre celdas vecinas; `vuelta: arriba` sube por el pasillo; `vuelta: izquierda` rodea por el margen."""
     ox, oy, ow, oh = o
     dx, dy, dw, dh = d
-    if a.get("vuelta") == "arriba":
+    if a.get("vuelta") == "lateral":  # versión vertical: sale por abajo (la entrada ocupa el costado) y sube por el pasillo
+        pasillo, bajo = ox - GX / 2, oy + oh + GY * 0.35
+        if abs(ox - dx) < 1:  # misma columna: sale y entra por el costado izquierdo, que está libre
+            pts = [(ox, oy + oh / 2), (pasillo, oy + oh / 2), (pasillo, dy + dh / 2), (dx, dy + dh / 2)]
+        else:
+            pts = [(ox + ow / 2, oy + oh), (ox + ow / 2, bajo), (pasillo, bajo), (pasillo, dy + dh / 2), (dx + dw, dy + dh / 2)]
+    elif a.get("vuelta") == "arriba":
         pts = [(ox + ow / 2, oy), (ox + ow / 2, oy - GY / 2), (dx + dw / 2, oy - GY / 2), (dx + dw / 2, dy + dh)]
     elif a.get("vuelta") == "izquierda":
         bajo, lado = oy + oh + GY * 0.4, MX * 0.45
@@ -149,10 +176,10 @@ def _flecha(o, d, a, fases) -> list[dict]:
 
 
 def exportar() -> None:
-    sp = da.leer(SPEC)
+    sp = _spec()
     da.FUENTE = AQUI  # el exportador busca <slug>.excalidraw en FUENTE
     da._PAGINA = da._PAGINA.replace("exportPadding: 0", "exportPadding: 60")  # la vuelta izquierda no toca el borde
-    png = da.exportar(str(SPEC))
+    png = da.exportar(str(SPEC), sp["slug"])
     final = AQUI / f"{sp['slug']}.png"
     png.replace(final)
     img = Image.open(final).convert("RGB")
@@ -166,7 +193,7 @@ def _norm(s: str) -> str:
 
 
 def verificar() -> int:
-    sp = da.leer(SPEC)
+    sp = _spec()
     doc = json.loads((AQUI / f"{sp['slug']}.excalidraw").read_text(encoding="utf-8"))
     k = sp.get("escala_export", 3)
     formas = {e["customData"]["nodo"]: e for e in doc["elements"] if (e.get("customData") or {}).get("nodo")}

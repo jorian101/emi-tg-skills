@@ -4,6 +4,8 @@
 # `vuelta: izquierda` rodea por el margen izquierdo. `fase` da el color; las que tienen `leyenda` van abajo.
 # Opcionales: `separacion: [x, y]` (pasillos más anchos para rótulos largos), `numero` en un paso (ramas
 # paralelas con el mismo número) y `recuadro: {fase, titulo, lineas}` (destacado bajo la leyenda).
+# Versión angosta (solapa del tríptico): `crear|exportar --vertical` traspone filas y columnas; para una sola
+# columna real, cada nodo puede traer `vertical: [fila, col]` (ej. todos en col 0 y la salida «No» en col 1).
 # `terminos_tg`: términos técnicos que el documento debe declarar (verificar --tg <extracción>.md).
 slug: flujo-ejemplo
 titulo: "Flujo de trabajo en el sistema: de la solicitud al documento aprobado"

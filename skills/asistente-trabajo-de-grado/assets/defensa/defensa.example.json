@@ -24,7 +24,7 @@
     {"nombre": "diagramas", "archivos": ["diagramas/salida/01-flujo-publico.mp4"], "depende_de": ["tg"],
      "como": "escenas.py <modulo> --modulos diagramas --tg <extracción del TG>", "tipo": "automático", "final": true},
     {"nombre": "ruta-critica", "archivos": ["ruta-critica/ruta-critica.yaml", "ruta-critica/ruta-critica.png"], "depende_de": ["tg"],
-     "como": "ruta_critica.py crear|verificar|exportar ruta-critica/ruta-critica.yaml", "tipo": "automático", "final": true},
+     "como": "diagrama_flujo.py crear|verificar|exportar ruta-critica/ruta-critica.yaml (y --vertical para la solapa del tríptico)", "tipo": "automático", "final": true},
     {"nombre": "anexos-qr", "archivos": ["ANEXOS-QR/anexos-qr.docx", "ANEXOS-QR/manifiesto-anexos.json", "ANEXOS-QR/QR-ANEXOS.docx"],
      "depende_de": ["tg"], "como": "si cambian letras o títulos de anexos en el documento: corregir el docx y el manifiesto; correr anexos_pipeline.py",
      "tipo": "manual + automático", "final": true, "publicar": ["ANEXOS-QR/QR-ANEXOS.docx"]}

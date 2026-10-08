@@ -2,7 +2,7 @@
 
 Cada diagrama del documento (pipelines, arquitectura) se presenta en **dos versiones**:
 
-- **Técnica:** la del documento (o la de desarrollo), sin cambios. Es el respaldo para las preguntas del tribunal.
+- **Técnica:** la figura del documento, sin cambios. Es el respaldo para las preguntas del tribunal.
 - **Pública:** una animación **por escenas** que explica el mismo flujo a alguien que no es técnico, **sin
   perder conceptos**.
 
@@ -20,6 +20,14 @@ Cada diagrama del documento (pipelines, arquitectura) se presenta en **dos versi
 - **Letra legible:** 28 px como mínimo en 1920 px (el motor lo exige) y rótulos de hasta dos líneas.
 - **Valores no medidos** (los números de un vector, el orden de unos candidatos, una respuesta) se
   rotulan «ilustrativos» o «de ejemplo».
+- **Registro formal** en los ejemplos que aparecen en pantalla (consultas, mensajes): tercera persona o
+  «usted», nunca voseo ni tuteo.
+- **El producto propone y la persona decide:** una escena que muestra una validación o una decisión dice
+  qué hace el producto (responde, cita, señala) y quién decide; no le atribuye la decisión al producto.
+- **Ningún texto fuera del escenario ni pisado:** `escenas.py` lo comprueba en el cuadro final de cada paso
+  y no exporta si falla (además de la revisión por visión del paso 4).
+- **Un ejemplo por cada variante que el TG declara** (p. ej. cada tipo de consulta o de documento): mostrar
+  una sola deja afuera lo que el tribunal va a preguntar.
 
 ## Cómo se arma
 
@@ -36,10 +44,15 @@ Cada diagrama del documento (pipelines, arquitectura) se presenta en **dos versi
 6. Ponerlos en las diapositivas: una propia a pantalla completa por diagrama, antes de su versión
    técnica (ver [entregables.md](entregables.md)).
 
-## Herramientas
+## Herramientas (qué se hace con qué)
 
-- Motor: Pillow; video con imageio-ffmpeg (trae su ffmpeg, no hace falta instalarlo).
-- `diagrama_animado.py` arma `.excalidraw` desde YAML y los exporta con Excalidraw real en Chrome
-  headless (necesita red para `esm.sh`). Busca Chrome en `$CHROME`, en el PATH o en el
-  `chrome-headless-shell` de `~/.cache/puppeteer`.
-- La ruta crítica usa esa misma base (`ruta_critica.py`).
+| Diagrama | Herramienta | Salida |
+| --- | --- | --- |
+| Diagramas animados para público no técnico | `escenas.py` (Pillow + imageio-ffmpeg, trae su ffmpeg) | MP4, GIF, PNG por paso |
+| **Ruta crítica (el único en Excalidraw)** | `diagrama_flujo.py crear\|verificar\|exportar` desde YAML; `--vertical` para la solapa del tríptico | `.excalidraw`, PNG, PDF |
+| Figuras del documento (UML, DER, etc.) | las de `generar-entregables-tesis` (Excalidraw prohibido ahí) | — |
+
+- La exportación de Excalidraw usa Excalidraw real en Chrome headless (`diagrama_animado.py`; necesita red
+  para `esm.sh`). Busca Chrome en `$CHROME`, en el PATH o en el `chrome-headless-shell` de `~/.cache/puppeteer`.
+- `ruta_critica.py` (carriles por rol) es el motor anterior; se conserva para quien ya lo usa, pero la ruta
+  crítica nueva va con `diagrama_flujo.py` (ver [flujo.md](flujo.md)).

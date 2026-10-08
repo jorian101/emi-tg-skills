@@ -84,8 +84,11 @@ def main() -> None:
         (t / "img").mkdir()
         from PIL import Image
 
-        Image.new("RGB", (40, 40), "blue").save(t / "img/logo.png")
-        Image.new("RGB", (40, 40), "red").save(t / "img/foto.jpg")
+        import re
+
+        for ruta in re.findall(r"[\w/.-]+\.(?:png|jpg)", ejemplo.read_text(encoding="utf-8")):
+            (t / ruta).parent.mkdir(parents=True, exist_ok=True)
+            Image.new("RGB", (40, 40), "blue").save(t / ruta)
         (t / "triptico.yaml").write_text(
             ejemplo.read_text(encoding="utf-8"), encoding="utf-8"
         )
