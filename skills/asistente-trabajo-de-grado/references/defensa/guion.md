@@ -13,6 +13,10 @@ Entregable: `GUION/guion-defensa.md` (+ .docx para leerlo en Windows) y las nota
    error conocido, su pregunta y la cita; plan B en la segunda pantalla. Si falta el caso, el guion lo marca «POR DEFINIR» y la demostración no
    afirma que prueba la detección de errores.
 6. **Preguntas esperadas.** Una respuesta corta por cada observación abierta de los revisores, con cifras del documento y la limitación declarada.
+   Siempre una para **causa y efecto**: «¿qué causa del árbol de problemas ataca el trabajo y cómo se mide?» — se responde con lo medido
+   (antes/después con número y porcentaje, quién lo validó) y se nombra la medición pendiente, sin presentarla como hecha.
+6bis. **Guion completo para estudiar** (`guion-completo-para-leer.md`): lo que se dice en cada diapositiva, en tercera persona y con frases
+   del TG, con la marca de minuto. Sirve para ensayar; en la defensa no se lee.
 7. **Ensayo** con cronómetro (±2 minutos) y con la segunda pantalla.
 8. Lo que falta por conseguir va a `PENDIENTES-DEFENSA.md` (plantilla `pendientes-defensa.plantilla.md`), con el entregable donde entra.
 

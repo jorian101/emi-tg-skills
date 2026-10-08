@@ -73,8 +73,9 @@ python3 $S/publicar_finales.py --dir DEFENSA                    # copia los fina
 | `notas_vault.py` | Hub, notas por entregable y nota de estado en el vault |
 | `escenas.py` | Motor de animaciones por escenas (versión pública de los diagramas) |
 | `diagrama_animado.py`, `ruta_critica.py` | `.excalidraw` desde YAML y export con Excalidraw real; ruta crítica por carriles |
-| `diagrama_flujo.py` | Diagrama de flujo desde YAML (pasos numerados, decisiones, colores por fase): la ruta crítica dentro del sistema |
-| `diapositivas.py` | Mazo: `texto`, `cifras --tg`, `verificar`, `notas`, `ocultar`, `imagen`, `tarjetas` (ver [diapositivas.md](diapositivas.md)) |
+| `diagrama_flujo.py` | Diagrama de flujo desde YAML (pasos numerados, decisiones, colores por fase): la ruta crítica; `--vertical` para la solapa |
+| `diapositivas.py` (+ `diapositivas_crear.py`) | Mazo: `crear` desde YAML, `texto`, `cifras --tg`, `verificar` (con tope de palabras), `notas`, `ocultar`, `imagen`, `tarjetas` (ver [diapositivas.md](diapositivas.md)) |
+| `manual.py` | Manual de usuario en Word desde Markdown con marcas, capturas y la plantilla del autor ([manual.md](manual.md)) |
 | `triptico.py` | Tríptico y bíptico desde `triptico.yaml`; `verificar` cruza las cifras con el documento ([triptico.md](triptico.md)) |
 | `tv.py` | Página de la segunda pantalla con videos en bucle y teclas ([tv-videos.md](tv-videos.md)) |
 | `capturas.py` | Capturas declarativas por rol con marcadores medidos y bloqueo de botones que escriben |
@@ -82,4 +83,8 @@ python3 $S/publicar_finales.py --dir DEFENSA                    # copia los fina
 | `word_a_pdf.py`, `watch_a_pdf.py` | PDF desde Word/PowerPoint (Windows desde WSL, o LibreOffice) y vigilante |
 
 Tests: `python3 $S/tests/test_verificar_sincronizacion.py`, `python3 $S/tests/test_verificar_correcciones.py`,
-`uv run --with playwright --with pyyaml python $S/tests/test_capturas.py`.
+`uv run --with playwright --with pyyaml python $S/tests/test_capturas.py`,
+`uv run --with python-pptx --with python-docx --with pillow --with pyyaml python $S/tests/test_diapositivas_triptico_tv.py`,
+`uv run --with python-docx --with pillow --with pyyaml python $S/tests/test_manual.py`,
+`uv run --with pyyaml --with pillow python $S/tests/test_diagrama_flujo.py` y
+`uv run --with pillow python $S/tests/test_escenas_geometria.py`.

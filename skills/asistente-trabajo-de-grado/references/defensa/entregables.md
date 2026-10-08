@@ -21,8 +21,9 @@
 
 ## Manual de usuario
 
-- Se genera completo en `manual_a_copiar` (texto fuente + capturas + plantilla con el formato del autor);
-  el autor lo copia al oficial. `verificar_correcciones.py --manual` lista las secciones que difieren.
+- Se genera completo en `manual_a_copiar` con `manual.py manual.yaml` (texto fuente + capturas + plantilla con
+  el formato del autor); el autor lo copia al oficial. `verificar_correcciones.py --manual` lista las secciones
+  que difieren. Estructura y reglas: [manual.md](manual.md).
 - Si cambió el frontend: recapturar (ver [capturas.md](capturas.md)) y ajustar el texto a los nombres
   nuevos de pantallas y menús. El manual no promete funciones que el documento no declara.
 
@@ -44,6 +45,9 @@ Ver [diapositivas.md](diapositivas.md) (estructura que pide el docente, 30 minut
 
 ## Anexos con QR
 
+- **Qué anexos llevan QR lo decide el usuario** (el modo inicializar lo pregunta con la lista de anexos de
+  `proyecto.yaml`): suelen ser los largos que no entran impresos (entrevistas, registros, historias de usuario,
+  pruebas). El manifiesto arranca con esa selección.
 - `anexos-qr.docx` lo edita el autor; el manifiesto (`manifiesto-anexos.json`) declara letra, título y
   nombre del archivo en Drive. `anexos_pipeline.py --dir DEFENSA` exporta el PDF, lo divide por portada
   («ANEXO X»), sube a Drive con el mismo nombre (mismo link, mismo QR) y arma `QR-ANEXOS.docx`.
@@ -62,8 +66,12 @@ Ver [diapositivas.md](diapositivas.md) (estructura que pide el docente, 30 minut
   cartulina o si un término técnico no está en el documento.
 - Los pasos salen de las pantallas reales (las capturas del manual) y los nombres, del documento. Lo que
   ocurre fuera del sistema (entregas físicas, sesiones) no va en este diagrama.
-- `ruta_critica.py` (carriles por rol, con la tarea observada y cómo asiste el sistema) sigue disponible
-  si se quiere mostrar la ruta del proceso manual.
+- **Versión vertical** para la solapa del tríptico: `--vertical` en los tres comandos, desde el mismo YAML
+  (ver [triptico.md](triptico.md)). La ruta crítica es el único diagrama que se hace en Excalidraw.
+- Si el TG no tiene software, la ruta crítica es la del **proceso del caso de estudio** con el aporte del
+  trabajo marcado en cada paso.
+- `ruta_critica.py` (carriles por rol, con la tarea observada y cómo asiste el sistema) es el motor anterior;
+  sigue disponible si se quiere mostrar la ruta del proceso manual.
 
 ## Publicación
 
