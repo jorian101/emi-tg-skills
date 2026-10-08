@@ -175,12 +175,12 @@ def asignar(vault: Path, catalogo: Path, rol: str, slug: str | None, quien: str 
 
 
 def check(vault: Path, catalogo: Path) -> int:
-    problemas = []
+    problemas, avisos = [], []  # problemas = algo está mal (sale 1); avisos = falta algo por hacer (sale 0)
     vinculados = set()
     for archivo, nombre in ROLES.values():
         d = docente_de(vault / "wiki/revisores" / archivo)
         if not d:
-            problemas.append(f"{nombre}: sin vincular (asignar_evaluador.py … --rol … --docente <slug> | --por-asignar)")
+            avisos.append(f"{nombre}: sin vincular (asignar_evaluador.py … --rol … --docente <slug> | --por-asignar)")
         elif d != "por-asignar":
             vinculados.add(d)
     for f in sorted((vault / "wiki/docentes").glob("*.md")):
@@ -198,8 +198,9 @@ def check(vault: Path, catalogo: Path) -> int:
         for p in sorted((catalogo / "docentes").glob("*.md")):
             n = str(frontmatter(p.read_text(encoding="utf-8")).get("nombre") or "")
             if n and norm(n) in texto and p.stem not in vinculados:
-                problemas.append(f"proyecto.yaml nombra a {n} ({p.stem}): ¿es tu evaluador? vinculalo")
-    print("\n".join(problemas) or "ok: cada rol vinculado y solo tus evaluadores en wiki/docentes")
+                avisos.append(f"proyecto.yaml nombra a {n} ({p.stem}): ¿es tu evaluador? vinculalo")
+    print("\n".join(f"  aviso {a}" for a in avisos))
+    print("\n".join(problemas) or "ok: solo tus evaluadores en wiki/docentes" + ("" if avisos else ", cada rol vinculado"))
     return 1 if problemas else 0
 
 

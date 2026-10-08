@@ -231,7 +231,10 @@ def extract(filename: str, force: bool = False) -> dict[str, object]:
         if target_media.exists():
             shutil.rmtree(target_media)
         extracted_media = media / "media" if (media / "media").exists() else media
-        shutil.copytree(extracted_media, target_media)
+        if extracted_media.exists():
+            shutil.copytree(extracted_media, target_media)
+        else:  # un TG sin imágenes no deja carpeta de media
+            target_media.mkdir(parents=True)
         report_destination.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         state = extraction_state(slug, source, report)
         state_destination.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
