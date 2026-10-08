@@ -9,7 +9,7 @@ mayúsculas** (auditar-pii.sh es sensible a mayúsculas a propósito; esta puert
   - cada término de `.pii-denylist.local` del repo (apellidos, nombres de pila, siglas de tu proyecto);
   - los apellidos y slugs de los docentes del catálogo (`docentes/*.md`), salvo con --sin-docentes (el propio catálogo);
   - correos reales (no noreply ni de ejemplo), rutas personales /home/<usuario>, enlaces de notebook y UUID.
-Sale 1 si hay algún hallazgo; cada uno se revisa a mano y, si es un falso positivo (p. ej. «terceros» como palabra común),
+Sale 1 si hay algún hallazgo; cada uno se revisa a mano y, si es un falso positivo (una palabra común que coincide con un apellido),
 se pasa con --permitir. También corre auditar-pii.sh y auditar-rutas.sh si el repo los tiene.
 """
 
@@ -24,7 +24,7 @@ from pathlib import Path
 from catalogo_lib import ARBOL_VACIO, catalogo_default, frontmatter
 
 TITULOS = {"ing", "lic", "msc", "cnl", "daen", "dr", "dra", "mcal", "sr", "sra"}
-GENERICOS = [r"[\w.+-]+@(?!users\.noreply\.github\.com|example\.|localhost|x\b|t\b)[\w-]+\.[\w.]+",
+GENERICOS = [r"(?<![/\w])[\w.+-]+@(?!users\.noreply\.github\.com|example\.|localhost|x\b|t\b)[\w-]+(\.[\w-]+)*\.[a-z]{2,}\b",
              r"/home/[a-z][\w-]+/", r"notebooklm\.google\.com|notebook\.google\.com",
              r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"]
 
