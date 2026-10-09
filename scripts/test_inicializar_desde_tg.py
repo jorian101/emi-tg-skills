@@ -44,6 +44,10 @@ Los objetivos específicos son:
 
 # Figura 1: Organigrama
 
+- Misión institucional: La misión de la institución es medir algo.
+
+- Visión institucional: La visión es ser referente.
+
 # ANEXO A: ÁRBOL DE PROBLEMAS
 """
 
@@ -61,6 +65,8 @@ with tempfile.TemporaryDirectory() as t:
     assert d["objetivos_especificos"]["items"] == ["Analizar el proceso actual de la institución.",
                                                    "Validar el sistema con usuarios reales."]
     assert d["figuras"] == [{"n": 1, "titulo": "Organigrama"}]
+    assert d["institucion_caso"]["mision"]["texto"] == "La misión de la institución es medir algo."
+    assert d["institucion_caso"]["vision"]["texto"].startswith("La visión") and d["institucion_caso"]["nombre"] == "INSTITUCIÓN DE PRUEBA"
     assert d["anexos"][0]["letra"] == "A" and d["problema"]["causa"] == "PENDIENTE"
     r = subprocess.run([sys.executable, str(Path(__file__).with_name("inicializar_desde_tg.py")), t, "tg"],
                        capture_output=True, text=True, check=False)
