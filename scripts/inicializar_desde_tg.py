@@ -67,6 +67,13 @@ def caratula(lineas: list[str]) -> dict:
     return c
 
 
+# misión y visión suelen venir como viñeta («- Misión institucional: La misión … es …»), no como título
+VINETA_INSTITUCIONAL = {
+    "mision": re.compile(r"^[-*]\s*\**misi[oó]n[^:]*:\**\s*(.+)$", re.IGNORECASE),
+    "vision": re.compile(r"^[-*]\s*\**visi[oó]n[^:]*:\**\s*(.+)$", re.IGNORECASE),
+}
+
+
 def secciones(lineas: list[str]) -> dict:
     """Primera aparición de cada sección clave fuera del índice: título literal + texto hasta el siguiente título."""
     out = {}
@@ -87,6 +94,11 @@ def secciones(lineas: list[str]) -> dict:
             texto = "\n".join(cuerpo).strip()
             if texto:  # el índice repite títulos sin cuerpo: se saltea
                 out[clave] = {"seccion": titulo, "texto": texto}
+    for ln in lineas:
+        for clave, patron in VINETA_INSTITUCIONAL.items():
+            m = patron.match(ln.strip())
+            if m and clave not in out:
+                out[clave] = {"seccion": f"viñeta «{clave}»", "texto": limpio(m.group(1))}
     return out
 
 
@@ -113,15 +125,16 @@ def armar(md: Path) -> dict:
     sec = secciones(lineas)
     figs, tabs, anexos = indices(lineas)
     oe = sec.get("objetivos_especificos", {})
+    cara = caratula(lineas)
     return {
         "_nota": "Generado por inicializar_desde_tg.py desde el TG extraído. PENDIENTE = no estaba en el TG o "
                  "no se pudo leer sin interpretar: lo completa el modo inicializar citando la sección.",
         "tg": {
             "slug": md.stem,
-            **caratula(lineas),
+            **cara,
             "revisores": [],
             "institucion_caso": {
-                "nombre": PENDIENTE, "sigla": PENDIENTE,
+                "nombre": cara.get("caso", PENDIENTE), "sigla": PENDIENTE,  # el caso de la carátula es la institución
                 "antecedentes": sec.get("antecedentes_institucionales", PENDIENTE),
                 "mision": sec.get("mision", PENDIENTE), "vision": sec.get("vision", PENDIENTE),
                 "funcion": PENDIENTE,
