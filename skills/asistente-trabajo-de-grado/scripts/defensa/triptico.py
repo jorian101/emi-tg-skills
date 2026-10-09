@@ -225,6 +225,9 @@ def generar(spec_path: Path) -> None:
     hoja(tri, paneles(exterior))
     hoja(tri, paneles(spec["interior"]), nueva_pagina=True)
     tri.save(base / spec["salida"]["triptico"])
+    if "biptico" not in spec:  # el bíptico de respaldo es opcional
+        print(f"ok {spec['salida']['triptico']}")
+        return
     bip = documento()
     hoja(bip, paneles(spec["biptico"]))
     bip.save(base / spec["salida"]["biptico"])

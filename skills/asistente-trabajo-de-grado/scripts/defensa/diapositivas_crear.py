@@ -124,8 +124,10 @@ def construir(spec: dict, base: Path) -> tuple[Presentation, list[str]]:
                                 (f"TUTOR: {d['tutor']}" if d.get("tutor") else "", 18, False),
                                 (d.get("lugar_fecha", ""), 18, False)):
                 if t:
-                    c = _texto(s, Cm(2), y, W - Cm(4), Cm(2.6 if neg and tam == 30 else 1.4), t, tam,
-                               negrita=neg, centro=True)
+                    ancho = W - Cm(4)
+                    lineas_n = -(-int(len(t) * Pt(tam) * 0.6) // int(ancho))  # ~0,6 em por letra: un título largo ocupa más líneas
+                    alto = max(Cm(2.6 if neg and tam == 30 else 1.4), int(lineas_n * Pt(tam) * 1.25))
+                    c = _texto(s, Cm(2), y, ancho, alto, t, tam, negrita=neg, centro=True)
                     y = c.top + c.height + Cm(0.5)
         elif tipo == "figura":
             s = prs.slides.add_slide(l_blanco)

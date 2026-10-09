@@ -82,9 +82,9 @@ def main() -> None:
 
         ejemplo = D.parent.parent / "assets/defensa/triptico.example.yaml"
         (t / "img").mkdir()
-        from PIL import Image
-
         import re
+
+        from PIL import Image
 
         for ruta in re.findall(r"[\w/.-]+\.(?:png|jpg)", ejemplo.read_text(encoding="utf-8")):
             (t / ruta).parent.mkdir(parents=True, exist_ok=True)
@@ -96,6 +96,12 @@ def main() -> None:
             correr("triptico.py", "generar", str(t / "triptico.yaml")).returncode == 0
         )
         assert (t / "triptico.docx").exists() and (t / "biptico.docx").exists()
+        # el bíptico de respaldo es opcional
+        sin = yaml.safe_load((t / "triptico.yaml").read_text(encoding="utf-8"))
+        del sin["biptico"]
+        sin["salida"]["triptico"] = "solo.docx"
+        (t / "solo.yaml").write_text(yaml.safe_dump(sin, allow_unicode=True), encoding="utf-8")
+        assert correr("triptico.py", "generar", str(t / "solo.yaml")).returncode == 0 and (t / "solo.docx").exists()
         tg.write_text("nada de 00", encoding="utf-8")
         assert (
             correr(
@@ -118,6 +124,13 @@ def main() -> None:
         nuevo = Presentation(t / "nuevo.pptx")
         assert [s._element.get("show") for s in nuevo.slides][-1] == "0"
         assert "Ver Anexo A" in "".join(f.text_frame.text for f in nuevo.slides[-1].shapes if f.has_text_frame)
+        # portada con un título largo: ninguna caja se monta sobre la anterior
+        spec["diapositivas"][0]["titulo"] = "SISTEMA DE CONTROL DE EXPEDIENTES EN PROYECTOS DE INFRAESTRUCTURA BASADO EN UN PIPELINE DE PROCESAMIENTO DE DATOS INTELIGENTE"
+        (t / "d.yaml").write_text(yaml.safe_dump(spec, allow_unicode=True), encoding="utf-8")
+        assert correr("diapositivas.py", "crear", str(t / "d.yaml")).returncode == 0
+        cajas = sorted((f for f in Presentation(t / "nuevo.pptx").slides[0].shapes if f.has_text_frame), key=lambda f: f.top)
+        assert all(b.top >= a.top + a.height for a, b in zip(cajas, cajas[1:], strict=False))
+        spec["diapositivas"][0]["titulo"] = "T"
         spec["diapositivas"].append({"tipo": "texto", "titulo": "X", "texto": largo})
         (t / "d.yaml").write_text(yaml.safe_dump(spec, allow_unicode=True), encoding="utf-8")
         assert correr("diapositivas.py", "crear", str(t / "d.yaml")).returncode == 1
