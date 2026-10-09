@@ -1,5 +1,6 @@
 """Checks de diapositivas.py, triptico.py y tv.py con un mazo y un yaml mínimos (uv run --with python-pptx --with python-docx --with pillow --with pyyaml python este_archivo.py)."""
 
+import itertools
 import subprocess
 import sys
 import tempfile
@@ -129,7 +130,7 @@ def main() -> None:
         (t / "d.yaml").write_text(yaml.safe_dump(spec, allow_unicode=True), encoding="utf-8")
         assert correr("diapositivas.py", "crear", str(t / "d.yaml")).returncode == 0
         cajas = sorted((f for f in Presentation(t / "nuevo.pptx").slides[0].shapes if f.has_text_frame), key=lambda f: f.top)
-        assert all(b.top >= a.top + a.height for a, b in zip(cajas, cajas[1:], strict=False))
+        assert all(b.top >= a.top + a.height for a, b in itertools.pairwise(cajas))
         spec["diapositivas"][0]["titulo"] = "T"
         spec["diapositivas"].append({"tipo": "texto", "titulo": "X", "texto": largo})
         (t / "d.yaml").write_text(yaml.safe_dump(spec, allow_unicode=True), encoding="utf-8")
